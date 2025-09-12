@@ -45,6 +45,10 @@ class Produit
     #[ORM\Column(nullable: true)]
     private ?int $tva = null;
 
+    #[ORM\ManyToOne(inversedBy: 'produits')]
+    private ?CategorieProduit $categorieProduit = null;
+
+
     public function __construct()
     {
         $this->fournisseurs = new ArrayCollection();
@@ -178,6 +182,18 @@ class Produit
     public function setTva(?int $tva): static
     {
         $this->tva = $tva;
+
+        return $this;
+    }
+
+    public function getCategorieProduit(): ?CategorieProduit
+    {
+        return $this->categorieProduit;
+    }
+
+    public function setCategorieProduit(?CategorieProduit $categorieProduit): static
+    {
+        $this->categorieProduit = $categorieProduit;
 
         return $this;
     }
