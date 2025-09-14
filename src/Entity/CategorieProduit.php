@@ -110,7 +110,7 @@ class CategorieProduit
     {
         if (!$this->produits->contains($produit)) {
             $this->produits->add($produit);
-            $produit->setYes($this);
+            $produit->setCategorieProduit($this);
         }
 
         return $this;
@@ -120,8 +120,8 @@ class CategorieProduit
     {
         if ($this->produits->removeElement($produit)) {
             // set the owning side to null (unless already changed)
-            if ($produit->getYes() === $this) {
-                $produit->setYes(null);
+            if ($produit->getCategorieProduit() === $this) {
+                $produit->setCategorieProduit(null);
             }
         }
 

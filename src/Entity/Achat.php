@@ -14,25 +14,30 @@ class Achat
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::TIME_IMMUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $dateAchat = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 0, nullable: true)]
+    #[ORM\Column(type: Types::FLOAT, precision: 10, scale: 0, nullable: true)]
     private ?string $montantTotal = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $etat = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTime $dateCreation = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $dateCreation = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTime $dateModification = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $dateModification = null;
+
+    #[ORM\ManyToOne(inversedBy: 'achats')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Fournisseur $fournisseur = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
+
 
     public function setId(?int $id): static
     {
@@ -57,6 +62,7 @@ class Achat
     {
         return $this->montantTotal;
     }
+
 
     public function setMontantTotal(?string $montantTotal): static
     {
@@ -100,4 +106,18 @@ class Achat
 
         return $this;
     }
+
+    public function getFournisseur(): ?Fournisseur
+    {
+        return $this->fournisseur;
+    }
+
+    public function setFournisseur(?Fournisseur $fournisseur): static
+    {
+        $this->fournisseur = $fournisseur;
+
+        return $this;
+    }
 }
+
+

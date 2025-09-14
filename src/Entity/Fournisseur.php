@@ -28,7 +28,7 @@ class Fournisseur
     private ?string $adresse = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $numTva = null;
+    private ?string $numTva = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTime $dateDerniereCommande = null;
@@ -45,9 +45,23 @@ class Fournisseur
     #[ORM\ManyToMany(targetEntity: Produit::class, mappedBy: 'fournisseurs')]
     private Collection $produits;
 
+    /**
+     * @var Collection<int, Achat>
+     */
+    #[ORM\OneToMany(targetEntity: Achat::class, mappedBy: 'fournisseur', orphanRemoval: true)]
+    private Collection $achats;
+
+    /**
+     * @var Collection<int, ProduitFournisseur>
+     */
+    #[ORM\OneToMany(targetEntity: ProduitFournisseur::class, mappedBy: 'fournisseurs', orphanRemoval: true)]
+    private Collection $produitFournisseur;
+
     public function __construct()
     {
         $this->produits = new ArrayCollection();
+        $this->achats = new ArrayCollection();
+        $this->produitFournisseur = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -180,6 +194,69 @@ class Fournisseur
     {
         if ($this->produits->removeElement($produit)) {
             $produit->removeFournisseur($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Achat>
+     
+     */
+    
+    
+    public function getAchats(): Collection
+    {
+        return $this->achats;
+    }
+
+    public function addAchat(Achat $achat): static
+    {
+        if (!$this->achats->contains($achat)) {
+            $this->achats->add($achat);
+            $achat->setFournisseur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAchat(Achat $achat): static
+    {
+        if ($this->achats->removeElement($achat)) {
+            // set the owning side to null (unless already changed)
+            if ($achat->getFournisseur() === $this) {
+                $achat->setFournisseur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ProduitFournisseur>
+     */
+    public function getProduitFournisseur(): Collection
+    {
+        return $this->produitFournisseur;
+    }
+
+    public function addProduitFournisseur(ProduitFournisseur $produitFournisseur): static
+    {
+        if (!$this->produitFournisseur->contains($produitFournisseur)) {
+            $this->produitFournisseur->add($produitFournisseur);
+            $produitFournisseur->setFournisseurs($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProduitFournisseur(ProduitFournisseur $produitFournisseur): static
+    {
+        if ($this->produitFournisseur->removeElement($produitFournisseur)) {
+            // set the owning side to null (unless already changed)
+            if ($produitFournisseur->getFournisseurs() === $this) {
+                $produitFournisseur->setFournisseurs(null);
+            }
         }
 
         return $this;

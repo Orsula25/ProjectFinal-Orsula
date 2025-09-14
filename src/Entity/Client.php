@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ClientRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
@@ -16,8 +18,9 @@ class Client
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $nom = null;
 
+   
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $Prénom = null;
+    private ?string $prenom = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $email = null;
@@ -29,10 +32,21 @@ class Client
     private ?string $adresse = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTime $dateCréation = null;
+    private ?\DateTime $dateCreation = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTime $dateModification = null;
+
+    /**
+     * @var Collection<int, Vente>
+     */
+    #[ORM\OneToMany(targetEntity: Vente::class, mappedBy: 'clients', orphanRemoval: true)]
+    private Collection $ventes;
+
+    public function __construct()
+    {
+        $this->ventes = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -57,15 +71,17 @@ class Client
 
         return $this;
     }
+    
 
-    public function getPrénom(): ?string
+
+    public function getPrenom(): ?string
     {
-        return $this->Prénom;
+        return $this->prenom;
     }
 
-    public function setPrénom(?string $Prénom): static
+    public function setPrenom(?string $prenom): static
     {
-        $this->Prénom = $Prénom;
+        $this->prenom = $prenom;
 
         return $this;
     }
@@ -106,14 +122,15 @@ class Client
         return $this;
     }
 
-    public function getDateCréation(): ?\DateTime
+
+    public function getDateCreation(): ?\DateTime
     {
-        return $this->dateCréation;
+        return $this->dateCreation;
     }
 
-    public function setDateCréation(?\DateTime $dateCréation): static
+    public function setDateCreation(?\DateTime $dateCreation): static
     {
-        $this->dateCréation = $dateCréation;
+        $this->dateCreation = $dateCreation;
 
         return $this;
     }
@@ -126,6 +143,36 @@ class Client
     public function setDateModification(\DateTime $dateModification): static
     {
         $this->dateModification = $dateModification;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Vente>
+     */
+    public function getVentes(): Collection
+    {
+        return $this->ventes;
+    }
+
+    public function addVente(Vente $vente): static
+    {
+        if (!$this->ventes->contains($vente)) {
+            $this->ventes->add($vente);
+            $vente->setClients($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVente(Vente $vente): static
+    {
+        if ($this->ventes->removeElement($vente)) {
+            // set the owning side to null (unless already changed)
+            if ($vente->getClients() === $this) {
+                $vente->setClients(null);
+            }
+        }
 
         return $this;
     }

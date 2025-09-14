@@ -29,6 +29,10 @@ class Vente
     #[ORM\Column(nullable: true)]
     private ?\DateTime $dateModification = null;
 
+    #[ORM\ManyToOne(inversedBy: 'ventes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Client $clients = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -97,6 +101,18 @@ class Vente
     public function setDateModification(?\DateTime $dateModification): static
     {
         $this->dateModification = $dateModification;
+
+        return $this;
+    }
+
+    public function getClients(): ?Client
+    {
+        return $this->clients;
+    }
+
+    public function setClients(?Client $clients): static
+    {
+        $this->clients = $clients;
 
         return $this;
     }
