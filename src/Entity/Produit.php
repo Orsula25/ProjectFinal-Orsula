@@ -72,6 +72,12 @@ class Produit
     #[ORM\OneToMany(targetEntity: DetailVente::class, mappedBy: 'produit', orphanRemoval: true)]
     private Collection $detailVente;
 
+    /**
+     * @var Collection<int, MouvementStock>
+     */
+    #[ORM\OneToMany(targetEntity: MouvementStock::class, mappedBy: 'produit', orphanRemoval: true)]
+    private Collection $mouvementStocks;
+
 
     public function __construct()
     {
@@ -80,6 +86,7 @@ class Produit
         $this->produitFournisseur = new ArrayCollection();
         $this->detailAchats = new ArrayCollection();
         $this->detailVente = new ArrayCollection();
+        $this->mouvementStocks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -318,6 +325,36 @@ class Produit
             // set the owning side to null (unless already changed)
             if ($detailVente->getProduit() === $this) {
                 $detailVente->setProduit(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MouvementStock>
+     */
+    public function getMouvementStocks(): Collection
+    {
+        return $this->mouvementStocks;
+    }
+
+    public function addMouvementStock(MouvementStock $mouvementStock): static
+    {
+        if (!$this->mouvementStocks->contains($mouvementStock)) {
+            $this->mouvementStocks->add($mouvementStock);
+            $mouvementStock->setProduit($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMouvementStock(MouvementStock $mouvementStock): static
+    {
+        if ($this->mouvementStocks->removeElement($mouvementStock)) {
+            // set the owning side to null (unless already changed)
+            if ($mouvementStock->getProduit() === $this) {
+                $mouvementStock->setProduit(null);
             }
         }
 
