@@ -66,6 +66,12 @@ class Produit
     #[ORM\OneToMany(targetEntity: DetailAchat::class, mappedBy: 'produit', orphanRemoval: true)]
     private Collection $detailAchats;
 
+    /**
+     * @var Collection<int, DetailVente>
+     */
+    #[ORM\OneToMany(targetEntity: DetailVente::class, mappedBy: 'produit', orphanRemoval: true)]
+    private Collection $detailVente;
+
 
     public function __construct()
     {
@@ -73,6 +79,7 @@ class Produit
         $this->Fournisseur = new ArrayCollection();
         $this->produitFournisseur = new ArrayCollection();
         $this->detailAchats = new ArrayCollection();
+        $this->detailVente = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -281,6 +288,36 @@ class Produit
             // set the owning side to null (unless already changed)
             if ($detailAchat->getProduit() === $this) {
                 $detailAchat->setProduit(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, DetailVente>
+     */
+    public function getDetailVente(): Collection
+    {
+        return $this->detailVente;
+    }
+
+    public function addDetailVente(DetailVente $detailVente): static
+    {
+        if (!$this->detailVente->contains($detailVente)) {
+            $this->detailVente->add($detailVente);
+            $detailVente->setProduit($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDetailVente(DetailVente $detailVente): static
+    {
+        if ($this->detailVente->removeElement($detailVente)) {
+            // set the owning side to null (unless already changed)
+            if ($detailVente->getProduit() === $this) {
+                $detailVente->setProduit(null);
             }
         }
 

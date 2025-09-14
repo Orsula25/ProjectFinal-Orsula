@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\VenteRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -32,6 +34,17 @@ class Vente
     #[ORM\ManyToOne(inversedBy: 'ventes')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Client $clients = null;
+
+    /**
+     * @var Collection<int, DetailVente>
+     */
+    #[ORM\OneToMany(targetEntity: DetailVente::class, mappedBy: 'vente', orphanRemoval: true)]
+    private Collection $detailVentes;
+
+    public function __construct()
+    {
+        $this->detailVentes = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -113,6 +126,36 @@ class Vente
     public function setClients(?Client $clients): static
     {
         $this->clients = $clients;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, DetailVente>
+     */
+    public function getDetailVentes(): Collection
+    {
+        return $this->detailVentes;
+    }
+
+    public function addDetailVente(DetailVente $detailVente): static
+    {
+        if (!$this->detailVentes->contains($detailVente)) {
+            $this->detailVentes->add($detailVente);
+            $detailVente->setVente($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDetailVente(DetailVente $detailVente): static
+    {
+        if ($this->detailVentes->removeElement($detailVente)) {
+            // set the owning side to null (unless already changed)
+            if ($detailVente->getVente() === $this) {
+                $detailVente->setVente(null);
+            }
+        }
 
         return $this;
     }
