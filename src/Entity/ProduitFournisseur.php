@@ -25,11 +25,11 @@ class ProduitFournisseur
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $dateModification = null;
 
-    #[ORM\ManyToOne(inversedBy: 'produitFournisseur')]
+    #[ORM\ManyToOne(inversedBy: 'produitFournisseurs')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Produit $produit = null;
 
-    #[ORM\ManyToOne(inversedBy: 'produitFournisseur')]
+    #[ORM\ManyToOne(inversedBy: 'produitFournisseurs')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Fournisseur $fournisseur = null;
 

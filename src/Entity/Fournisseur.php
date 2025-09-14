@@ -16,7 +16,7 @@ class Fournisseur
     #[ORM\Column]
     private ?int $id = null;
 
-    // Conseil: rends "nom" non nullable si possible
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $nom = null;
 
