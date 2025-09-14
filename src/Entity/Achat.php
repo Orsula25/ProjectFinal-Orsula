@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\AchatRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -32,6 +34,17 @@ class Achat
     #[ORM\ManyToOne(inversedBy: 'achats')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Fournisseur $fournisseur = null;
+
+    /**
+     * @var Collection<int, DetailAchat>
+     */
+    #[ORM\OneToMany(targetEntity: DetailAchat::class, mappedBy: 'achat', orphanRemoval: true)]
+    private Collection $datailAchats;
+
+    public function __construct()
+    {
+        $this->datailAchats = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -115,6 +128,36 @@ class Achat
     public function setFournisseur(?Fournisseur $fournisseur): static
     {
         $this->fournisseur = $fournisseur;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, DetailAchat>
+     */
+    public function getDatailAchats(): Collection
+    {
+        return $this->datailAchats;
+    }
+
+    public function addDatailAchat(DetailAchat $datailAchat): static
+    {
+        if (!$this->datailAchats->contains($datailAchat)) {
+            $this->datailAchats->add($datailAchat);
+            $datailAchat->setAchat($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDatailAchat(DetailAchat $datailAchat): static
+    {
+        if ($this->datailAchats->removeElement($datailAchat)) {
+            // set the owning side to null (unless already changed)
+            if ($datailAchat->getAchat() === $this) {
+                $datailAchat->setAchat(null);
+            }
+        }
 
         return $this;
     }
