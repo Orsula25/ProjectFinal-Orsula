@@ -58,10 +58,7 @@ class Fournisseur
         $this->achats = new ArrayCollection();
         $this->produitFournisseurs = new ArrayCollection();
 
-        // Optionnel: initialiser les timestamps
-        // $now = new \DateTimeImmutable();
-        // $this->dateCreation = $now;
-        // $this->dateModification = $now;
+       
     }
 
     public function getId(): ?int
@@ -69,7 +66,7 @@ class Fournisseur
         return $this->id;
     }
 
-    // SUPPRIMER setId(): Doctrine gère l'ID
+    
 
     public function getNom(): ?string
     {

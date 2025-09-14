@@ -20,10 +20,10 @@ class Achat
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $dateAchat = null;
 
-    #[ORM\Column(type: Types::decimal, precision: 10, scale: 0, nullable: true)]
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
     private ?string $montantTotal = null;
 
-    #[ORM\Column(Enum: Etat::class, nullable: true)]
+    #[ORM\Column(length: 50, nullable: true)]
     private ?string $etat = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
