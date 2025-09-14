@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\FournisseurRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: FournisseurRepository::class)]
@@ -15,53 +16,52 @@ class Fournisseur
     #[ORM\Column]
     private ?int $id = null;
 
+    // Conseil: rends "nom" non nullable si possible
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $email = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $telephone = null;
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $telephone = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $adresse = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(length: 50, nullable: true)]
     private ?string $numTva = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTime $dateDerniereCommande = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $dateDerniereCommande = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTime $dateModification = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $dateModification = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTime $dateCreation = null;
-
-    /**
-     * @var Collection<int, Produit>
-     */
-    #[ORM\ManyToMany(targetEntity: Produit::class, mappedBy: 'fournisseurs')]
-    private Collection $produits;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $dateCreation = null;
 
     /**
      * @var Collection<int, Achat>
      */
-    #[ORM\OneToMany(targetEntity: Achat::class, mappedBy: 'fournisseur', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Achat::class, mappedBy: 'fournisseur')]
     private Collection $achats;
 
     /**
      * @var Collection<int, ProduitFournisseur>
      */
-    #[ORM\OneToMany(targetEntity: ProduitFournisseur::class, mappedBy: 'fournisseurs', orphanRemoval: true)]
-    private Collection $produitFournisseur;
+    #[ORM\OneToMany(targetEntity: ProduitFournisseur::class, mappedBy: 'fournisseur', orphanRemoval: true)]
+    private Collection $produitFournisseurs;
 
     public function __construct()
     {
-        $this->produits = new ArrayCollection();
         $this->achats = new ArrayCollection();
-        $this->produitFournisseur = new ArrayCollection();
+        $this->produitFournisseurs = new ArrayCollection();
+
+        // Optionnel: initialiser les timestamps
+        // $now = new \DateTimeImmutable();
+        // $this->dateCreation = $now;
+        // $this->dateModification = $now;
     }
 
     public function getId(): ?int
@@ -69,12 +69,7 @@ class Fournisseur
         return $this->id;
     }
 
-    public function setId(?int $id): static
-    {
-        $this->id = $id;
-
-        return $this;
-    }
+    // SUPPRIMER setId(): Doctrine gère l'ID
 
     public function getNom(): ?string
     {
@@ -84,7 +79,6 @@ class Fournisseur
     public function setNom(?string $nom): static
     {
         $this->nom = $nom;
-
         return $this;
     }
 
@@ -96,19 +90,17 @@ class Fournisseur
     public function setEmail(?string $email): static
     {
         $this->email = $email;
-
         return $this;
     }
 
-    public function getTelephone(): ?int
+    public function getTelephone(): ?string
     {
         return $this->telephone;
     }
 
-    public function setTelephone(?int $telephone): static
+    public function setTelephone(?string $telephone): static
     {
         $this->telephone = $telephone;
-
         return $this;
     }
 
@@ -120,91 +112,56 @@ class Fournisseur
     public function setAdresse(?string $adresse): static
     {
         $this->adresse = $adresse;
-
         return $this;
     }
 
-    public function getNumTva(): ?int
+    public function getNumTva(): ?string
     {
         return $this->numTva;
     }
 
-    public function setNumTva(?int $numTva): static
+    public function setNumTva(?string $numTva): static
     {
         $this->numTva = $numTva;
-
         return $this;
     }
 
-    public function getDateDerniereCommande(): ?\DateTime
+    public function getDateDerniereCommande(): ?\DateTimeImmutable
     {
         return $this->dateDerniereCommande;
     }
 
-    public function setDateDerniereCommande(\DateTime $dateDerniereCommande): static
+    public function setDateDerniereCommande(\DateTimeImmutable $dateDerniereCommande): static
     {
         $this->dateDerniereCommande = $dateDerniereCommande;
-
         return $this;
     }
 
-    public function getDateModification(): ?\DateTime
+    public function getDateModification(): ?\DateTimeImmutable
     {
         return $this->dateModification;
     }
 
-    public function setDateModification(?\DateTime $dateModification): static
+    public function setDateModification(?\DateTimeImmutable $dateModification): static
     {
         $this->dateModification = $dateModification;
-
         return $this;
     }
 
-    public function getDateCreation(): ?\DateTime
+    public function getDateCreation(): ?\DateTimeImmutable
     {
         return $this->dateCreation;
     }
 
-    public function setDateCreation(\DateTime $dateCreation): static
+    public function setDateCreation(\DateTimeImmutable $dateCreation): static
     {
         $this->dateCreation = $dateCreation;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Produit>
-     */
-    public function getProduits(): Collection
-    {
-        return $this->produits;
-    }
-
-    public function addProduit(Produit $produit): static
-    {
-        if (!$this->produits->contains($produit)) {
-            $this->produits->add($produit);
-            $produit->addFournisseur($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProduit(Produit $produit): static
-    {
-        if ($this->produits->removeElement($produit)) {
-            $produit->removeFournisseur($this);
-        }
-
         return $this;
     }
 
     /**
      * @return Collection<int, Achat>
-     
      */
-    
-    
     public function getAchats(): Collection
     {
         return $this->achats;
@@ -216,49 +173,43 @@ class Fournisseur
             $this->achats->add($achat);
             $achat->setFournisseur($this);
         }
-
         return $this;
     }
 
     public function removeAchat(Achat $achat): static
     {
         if ($this->achats->removeElement($achat)) {
-            // set the owning side to null (unless already changed)
             if ($achat->getFournisseur() === $this) {
                 $achat->setFournisseur(null);
             }
         }
-
         return $this;
     }
 
     /**
      * @return Collection<int, ProduitFournisseur>
      */
-    public function getProduitFournisseur(): Collection
+    public function getProduitFournisseurs(): Collection
     {
-        return $this->produitFournisseur;
+        return $this->produitFournisseurs;
     }
 
-    public function addProduitFournisseur(ProduitFournisseur $produitFournisseur): static
+    public function addProduitFournisseur(ProduitFournisseur $pf): static
     {
-        if (!$this->produitFournisseur->contains($produitFournisseur)) {
-            $this->produitFournisseur->add($produitFournisseur);
-            $produitFournisseur->setFournisseurs($this);
+        if (!$this->produitFournisseurs->contains($pf)) {
+            $this->produitFournisseurs->add($pf);
+            $pf->setFournisseur($this);
         }
-
         return $this;
     }
 
-    public function removeProduitFournisseur(ProduitFournisseur $produitFournisseur): static
+    public function removeProduitFournisseur(ProduitFournisseur $pf): static
     {
-        if ($this->produitFournisseur->removeElement($produitFournisseur)) {
-            // set the owning side to null (unless already changed)
-            if ($produitFournisseur->getFournisseurs() === $this) {
-                $produitFournisseur->setFournisseurs(null);
+        if ($this->produitFournisseurs->removeElement($pf)) {
+            if ($pf->getFournisseur() === $this) {
+                $pf->setFournisseur(null);
             }
         }
-
         return $this;
     }
 }

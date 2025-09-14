@@ -13,25 +13,25 @@ class ProduitFournisseur
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(type: 'float', nullable: true)]
     private ?float $prix = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTime $delaisLivraison = null;
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $delaiLivraison = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTime $dateCreation = null;
+    private ?\DateTimeImmutable $dateCreation = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTime $dateModification = null;
+    private ?\DateTimeImmutable $dateModification = null;
 
     #[ORM\ManyToOne(inversedBy: 'produitFournisseur')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Produit $produits = null;
+    private ?Produit $produit = null;
 
     #[ORM\ManyToOne(inversedBy: 'produitFournisseur')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Fournisseur $fournisseurs = null;
+    private ?Fournisseur $fournisseur = null;
 
     public function getId(): ?int
     {
@@ -57,62 +57,62 @@ class ProduitFournisseur
         return $this;
     }
 
-    public function getDelaisLivraison(): ?\DateTime
+    public function getDelaiLivraison(): ?int
     {
-        return $this->delaisLivraison;
+        return $this->delaiLivraison;
     }
 
-    public function setDelaisLivraison(?\DateTime $delaisLivraison): static
+    public function setDelaiLivraison(?int $delaiLivraison): static
     {
-        $this->delaisLivraison = $delaisLivraison;
+        $this->delaiLivraison = $delaiLivraison;
 
         return $this;
     }
 
-    public function getDateCreation(): ?\DateTime
+    public function getDateCreation(): ?\DateTimeImmutable
     {
         return $this->dateCreation;
     }
 
-    public function setDateCreation(?\DateTime $dateCreation): static
+    public function setDateCreation(?\DateTimeImmutable $dateCreation): static
     {
         $this->dateCreation = $dateCreation;
 
         return $this;
     }
 
-    public function getDateModification(): ?\DateTime
+    public function getDateModification(): ?\DateTimeImmutable
     {
         return $this->dateModification;
     }
 
-    public function setDateModification(?\DateTime $dateModification): static
+    public function setDateModification(?\DateTimeImmutable $dateModification): static
     {
         $this->dateModification = $dateModification;
 
         return $this;
     }
 
-    public function getProduits(): ?Produit
+    public function getProduit(): ?Produit
     {
-        return $this->produits;
+        return $this->produit;
     }
 
-    public function setProduits(?Produit $produits): static
+    public function setProduit(?Produit $produit): static
     {
-        $this->produits = $produits;
+        $this->produit = $produit;
 
         return $this;
     }
 
-    public function getFournisseurs(): ?Fournisseur
+    public function getFournisseur(): ?Fournisseur
     {
-        return $this->fournisseurs;
+        return $this->fournisseur;
     }
 
-    public function setFournisseurs(?Fournisseur $fournisseurs): static
+    public function setFournisseur(?Fournisseur $fournisseur): static
     {
-        $this->fournisseurs = $fournisseurs;
+        $this->fournisseur = $fournisseur;
 
         return $this;
     }

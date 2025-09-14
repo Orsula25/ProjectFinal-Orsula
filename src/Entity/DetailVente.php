@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\DetailVenteRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DetailVenteRepository::class)]
@@ -17,18 +18,18 @@ class DetailVente
     #[ORM\JoinColumn(nullable: false)]
     private ?Vente $vente = null;
 
-    #[ORM\ManyToOne(inversedBy: 'detailVente')]
+    #[ORM\ManyToOne(inversedBy: 'detailVentes')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Produit $produit = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(type: Types::INTEGER)]
     private ?int $quantite = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?float $prixUnitaire = null;
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
+    private ?string $prixUnitaire = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?float $sousTotal = null;
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
+    private ?string $sousTotal = null;
 
     public function getId(): ?int
     {
@@ -78,24 +79,24 @@ class DetailVente
         return $this;
     }
 
-    public function getPrixUnitaire(): ?float
+    public function getPrixUnitaire(): ?string
     {
         return $this->prixUnitaire;
     }
 
-    public function setPrixUnitaire(?float $prixUnitaire): static
+    public function setPrixUnitaire(?string $prixUnitaire): static
     {
         $this->prixUnitaire = $prixUnitaire;
 
         return $this;
     }
 
-    public function getSousTotal(): ?float
+    public function getSousTotal(): ?string
     {
         return $this->sousTotal;
     }
 
-    public function setSousTotal(?float $sousTotal): static
+    public function setSousTotal(?string $sousTotal): static
     {
         $this->sousTotal = $sousTotal;
 

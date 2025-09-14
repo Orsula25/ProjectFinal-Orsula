@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\CategorieProduitRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CategorieProduitRepository::class)]
@@ -15,22 +16,22 @@ class CategorieProduit
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255)]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTime $dateCreation = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $dateCreation = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTime $dateModification = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $dateModification = null;
 
     /**
      * @var Collection<int, Produit>
      */
-    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'categorieProduit')]
+    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'categorieProduit', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $produits;
 
     public function __construct()
@@ -74,24 +75,24 @@ class CategorieProduit
         return $this;
     }
 
-    public function getDateCreation(): ?\DateTime
+    public function getDateCreation(): ?\DateTimeImmutable
     {
         return $this->dateCreation;
     }
 
-    public function setDateCreation(?\DateTime $dateCreation): static
+    public function setDateCreation(\DateTimeImmutable $dateCreation): static
     {
         $this->dateCreation = $dateCreation;
 
         return $this;
     }
 
-    public function getDateModification(): ?\DateTime
+    public function getDateModification(): ?\DateTimeImmutable
     {
         return $this->dateModification;
     }
 
-    public function setDateModification(?\DateTime $dateModification): static
+    public function setDateModification(\DateTimeImmutable $dateModification): static
     {
         $this->dateModification = $dateModification;
 

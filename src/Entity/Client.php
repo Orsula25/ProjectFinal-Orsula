@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ClientRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
@@ -26,21 +27,21 @@ class Client
     private ?string $email = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $telephone = null;
+    private ?string $telephone = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $adresse = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTime $dateCreation = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $dateCreation = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTime $dateModification = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $dateModification = null;
 
     /**
      * @var Collection<int, Vente>
      */
-    #[ORM\OneToMany(targetEntity: Vente::class, mappedBy: 'clients', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Vente::class, mappedBy: 'client', orphanRemoval: true)]
     private Collection $ventes;
 
     public function __construct()
@@ -98,12 +99,13 @@ class Client
         return $this;
     }
 
-    public function getTelephone(): ?int
+
+    public function getTelephone(): ?string
     {
         return $this->telephone;
     }
 
-    public function setTelephone(?int $telephone): static
+    public function setTelephone(?string $telephone): static
     {
         $this->telephone = $telephone;
 
@@ -123,24 +125,24 @@ class Client
     }
 
 
-    public function getDateCreation(): ?\DateTime
+    public function getDateCreation(): ?\DateTimeImmutable
     {
         return $this->dateCreation;
     }
 
-    public function setDateCreation(?\DateTime $dateCreation): static
+    public function setDateCreation(?\DateTimeImmutable $dateCreation): static
     {
         $this->dateCreation = $dateCreation;
 
         return $this;
     }
 
-    public function getDateModification(): ?\DateTime
+    public function getDateModification(): ?\DateTimeImmutable
     {
         return $this->dateModification;
     }
 
-    public function setDateModification(\DateTime $dateModification): static
+    public function setDateModification(\DateTimeImmutable $dateModification): static
     {
         $this->dateModification = $dateModification;
 
@@ -159,7 +161,7 @@ class Client
     {
         if (!$this->ventes->contains($vente)) {
             $this->ventes->add($vente);
-            $vente->setClients($this);
+            $vente->setClient($this);
         }
 
         return $this;
@@ -169,8 +171,8 @@ class Client
     {
         if ($this->ventes->removeElement($vente)) {
             // set the owning side to null (unless already changed)
-            if ($vente->getClients() === $this) {
-                $vente->setClients(null);
+            if ($vente->getClient() === $this) {
+                $vente->setClient(null);
             }
         }
 

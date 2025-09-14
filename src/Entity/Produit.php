@@ -5,9 +5,13 @@ namespace App\Entity;
 use App\Repository\ProduitRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProduitRepository::class)]
+#[ORM\Table(name: 'produit')]
+#[ORM\UniqueConstraint(name: 'uniq_produit_reference', columns: ['reference'])]
+#[ORM\HasLifecycleCallbacks]
 class Produit
 {
     #[ORM\Id]
@@ -15,50 +19,45 @@ class Produit
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $nom = null;
+    // Conseil: rends le nom obligatoire
+    #[ORM\Column(length: 255)]
+    private string $nom;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?float $prixUnitaire = null;
+    // Argent -> DECIMAL côté DB, string côté PHP
+    #[ORM\Column(type: Types::DECIMAL, precision: 12, scale: 2)]
+    private string $prixUnitaire = '0.00';
 
-    #[ORM\Column(nullable: true)]
-    private ?int $quantiteStock = null;
+    // Stratégie B: stock courant non nul
+    #[ORM\Column(type: Types::INTEGER)]
+    private int $quantiteStock = 0;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $reference = null;
+    // SKU / référence obligatoire + unique (voir UniqueConstraint ci-dessus)
+    #[ORM\Column(length: 64)]
+    private string $reference;
 
-    /**
-     * @var Collection<int, Fournisseur>
-     */
-    #[ORM\ManyToMany(targetEntity: Fournisseur::class, inversedBy: 'produits')]
-    private Collection $fournisseurs;
+    // Dates immuables, non nulles (+ callbacks)
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    private \DateTimeImmutable $dateCreation;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTime $dateCreation = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    private \DateTimeImmutable $dateModification;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTime $dateModification = null;
+    // TVA: si c'est un taux, DECIMAL(5,2) en string (ex: "21.00")
+    #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 2, nullable: true)]
+    private ?string $tva = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $tva = null;
-
-    #[ORM\ManyToOne(inversedBy: 'produits')]
+    #[ORM\ManyToOne(targetEntity: CategorieProduit::class, inversedBy: 'produits')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?CategorieProduit $categorieProduit = null;
-
-    /**
-     * @var Collection<int, Fournisseur>
-     */
-    #[ORM\ManyToMany(targetEntity: Fournisseur::class)]
-    private Collection $Fournisseur;
 
     /**
      * @var Collection<int, ProduitFournisseur>
      */
-    #[ORM\OneToMany(targetEntity: ProduitFournisseur::class, mappedBy: 'produits', orphanRemoval: true)]
-    private Collection $produitFournisseur;
+    #[ORM\OneToMany(targetEntity: ProduitFournisseur::class, mappedBy: 'produit', orphanRemoval: true)]
+    private Collection $produitFournisseurs;
 
     /**
      * @var Collection<int, DetailAchat>
@@ -70,7 +69,7 @@ class Produit
      * @var Collection<int, DetailVente>
      */
     #[ORM\OneToMany(targetEntity: DetailVente::class, mappedBy: 'produit', orphanRemoval: true)]
-    private Collection $detailVente;
+    private Collection $detailVentes;
 
     /**
      * @var Collection<int, MouvementStock>
@@ -78,38 +77,50 @@ class Produit
     #[ORM\OneToMany(targetEntity: MouvementStock::class, mappedBy: 'produit', orphanRemoval: true)]
     private Collection $mouvementStocks;
 
-
     public function __construct()
     {
-        $this->fournisseurs = new ArrayCollection();
-        $this->Fournisseur = new ArrayCollection();
-        $this->produitFournisseur = new ArrayCollection();
+        // init collections
+        $this->produitFournisseurs = new ArrayCollection();
         $this->detailAchats = new ArrayCollection();
-        $this->detailVente = new ArrayCollection();
+        $this->detailVentes = new ArrayCollection();
         $this->mouvementStocks = new ArrayCollection();
+
+        // timestamps
+        $now = new \DateTimeImmutable();
+        $this->dateCreation = $now;
+        $this->dateModification = $now;
     }
+
+    #[ORM\PrePersist]
+    public function onPrePersist(): void
+    {
+        $now = new \DateTimeImmutable();
+        $this->dateCreation = $this->dateCreation ?? $now;
+        $this->dateModification = $now;
+    }
+
+    #[ORM\PreUpdate]
+    public function onPreUpdate(): void
+    {
+        $this->dateModification = new \DateTimeImmutable();
+    }
+
+    // --- Getters/Setters ---
 
     public function getId(): ?int
     {
         return $this->id;
     }
-
-    public function setId(?int $id): static
-    {
-        $this->id = $id;
-
-        return $this;
-    }
+    // (pas de setId())
 
     public function getNom(): ?string
     {
         return $this->nom;
     }
 
-    public function setNom(?string $nom): static
+    public function setNom(string $nom): static
     {
         $this->nom = $nom;
-
         return $this;
     }
 
@@ -121,103 +132,72 @@ class Produit
     public function setDescription(?string $description): static
     {
         $this->description = $description;
-
         return $this;
     }
 
-    public function getPrixUnitaire(): ?float
+    public function getPrixUnitaire(): string
     {
         return $this->prixUnitaire;
     }
 
-    public function setPrixUnitaire(?float $prixUnitaire): static
+    public function setPrixUnitaire(string $prixUnitaire): static
     {
         $this->prixUnitaire = $prixUnitaire;
-
         return $this;
     }
 
-    public function getQuantiteStock(): ?int
+    public function getQuantiteStock(): int
     {
         return $this->quantiteStock;
     }
 
-    public function setQuantiteStock(?int $quantiteStock): static
+    public function setQuantiteStock(int $quantiteStock): static
     {
         $this->quantiteStock = $quantiteStock;
-
         return $this;
     }
 
-    public function getReference(): ?string
+    public function getReference(): string
     {
         return $this->reference;
     }
 
-    public function setReference(?string $reference): static
+    public function setReference(string $reference): static
     {
         $this->reference = $reference;
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Fournisseur>
-     */
-    public function getFournisseurs(): Collection
-    {
-        return $this->fournisseurs;
-    }
-
-    public function addFournisseur(Fournisseur $fournisseur): static
-    {
-        if (!$this->fournisseurs->contains($fournisseur)) {
-            $this->fournisseurs->add($fournisseur);
-        }
-
-        return $this;
-    }
-
-    public function removeFournisseur(Fournisseur $fournisseur): static
-    {
-        $this->fournisseurs->removeElement($fournisseur);
-
-        return $this;
-    }
-
-    public function getDateCreation(): ?\DateTime
+    public function getDateCreation(): \DateTimeImmutable
     {
         return $this->dateCreation;
     }
 
-    public function setDateCreation(?\DateTime $dateCreation): static
+    public function setDateCreation(\DateTimeImmutable $dateCreation): static
     {
         $this->dateCreation = $dateCreation;
-
         return $this;
     }
 
-    public function getDateModification(): ?\DateTime
+    public function getDateModification(): \DateTimeImmutable
     {
         return $this->dateModification;
     }
 
-    public function setDateModification(?\DateTime $dateModification): static
+    public function setDateModification(\DateTimeImmutable $dateModification): static
     {
         $this->dateModification = $dateModification;
-
         return $this;
     }
 
-    public function getTva(): ?int
+    public function getTva(): ?string
     {
         return $this->tva;
     }
 
-    public function setTva(?int $tva): static
+    public function setTva(?string $tva): static
     {
         $this->tva = $tva;
-
         return $this;
     }
 
@@ -229,135 +209,34 @@ class Produit
     public function setCategorieProduit(?CategorieProduit $categorieProduit): static
     {
         $this->categorieProduit = $categorieProduit;
-
         return $this;
-    }
-
-    /**
-     * @return Collection<int, Fournisseur>
-     */
-    public function getFournisseur(): Collection
-    {
-        return $this->Fournisseur;
     }
 
     /**
      * @return Collection<int, ProduitFournisseur>
      */
-    public function getProduitFournisseur(): Collection
+    public function getProduitFournisseurs(): Collection
     {
-        return $this->produitFournisseur;
+        return $this->produitFournisseurs;
     }
 
     public function addProduitFournisseur(ProduitFournisseur $produitFournisseur): static
     {
-        if (!$this->produitFournisseur->contains($produitFournisseur)) {
-            $this->produitFournisseur->add($produitFournisseur);
-            $produitFournisseur->setProduits($this);
+        if (!$this->produitFournisseurs->contains($produitFournisseur)) {
+            $this->produitFournisseurs->add($produitFournisseur);
+            $produitFournisseur->setProduit($this);
         }
-
         return $this;
     }
 
     public function removeProduitFournisseur(ProduitFournisseur $produitFournisseur): static
     {
-        if ($this->produitFournisseur->removeElement($produitFournisseur)) {
-            // set the owning side to null (unless already changed)
-            if ($produitFournisseur->getProduits() === $this) {
-                $produitFournisseur->setProduits(null);
+        if ($this->produitFournisseurs->removeElement($produitFournisseur)) {
+            if ($produitFournisseur->getProduit()
+                !== $this) {
+                $produitFournisseur->setProduit(null);
             }
         }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, DetailAchat>
-     */
-    public function getDetailAchats(): Collection
-    {
-        return $this->detailAchats;
-    }
-
-    public function addDetailAchat(DetailAchat $detailAchat): static
-    {
-        if (!$this->detailAchats->contains($detailAchat)) {
-            $this->detailAchats->add($detailAchat);
-            $detailAchat->setProduit($this);
-        }
-
-        return $this;
-    }
-
-    public function removeDetailAchat(DetailAchat $detailAchat): static
-    {
-        if ($this->detailAchats->removeElement($detailAchat)) {
-            // set the owning side to null (unless already changed)
-            if ($detailAchat->getProduit() === $this) {
-                $detailAchat->setProduit(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, DetailVente>
-     */
-    public function getDetailVente(): Collection
-    {
-        return $this->detailVente;
-    }
-
-    public function addDetailVente(DetailVente $detailVente): static
-    {
-        if (!$this->detailVente->contains($detailVente)) {
-            $this->detailVente->add($detailVente);
-            $detailVente->setProduit($this);
-        }
-
-        return $this;
-    }
-
-    public function removeDetailVente(DetailVente $detailVente): static
-    {
-        if ($this->detailVente->removeElement($detailVente)) {
-            // set the owning side to null (unless already changed)
-            if ($detailVente->getProduit() === $this) {
-                $detailVente->setProduit(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, MouvementStock>
-     */
-    public function getMouvementStocks(): Collection
-    {
-        return $this->mouvementStocks;
-    }
-
-    public function addMouvementStock(MouvementStock $mouvementStock): static
-    {
-        if (!$this->mouvementStocks->contains($mouvementStock)) {
-            $this->mouvementStocks->add($mouvementStock);
-            $mouvementStock->setProduit($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMouvementStock(MouvementStock $mouvementStock): static
-    {
-        if ($this->mouvementStocks->removeElement($mouvementStock)) {
-            // set the owning side to null (unless already changed)
-            if ($mouvementStock->getProduit() === $this) {
-                $mouvementStock->setProduit(null);
-            }
-        }
-
         return $this;
     }
 }

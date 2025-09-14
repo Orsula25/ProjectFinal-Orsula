@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\AchatRepository;
+use App\Entity\Enum\Etat;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -19,10 +20,10 @@ class Achat
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $dateAchat = null;
 
-    #[ORM\Column(type: Types::FLOAT, precision: 10, scale: 0, nullable: true)]
+    #[ORM\Column(type: Types::decimal, precision: 10, scale: 0, nullable: true)]
     private ?string $montantTotal = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(Enum: Etat::class, nullable: true)]
     private ?string $etat = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
@@ -39,11 +40,11 @@ class Achat
      * @var Collection<int, DetailAchat>
      */
     #[ORM\OneToMany(targetEntity: DetailAchat::class, mappedBy: 'achat', orphanRemoval: true)]
-    private Collection $datailAchats;
+    private Collection $detailAchats;
 
     public function __construct()
     {
-        $this->datailAchats = new ArrayCollection();
+        $this->detailAchats = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -96,24 +97,24 @@ class Achat
         return $this;
     }
 
-    public function getDateCreation(): ?\DateTime
+    public function getDateCreation(): ?\DateTimeImmutable
     {
         return $this->dateCreation;
     }
 
-    public function setDateCreation(?\DateTime $dateCreation): static
+    public function setDateCreation(\DateTimeImmutable $dateCreation): static
     {
         $this->dateCreation = $dateCreation;
 
         return $this;
     }
 
-    public function getDateModification(): ?\DateTime
+    public function getDateModification(): ?\DateTimeImmutable
     {
         return $this->dateModification;
     }
 
-    public function setDateModification(?\DateTime $dateModification): static
+    public function setDateModification(\DateTimeImmutable $dateModification): static
     {
         $this->dateModification = $dateModification;
 
@@ -131,31 +132,35 @@ class Achat
 
         return $this;
     }
-
+    
+    /**
+     * @return Collection<int, DetailAchats>
+     
+     */
     /**
      * @return Collection<int, DetailAchat>
      */
-    public function getDatailAchats(): Collection
+    public function getDetailAchats(): Collection
     {
-        return $this->datailAchats;
+        return $this->detailAchats;
     }
 
-    public function addDatailAchat(DetailAchat $datailAchat): static
+    public function addDetailAchat(DetailAchat $detailAchat): static
     {
-        if (!$this->datailAchats->contains($datailAchat)) {
-            $this->datailAchats->add($datailAchat);
-            $datailAchat->setAchat($this);
+        if (!$this->detailAchats->contains($detailAchat)) {
+            $this->detailAchats->add($detailAchat);
+            $detailAchat->setAchat($this);
         }
 
         return $this;
     }
 
-    public function removeDatailAchat(DetailAchat $datailAchat): static
+    public function removeDetailAchat(DetailAchat $detailAchat): static
     {
-        if ($this->datailAchats->removeElement($datailAchat)) {
+        if ($this->detailAchats->removeElement($detailAchat)) {
             // set the owning side to null (unless already changed)
-            if ($datailAchat->getAchat() === $this) {
-                $datailAchat->setAchat(null);
+            if ($detailAchat->getAchat() === $this) {
+                $detailAchat->setAchat(null);
             }
         }
 

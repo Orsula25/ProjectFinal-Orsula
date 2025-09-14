@@ -9,6 +9,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: VenteRepository::class)]
+#[ORM\Table(name: 'vente')]
+#[ORM\HasLifecycleCallbacks]
 class Vente
 {
     #[ORM\Id]
@@ -16,47 +18,66 @@ class Vente
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::TIME_IMMUTABLE, nullable: true)]
+    // Date + heure de la vente
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $dateVente = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 0, nullable: true)]
+    // Argent -> DECIMAL côté DB, string côté PHP
+    #[ORM\Column(type: Types::DECIMAL, precision: 12, scale: 2, nullable: true)]
     private ?string $montantTotal = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    // Option simple: string. (Voir plus bas option enum)
+    #[ORM\Column(length: 50, nullable: true)]
     private ?string $etat = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTime $dateCreation = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    private \DateTimeImmutable $dateCreation;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTime $dateModification = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    private \DateTimeImmutable $dateModification;
 
     #[ORM\ManyToOne(inversedBy: 'ventes')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Client $clients = null;
+    private ?Client $client = null;
 
     /**
      * @var Collection<int, DetailVente>
      */
-    #[ORM\OneToMany(targetEntity: DetailVente::class, mappedBy: 'vente', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: DetailVente::class, mappedBy: 'vente', orphanRemoval: true, cascade: ['persist'])]
     private Collection $detailVentes;
 
     public function __construct()
     {
         $this->detailVentes = new ArrayCollection();
+        $now = new \DateTimeImmutable();
+        $this->dateCreation = $now;
+        $this->dateModification = $now;
+        // éventuellement: $this->dateVente = $now;
+        // éventuellement: $this->etat = 'DRAFT';
     }
+
+    #[ORM\PrePersist]
+    public function onPrePersist(): void
+    {
+        $now = new \DateTimeImmutable();
+        $this->dateCreation = $this->dateCreation ?? $now;
+        $this->dateModification = $now;
+    }
+
+    #[ORM\PreUpdate]
+    public function onPreUpdate(): void
+    {
+        $this->dateModification = new \DateTimeImmutable();
+    }
+
+    // --- Getters / Setters ---
 
     public function getId(): ?int
     {
         return $this->id;
     }
-
-    public function setId(?int $id): static
-    {
-        $this->id = $id;
-
-        return $this;
-    }
+    
+    
 
     public function getDateVente(): ?\DateTimeImmutable
     {
@@ -66,7 +87,6 @@ class Vente
     public function setDateVente(?\DateTimeImmutable $dateVente): static
     {
         $this->dateVente = $dateVente;
-
         return $this;
     }
 
@@ -78,7 +98,6 @@ class Vente
     public function setMontantTotal(?string $montantTotal): static
     {
         $this->montantTotal = $montantTotal;
-
         return $this;
     }
 
@@ -90,43 +109,39 @@ class Vente
     public function setEtat(?string $etat): static
     {
         $this->etat = $etat;
-
         return $this;
     }
 
-    public function getDateCreation(): ?\DateTime
+    public function getDateCreation(): \DateTimeImmutable
     {
         return $this->dateCreation;
     }
 
-    public function setDateCreation(?\DateTime $dateCreation): static
+    public function setDateCreation(\DateTimeImmutable $dateCreation): static
     {
         $this->dateCreation = $dateCreation;
-
         return $this;
     }
 
-    public function getDateModification(): ?\DateTime
+    public function getDateModification(): \DateTimeImmutable
     {
         return $this->dateModification;
     }
 
-    public function setDateModification(?\DateTime $dateModification): static
+    public function setDateModification(\DateTimeImmutable $dateModification): static
     {
         $this->dateModification = $dateModification;
-
         return $this;
     }
 
-    public function getClients(): ?Client
+    public function getClient(): ?Client
     {
-        return $this->clients;
+        return $this->client;
     }
 
-    public function setClients(?Client $clients): static
+    public function setClient(?Client $client): static
     {
-        $this->clients = $clients;
-
+        $this->client = $client;
         return $this;
     }
 
@@ -144,19 +159,16 @@ class Vente
             $this->detailVentes->add($detailVente);
             $detailVente->setVente($this);
         }
-
         return $this;
     }
 
     public function removeDetailVente(DetailVente $detailVente): static
     {
         if ($this->detailVentes->removeElement($detailVente)) {
-            // set the owning side to null (unless already changed)
             if ($detailVente->getVente() === $this) {
                 $detailVente->setVente(null);
             }
         }
-
         return $this;
     }
 }
