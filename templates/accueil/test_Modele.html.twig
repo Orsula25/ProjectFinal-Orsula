@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+Voici la liste de produits: 
+{{dump(produits)}}
+
+{% for produit in produits %}
+    {{ produit.nom }}
+    {{ produit.description }}
+ 
+  
+{% endfor %}
+
+
+{% endblock %}

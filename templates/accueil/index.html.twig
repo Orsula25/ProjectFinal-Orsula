@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+Bonjour bienvenue sur le site 
+
+<br> Voici le nom: {{ nom }}
+<br> Voici les hobbies :{{ hobbies }}
+<br> Voici la date de naissance: {{ dateNaissance.format('d/m/
+Y') }}
+<br> Voici l'adresse: {{ adresse.rue }} {{ adresse.numero }} {{ adresse.codePostal }} {{ adresse.ville }}
+
+
+
+{% endblock %}
