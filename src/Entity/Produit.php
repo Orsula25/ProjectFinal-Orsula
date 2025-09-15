@@ -19,33 +19,32 @@ class Produit
     #[ORM\Column]
     private ?int $id = null;
 
-    // Conseil: rends le nom obligatoire
+ 
     #[ORM\Column(length: 255)]
     private string $nom;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
-    // Argent -> DECIMAL côté DB, string côté PHP
+    
     #[ORM\Column(type: Types::DECIMAL, precision: 12, scale: 2)]
     private string $prixUnitaire = '0.00';
 
-    // Stratégie B: stock courant non nul
     #[ORM\Column(type: Types::INTEGER)]
     private int $quantiteStock = 0;
 
-    // SKU / référence obligatoire + unique (voir UniqueConstraint ci-dessus)
+   
     #[ORM\Column(length: 64)]
     private string $reference;
 
-    // Dates immuables, non nulles (+ callbacks)
+   
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private \DateTimeImmutable $dateCreation;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private \DateTimeImmutable $dateModification;
 
-    // TVA: si c'est un taux, DECIMAL(5,2) en string (ex: "21.00")
+   
     #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 2, nullable: true)]
     private ?string $tva = null;
 
@@ -105,13 +104,13 @@ class Produit
         $this->dateModification = new \DateTimeImmutable();
     }
 
-    // --- Getters/Setters ---
+    
 
     public function getId(): ?int
     {
         return $this->id;
     }
-    // (pas de setId())
+
 
     public function getNom(): ?string
     {

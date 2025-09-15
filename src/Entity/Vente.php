@@ -18,15 +18,14 @@ class Vente
     #[ORM\Column]
     private ?int $id = null;
 
-    // Date + heure de la vente
+
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $dateVente = null;
 
-    // Argent -> DECIMAL côté DB, string côté PHP
+
     #[ORM\Column(type: Types::DECIMAL, precision: 12, scale: 2, nullable: true)]
     private ?string $montantTotal = null;
 
-    // Option simple: string. (Voir plus bas option enum)
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $etat = null;
 
@@ -52,8 +51,7 @@ class Vente
         $now = new \DateTimeImmutable();
         $this->dateCreation = $now;
         $this->dateModification = $now;
-        // éventuellement: $this->dateVente = $now;
-        // éventuellement: $this->etat = 'DRAFT';
+    ;
     }
 
     #[ORM\PrePersist]

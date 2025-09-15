@@ -17,7 +17,6 @@ class MouvementStock
     #[ORM\Column]
     private ?int $id = null;
 
-    // OK si Produit a bien: OneToMany(mappedBy: 'produit') $mouvementStocks
     #[ORM\ManyToOne(inversedBy: 'mouvementStocks')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Produit $produit = null;
@@ -25,14 +24,13 @@ class MouvementStock
     #[ORM\Column(type: Types::INTEGER)]
     private int $quantite = 0; // conseil: > 0 via validation
 
-    // Pas d'inversedBy ici car Achat/Vente n'ont pas mouvementStocks
+  
     #[ORM\ManyToOne(targetEntity: Achat::class)]
     private ?Achat $achat = null;
 
     #[ORM\ManyToOne(targetEntity: Vente::class)]
     private ?Vente $vente = null;
 
-    // Ne PAS mélanger type/length avec enumType
     #[ORM\Column(enumType: TypeMouvement::class)]
     private TypeMouvement $typeMouvement;
 
@@ -47,8 +45,7 @@ class MouvementStock
         $now = new \DateTimeImmutable();
         $this->dateCreation = $now;
         $this->dateModification = $now;
-        // Par sécurité, tu peux aussi choisir un défaut:
-        // $this->typeMouvement = TypeMouvement::AJUSTEMENT;
+       
     }
 
     #[ORM\PrePersist]
@@ -71,7 +68,6 @@ class MouvementStock
     {
         return $this->id;
     }
-    // (supprimer setId())
 
     public function getProduit(): ?Produit
     {
