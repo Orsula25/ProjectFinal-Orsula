@@ -4,12 +4,13 @@
 
 {% block body %}
 
-{{form_start(formProduit)}}
-{{form_widget(formProduit)}}
 
-<input type="submit" value="Inserst">
 
-{{form_end(formProduit)}}
+{% for produit in produits %}
+    <p>{{produit.getNom()}}</p>
+{% endfor %}
+
+
 
 
 

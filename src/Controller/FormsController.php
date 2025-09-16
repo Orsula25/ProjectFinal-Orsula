@@ -2,14 +2,15 @@
 
 namespace App\Controller;
 
-use App\Entity\Produit;
+
 use App\Form\ProduitType;
-useSymfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\Produit;
+
 
 
 class FormsController extends AbstractController
@@ -29,7 +30,7 @@ class FormsController extends AbstractController
 
 
 
-    #[Route('/forms/inserer/produit')]
+    #[Route('/forms/inserer/produit', name: 'app_form_inserer_produit')]
     public function insererProduit(Request $request, EntityManagerInterface $em):Response{
         $produit = new Produit();
         
@@ -45,17 +46,31 @@ class FormsController extends AbstractController
         if ($formProduit->isSubmitted()) {
             $em->persist($produit);
             $em->flush();
-            return $this->redirectToRoute('app_forms');
+            return $this->redirectToRoute('app_form_afficher_produit');
         
         }
 
         //2- on ne vient pas dun submit, alors on affiche le formulaire
       else {
-        $vars = ['formProduit' => $formProduit->];
+        $vars = ['formProduit' => $formProduit];
         return $this->render('forms/afficher_form_insert.html.twig', $vars);
       }
+
+    }
+
+    #[Route('/forms/afficher/produit', name: 'app_form_afficher_produit')]
+    public function afficherProduit(EntityManagerInterface $em){
+        //Envoyer à une vue tous les produit inserer dans la bd
+        // la vue les affichera 
+        $rep = $em->getRepository(Produit::class);
+        $arrayProduits = $rep->findAll();
+        $vars = [
+            'produits' => $arrayProduits
+        ];
+        return $this->render('forms/afficher_animaux.html.twig', $vars);
+
             
-        
+    }
     
    
 }
