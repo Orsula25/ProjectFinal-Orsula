@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello FormsController!{% endblock %}
+
+{% block body %}
+
+
+
+{% for client in clients %}
+    <p>{{client.getNom()}}</p>
+{% endfor %}
+
+
+
+
+
+
+{% endblock %}

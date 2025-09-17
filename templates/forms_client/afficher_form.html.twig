@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello FormsClientContollerController!{% endblock %}
+
+{% block body %}
+
+
+{{form_start(formClient)}}
+{{form_widget(formClient)}}
+
+<input type="submit" value="Inserst">
+
+{{form_end(formClient)}}
+{% endblock %}

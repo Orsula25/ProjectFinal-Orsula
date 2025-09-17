@@ -67,7 +67,7 @@ class FormsController extends AbstractController
         $vars = [
             'produits' => $arrayProduits
         ];
-        return $this->render('forms/afficher_animaux.html.twig', $vars);
+        return $this->render('forms/afficher_produit.html.twig', $vars);
 
             
     }
