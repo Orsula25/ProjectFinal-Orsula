@@ -45,6 +45,9 @@ class Vente
     #[ORM\OneToMany(targetEntity: DetailVente::class, mappedBy: 'vente', orphanRemoval: true, cascade: ['persist'])]
     private Collection $detailVentes;
 
+    #[ORM\ManyToOne(inversedBy: 'venteEffectue')]
+    private ?Utilisateur $venteTermine = null;
+
     public function __construct()
     {
         $this->detailVentes = new ArrayCollection();
@@ -167,6 +170,18 @@ class Vente
                 $detailVente->setVente(null);
             }
         }
+        return $this;
+    }
+
+    public function getVenteTermine(): ?Utilisateur
+    {
+        return $this->venteTermine;
+    }
+
+    public function setVenteTermine(?Utilisateur $venteTermine): static
+    {
+        $this->venteTermine = $venteTermine;
+
         return $this;
     }
 }

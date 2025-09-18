@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UtilisateurRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -38,6 +40,17 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(nullable: true)]
     private ?\DateTime $dateNaissace = null;
+
+    /**
+     * @var Collection<int, Vente>
+     */
+    #[ORM\OneToMany(targetEntity: Vente::class, mappedBy: 'venteTermine')]
+    private Collection $venteEffectue;
+
+    public function __construct()
+    {
+        $this->venteEffectue = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -140,6 +153,36 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function setDateNaissace(?\DateTime $dateNaissace): static
     {
         $this->dateNaissace = $dateNaissace;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Vente>
+     */
+    public function getVenteEffectue(): Collection
+    {
+        return $this->venteEffectue;
+    }
+
+    public function addVenteEffectue(Vente $venteEffectue): static
+    {
+        if (!$this->venteEffectue->contains($venteEffectue)) {
+            $this->venteEffectue->add($venteEffectue);
+            $venteEffectue->setVenteTermine($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVenteEffectue(Vente $venteEffectue): static
+    {
+        if ($this->venteEffectue->removeElement($venteEffectue)) {
+            // set the owning side to null (unless already changed)
+            if ($venteEffectue->getVenteTermine() === $this) {
+                $venteEffectue->setVenteTermine(null);
+            }
+        }
 
         return $this;
     }

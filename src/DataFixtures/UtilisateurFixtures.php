@@ -31,6 +31,10 @@ class UtilisateurFixtures extends Fixture
             $utlisateur->setDateNaissace($faker->dateTimeBetween('-100 years', '-18 years'));
             $utlisateur->setRoles(['ROLE_USER']);
             $utlisateur->setPassword($this ->hasher->hashPassword($utlisateur, "password" . $i));
+
+
+
+            
             $manager->persist($utlisateur);
         }
 
