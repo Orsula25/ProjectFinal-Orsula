@@ -33,6 +33,12 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $nom = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTime $dateNaissace = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -112,5 +118,29 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void
     {
         // @deprecated, to be removed when upgrading to Symfony 8
+    }
+
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    public function setNom(?string $nom): static
+    {
+        $this->nom = $nom;
+
+        return $this;
+    }
+
+    public function getDateNaissace(): ?\DateTime
+    {
+        return $this->dateNaissace;
+    }
+
+    public function setDateNaissace(?\DateTime $dateNaissace): static
+    {
+        $this->dateNaissace = $dateNaissace;
+
+        return $this;
     }
 }
