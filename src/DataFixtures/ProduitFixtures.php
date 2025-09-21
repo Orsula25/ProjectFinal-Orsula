@@ -3,40 +3,40 @@
 namespace App\DataFixtures;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Faker\Factory;
 use App\Entity\Produit;
 use App\Entity\CategorieProduit;
-use Faker\Factory;
 
-class ProduitFixtures extends Fixture
+final class ProduitFixtures extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create('fr_FR');
 
-        // Création d'une catégorie par défaut si elle n'existe pas
-        $categorie = new CategorieProduit();
-        $categorie->setNom('Général');
-        $categorie->setDescription('Catégorie par défaut');
-        $manager->persist($categorie);
-
-        for ($i = 0; $i < 3; $i++) {
+        for ($i = 1; $i <= 10; $i++) {
             $produit = new Produit();
-            $produit->setNom(ucfirst($faker->words(3, true)));
+            $produit->setNom(ucfirst($faker->words(5, true)));
             $produit->setDescription($faker->paragraph());
             $produit->setPrixUnitaire($faker->randomFloat(2, 10, 1000));
             $produit->setQuantiteStock($faker->numberBetween(0, 100));
-            $produit->setReference(sprintf('REF-%s-%04d', strtoupper($faker->lexify('????')), $i + 1));
-            $produit->setCategorieProduit($categorie);
+            $produit->setReference(sprintf('REF-%s-%04d', strtoupper($faker->lexify('????')), $i));
             $produit->setTva($faker->randomElement([5.5, 10, 20]));
-            
+
+            /** @var CategorieProduit $cat */
+            $cat = $this->getReference('categorieProduit' . rand(1, 10), CategorieProduit::class);
+            $produit->setCategorieProduit($cat);
+
             $manager->persist($produit);
-            
-            // Ajout d'une référence pour pouvoir l'utiliser dans d'autres fixtures
-            $this->addReference('produit_' . $i, $produit);
+            $this->addReference('produit' . $i, $produit);
         }
 
         $manager->flush();
     }
-    
+
+    public function getDependencies(): array
+    {
+        return [CategorieProduitFixtures::class];
+    }
 }

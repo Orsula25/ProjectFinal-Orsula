@@ -35,10 +35,7 @@ class Vente
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private \DateTimeImmutable $dateModification;
 
-    #[ORM\ManyToOne(inversedBy: 'ventes')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Client $client = null;
-
+   
     /**
      * @var Collection<int, DetailVente>
      */
@@ -47,6 +44,9 @@ class Vente
 
     #[ORM\ManyToOne(inversedBy: 'venteEffectue')]
     private ?Utilisateur $venteTermine = null;
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: 'ventes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Client $client = null;
 
     public function __construct()
     {
@@ -54,7 +54,7 @@ class Vente
         $now = new \DateTimeImmutable();
         $this->dateCreation = $now;
         $this->dateModification = $now;
-    ;
+    
     }
 
     #[ORM\PrePersist]
