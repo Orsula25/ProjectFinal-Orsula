@@ -46,7 +46,7 @@ class UtilisateurFixtures extends Fixture
             $utlisateur->setNom("admin" . $i);
             $utlisateur->setDateNaissace($faker->dateTimeBetween('-100 years', '-18 years'));
             $utlisateur->setRoles(['ROLE_ADMIN']);
-            $utlisateur->setPassword($this ->hasher->hashPassword($utlisateur, "password" . $i));
+            $utlisateur->setPassword($this ->hasher->hashPassword($utlisateur, "Lepassword" . $i));
             $manager->persist($utlisateur);
         }
         

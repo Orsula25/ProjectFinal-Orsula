@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Log in!{% endblock %}
+{% block title %}Logix G-Stock<br>Votre logiciel sur mesure{% endblock %}
 
 {% block navigation %}
 
@@ -19,7 +19,7 @@
             </div>
         {% endif %}
 
-        <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+        <h1 class="h3 mb-3 font-weight-normal">Login</h1>
         <label for="username">Email</label>
         <input type="email" value="{{ last_username }}" name="_username" id="username" class="form-control" autocomplete="email" required autofocus>
         <label for="password">Password</label>
@@ -37,7 +37,25 @@
         #}
 
         <button class="btn btn-lg btn-primary" type="submit">
-            Sign in
+            Login
         </button>
+    
+
     </form>
+
+<br>
+
+        {% if not app.user %}
+        <div class="mb-3">
+            Vous n'êtes pas enregistré! <a href="{{ path('app_register') }}">S'enregistrer</a> 
+        </div>
+        {% endif %}
+
+
+
+
+
+
+    
+
 {% endblock %}

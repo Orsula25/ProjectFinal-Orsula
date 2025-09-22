@@ -4,11 +4,16 @@
 
 Bonjour bienvenue sur le site 
 
-<br> Voici le nom: {{ nom }}
-<br> Voici les hobbies :{{ hobbies }}
-<br> Voici la date de naissance: {{ dateNaissance.format('d/m/
-Y') }}
-<br> Voici l'adresse: {{ adresse.rue }} {{ adresse.numero }} {{ adresse.codePostal }} {{ adresse.ville }}
+les liens de tout le monde
+
+
+{% if is_granted('ROLE_ADMIN') %}
+
+les liens de l'admin
+
+{% endif %}
+
+
 
 
 

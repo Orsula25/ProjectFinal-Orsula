@@ -16,27 +16,9 @@ final class AccueilController extends AbstractController
     #[Route('/accueil', name: 'app_accueil')]
     public function index(): Response
     {
-
-        $adresse = [
-
-            'rue' => ' rue de la paix',
-            'numero' => '1',
-            'codePostal' => '1800',
-            'ville' => 'Bruxelles'
-        ];
-
         
-
-       $vars = [
-        'nom' => 'Jean Dupont',// passage de variable simple 
-        'hobbies' => "courses",
-        'dateNaissance' => new \DateTime("2020-1-6"),// passage d'un objet DateTime
-
-        'adresse' => $adresse,
-      ];
-
-
-        return $this->render('accueil/index.html.twig', $vars);
+        
+        return $this->render('accueil/index.html.twig');
     }
 
     #[Route('/accueil/index.html.twig')]
