@@ -26,11 +26,11 @@ class UtilisateurFixtures extends Fixture
         $faker = \Faker\Factory::create('fr_FR');
         for ($i = 0; $i < 10; $i++) {
             $utlisateur = new Utilisateur();
-            $utlisateur->setEmail($faker->email("user" . $i . "@gmail.com"));
-            $utlisateur->setNom($faker->name("user" . $i));
+            $utlisateur->setEmail("user" . $i . "@gmail.com");
+            $utlisateur->setNom("user" . $i);
             $utlisateur->setDateNaissace($faker->dateTimeBetween('-100 years', '-18 years'));
             $utlisateur->setRoles(['ROLE_USER']);
-            $utlisateur->setPassword($this ->hasher->hashPassword($utlisateur, "password" . $i));
+            $utlisateur->setPassword($this ->hasher->hashPassword($utlisateur, "Lepassword" . $i));
 
 
 
@@ -42,8 +42,8 @@ class UtilisateurFixtures extends Fixture
 
         for ($i = 0; $i < 5; $i++) {
             $utlisateur = new Utilisateur();
-            $utlisateur->setEmail($faker->email("admin" . $i . "@gmail.com"));
-            $utlisateur->setNom($faker->name("admin" . $i));
+            $utlisateur->setEmail("admin" . $i . "@gmail.com");
+            $utlisateur->setNom("admin" . $i);
             $utlisateur->setDateNaissace($faker->dateTimeBetween('-100 years', '-18 years'));
             $utlisateur->setRoles(['ROLE_ADMIN']);
             $utlisateur->setPassword($this ->hasher->hashPassword($utlisateur, "password" . $i));
