@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello AjaxController!{% endblock %}
+
+
+
+{% block body %}
+{# dans cette vue , on dot avoir le formulaire et le traitement Ajax #}
+
+
+<form id="form_nom">
+    <input type="text" name="name" id="name">
+    <button type="submit">Submit</button>
+</form>
+
+<div id="divContenu">
+ici on affiche le résultat 
+
+</div>
+
+<script>
+
+    const txtNom = document.querySelector("#name");
+    txtNom.addEventListener('input', function(event) {
+    const value = event.target.value; // obtenir la valeur de l'input
+    const formNom = document.querySelector("#form_nom");
+    // on creer un formdata apartir de formNom
+    const formData = new FormData(formNom);
+   
+
+    // on a la valeur , on appel le serveur 
+    axios ({
+        url: '/ajax/form/independent/traitement',
+        method: 'POST',
+        data: formData
+    }).then(function (response) {
+        const divContenu = document.querySelector("#divContenu");
+        divContenu.innerHTML = response.data.message;
+    })
+
+
+
+   
+   })
+</script>
+
+{% endblock %}
+

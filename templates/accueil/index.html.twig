@@ -1,15 +1,24 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+<header>
+    <h1>Logix G-Stock</h1>
+    <nav>
+        <ul>
+            <li><a href="{{ path('app_Vente') }}">Vente</a></li>
+            <li><a href="{{ path('app_achat') }}">Achat</a></li>
+            <li><a href="{{ path('app_stock') }}">Stock</a></li>
+        </ul>
+    </nav>
+    
+</header>
 
-Bonjour bienvenue sur le site 
 
-les liens de tout le monde
 
 
 {% if is_granted('ROLE_ADMIN') %}
 
-les liens de l'admin
+
 
 {% endif %}
 
