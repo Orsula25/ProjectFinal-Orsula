@@ -23,6 +23,7 @@ final class ProduitFixtures extends Fixture implements DependentFixtureInterface
             $produit->setQuantiteStock($faker->numberBetween(0, 100));
             $produit->setReference(sprintf('REF-%s-%04d', strtoupper($faker->lexify('????')), $i));
             $produit->setTva($faker->randomElement([5.5, 10, 20]));
+            $produit -> setStockMin($faker->numberBetween(0, 30));
 
             /** @var CategorieProduit $cat */
             $cat = $this->getReference('categorieProduit' . rand(1, 10), CategorieProduit::class);

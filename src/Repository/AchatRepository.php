@@ -40,4 +40,12 @@ class AchatRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function getTotalAchats():float
+    {
+        return(float)$this->createQueryBuilder('a')
+        ->select('SUM(a.montantTotal)')
+        ->getQuery()
+        ->getSingleScalarResult();
+    }
 }

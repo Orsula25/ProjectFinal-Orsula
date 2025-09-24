@@ -40,4 +40,38 @@ class ProduitRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    // la valer total du stock 
+
+    public function getValeurStock():float{
+        return (float) $this ->createQueryBuilder('p')
+        ->select('COALESCE(SUM(p.quantiteStock * p.prixUnitaire),0)')
+        ->getQuery()
+        ->getSingleScalarResult();
+    }
+
+    // les produit sous le seuil
+    public function getProduitSousSeuil():int
+    {
+
+        return $this->createQueryBuilder('p')
+        ->select('COUNT(p.id)')
+        ->where('p.stockMin is not NULL')
+        ->andWhere('p.quantiteStock < p.stockMin')
+        ->getQuery()
+        ->getSingleScalarResult();
+      
+    }
+
+
+    // les produit en reprure de stock 
+
+    public function countProduitsEnRupture():int {
+        return $this->createQueryBuilder('p')
+        ->select('COUNT(p.id)')
+        ->where('p.quantiteStock = 0')
+        ->getQuery()
+        ->getSingleScalarResult();
+    }
+
 }

@@ -76,6 +76,9 @@ class Produit
     #[ORM\OneToMany(targetEntity: MouvementStock::class, mappedBy: 'produit', orphanRemoval: true)]
     private Collection $mouvementStocks;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $stockMin = null;
+
     public function __construct()
     {
         // init collections
@@ -236,6 +239,18 @@ class Produit
                 $produitFournisseur->setProduit(null);
             }
         }
+        return $this;
+    }
+
+    public function getStockMin(): ?int
+    {
+        return $this->stockMin;
+    }
+
+    public function setStockMin(?int $stockMin): static
+    {
+        $this->stockMin = $stockMin;
+
         return $this;
     }
 }

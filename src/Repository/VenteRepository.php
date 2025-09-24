@@ -40,4 +40,13 @@ class VenteRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+
+    public function getChiffreAffaire(): float
+    {
+        return $this->createQueryBuilder('v')
+            ->select('SUM(v.montantTotal)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

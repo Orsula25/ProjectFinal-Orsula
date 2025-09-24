@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vente{% endblock %}
+
+{% block body %}
+    <h1>Vente</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ vente.id }}</td>
+            </tr>
+            <tr>
+                <th>DateVente</th>
+                <td>{{ vente.dateVente ? vente.dateVente|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>MontantTotal</th>
+                <td>{{ vente.montantTotal }}</td>
+            </tr>
+            <tr>
+                <th>Etat</th>
+                <td>{{ vente.etat }}</td>
+            </tr>
+            <tr>
+                <th>DateCreation</th>
+                <td>{{ vente.dateCreation ? vente.dateCreation|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>DateModification</th>
+                <td>{{ vente.dateModification ? vente.dateModification|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_vente_index') }}">back to list</a>
+
+    <a href="{{ path('app_vente_edit', {'id': vente.id}) }}">edit</a>
+
+    {{ include('vente/_delete_form.html.twig') }}
+{% endblock %}
