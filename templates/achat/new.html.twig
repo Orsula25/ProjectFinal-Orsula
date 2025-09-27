@@ -3,6 +3,19 @@
 {% block title %}Ajouter un achat{% endblock %}
 
 {% block body %}
+
+{{ form_start(form) }}
+{{ form_widget(form.dateAchat) }}
+{{ form_widget(form.fournisseur) }}
+
+<h3>Produits achetés</h3>
+<div data-prototypr="{{ form_widget(form.detailAchats.vars.prototype) }}">
+    {{ form_widget(form.detailAchats) }}
+</div>
+
+<button class!"btn btn-primary">Enregistrer</button>
+
+
     <h1>Ajouter un achat</h1>
 
     {{ include('achat/_form.html.twig') }}
