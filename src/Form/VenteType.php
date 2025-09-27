@@ -3,11 +3,14 @@
 namespace App\Form;
 
 use App\Entity\Vente;
+use App\Entity\Client;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Form\DetailVenteType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType as DoctrineEntityType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
 class VenteType extends AbstractType
 {
@@ -15,6 +18,15 @@ class VenteType extends AbstractType
     {
         $builder
             // les champs propres à Vente
+            ->add('dateVente', DateTimeType::class, [
+                'widget' => 'single_text',
+                'html5' => true,
+            ])
+            ->add('client', DoctrineEntityType::class, [
+                'class' => Client::class,
+                'choice_label' => 'nom',
+                'label' => 'Client',
+            ])
             ->add('detailVentes', CollectionType::class, [
                 'entry_type' => DetailVenteType::class,
                 'allow_add' => true,

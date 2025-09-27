@@ -5,6 +5,17 @@
 {% block body %}
     <h1>Ajouter une vente</h1>
 
+
+    {{ form_start(form) }}
+    {{ form_widget(form.dateVente) }}
+    {{ form_widget(form.client) }}
+
+<h3>Produits vendus</h3>
+<div data-prototype="{{ form_widget(form.detailVentes.vars.prototype) }}">
+
+    {{ form_widget(form.detailVentes) }}
+</div>
+
     {{ include('vente/_form.html.twig') }}
 
     <a href="{{ path('app_vente_index') }}">Retour à la liste</a>
