@@ -2,38 +2,31 @@
 
 namespace App\Form;
 
-use App\Entity\DetailAchat;
-use App\Entity\Produit;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Entity\Achat;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Type\IntegerType;
-use Symfony\Component\Form\Extension\Type\MoneyType;
 
 class AchatType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('produit', EntityType::class, [
-                'class' => Produit::class,
-                'choice_label' => 'nom',
-                'label' => 'Produit',
-            ])
-            ->add('quantite', IntegerType::class, [
-                'label' => 'Quantité',
-            ])
-            ->add('prixUnitaire', MoneyType::class, [
-                'label' => 'Prix unitaire',
+            // ici tu ajoutes les champs propres à Achat (ex: fournisseur, dateAchat, etc.)
+            ->add('detailAchats', CollectionType::class, [
+                'entry_type' => DetailAchatType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+                'label' => false,
             ]);
-            
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => detailAchat::class,
+            'data_class' => Achat::class,
         ]);
     }
 }
