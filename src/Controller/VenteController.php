@@ -35,10 +35,24 @@ final class VenteController extends AbstractController
         $form = $this->createForm(VenteType::class, $vente);
         $form->handleRequest($request);
 
+
+
         if ($form->isSubmitted() && $form->isValid()) {
+            foreach ($vente->getDetailVentes() as $detail) {
+                $detail->setVente($vente);
+                $detail->calculerSousTotal();
+            }
+            // calcul total 
+
+            $total = 0;
+            foreach ($vente->getDetailVentes() as $detail) {
+                $total += (float)$detail->getSousTotal();
+            }
+            $vente ->setMontantTotal($total);
             $entityManager->persist($vente);
             $entityManager->flush();
 
+            $this->addFlash('success', 'Vente enregistrée avec succès✅');
             return $this->redirectToRoute('app_vente_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -64,6 +78,7 @@ final class VenteController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
+            $this->addFlash('success', 'Vente modifiée avec succès✅');
 
             return $this->redirectToRoute('app_vente_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -80,8 +95,9 @@ final class VenteController extends AbstractController
         if ($this->isCsrfTokenValid('delete'.$vente->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($vente);
             $entityManager->flush();
-        }
+            }
 
+        $this->addFlash('success', 'Vente supprimée avec succès✅');
         return $this->redirectToRoute('app_vente_index', [], Response::HTTP_SEE_OTHER);
     }
 
