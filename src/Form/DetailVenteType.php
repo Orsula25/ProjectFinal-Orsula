@@ -2,13 +2,14 @@
 
 namespace App\Form;
 
+use App\Entity\DetailVente;
+use App\Entity\Produit;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Type\EntityType;
-use Symfony\Component\Form\Extension\Type\IntegerType;
-use Symfony\Component\Form\Extension\Type\MoneyType;
-use App\Entity\Produit;
 
 class DetailVenteType extends AbstractType
 {
@@ -21,18 +22,19 @@ class DetailVenteType extends AbstractType
                 'label' => 'Produit',
             ])
             ->add('quantite', IntegerType::class, [
-            
+                'label' => 'Quantité',
             ])
             ->add('prixUnitaire', MoneyType::class, [
-            
+                'label' => 'Prix unitaire',
+                'currency' => 'EUR',
+                'required' => false,
             ]);
-         
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            // Configure your form options here
+            'data_class' => DetailVente::class,
         ]);
     }
 }
