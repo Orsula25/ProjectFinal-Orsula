@@ -13,7 +13,8 @@ class AchatType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            // ici tu ajoutes les champs propres à Achat (ex: fournisseur, dateAchat, etc.)
+
+            // les champs propres à Achat
             ->add('detailAchats', CollectionType::class, [
                 'entry_type' => DetailAchatType::class,
                 'allow_add' => true,

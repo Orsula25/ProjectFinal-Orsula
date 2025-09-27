@@ -36,10 +36,25 @@ final class AchatController extends AbstractController
         $form = $this->createForm(AchatType::class, $achat);
         $form->handleRequest($request);
 
+
+
         if ($form->isSubmitted() && $form->isValid()) {
+            //calcule des sous totaux pour chaque détail 
+            foreach ($achat->getDetailAchats() as $detail) {
+                $detail->setAchat($achat);
+                $detail->calculerSousTotal();
+            }
+
+            // recalcul du total de l'achat 
+            $total = 0;
+            foreach ($achat->getDetailAchats() as $detail) {
+                $total += (float)$detail->getSousTotal();
+            }
+            $achat ->setMontantTotal($total);
             $entityManager->persist($achat);
             $entityManager->flush();
 
+            $this->addFlash('success', 'Achat enregistré avec succès✅');
             return $this->redirectToRoute('app_achat_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -66,6 +81,7 @@ final class AchatController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
+            $this->addFlash('success', 'Achat modifié avec succès✅');
             return $this->redirectToRoute('app_achat_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -81,6 +97,8 @@ final class AchatController extends AbstractController
         if ($this->isCsrfTokenValid('delete'.$achat->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($achat);
             $entityManager->flush();
+
+            $this->addFlash('success', 'Achat supprimé avec succès✅');
         }
 
         return $this->redirectToRoute('app_achat_index', [], Response::HTTP_SEE_OTHER);

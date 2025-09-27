@@ -14,7 +14,7 @@ class VenteType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            // ici tu mets les champs propres à Vente (client, date, etc.)
+            // les champs propres à Vente
             ->add('detailVentes', CollectionType::class, [
                 'entry_type' => DetailVenteType::class,
                 'allow_add' => true,
