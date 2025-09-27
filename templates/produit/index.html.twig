@@ -35,8 +35,17 @@
                 <td>{{ produit.tva }}</td>
                 <td>{{ produit.stockMin }}</td>
                 <td>
-                    <a href="{{ path('app_produit_show', {'id': produit.id}) }}">show</a>
-                    <a href="{{ path('app_produit_edit', {'id': produit.id}) }}">edit</a>
+                {% if produit.etatStock == 'rupture'%}
+                    ❌ Rupture
+                {% elseif produit.etatStock == 'sous_seuil'%}
+                    ⚠️ Sous Seuil
+                {% else %}
+                    ✅ Ok
+                {% endif %}
+                </td>
+                <td>
+                    <a href="{{ path('app_produit_show', {'id': produit.id}) }}">Afficher</a>
+                    <a href="{{ path('app_produit_edit', {'id': produit.id}) }}">Modifier</a>
                 </td>
             </tr>
         {% else %}
@@ -47,5 +56,5 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_produit_new') }}">Create new</a>
+    <a href="{{ path('app_produit_new') }}">Ajouter un produit</a>
 {% endblock %}

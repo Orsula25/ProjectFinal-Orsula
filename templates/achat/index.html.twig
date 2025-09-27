@@ -27,8 +27,8 @@
                 <td>{{ achat.dateCreation ? achat.dateCreation|date('Y-m-d H:i:s') : '' }}</td>
                 <td>{{ achat.dateModification ? achat.dateModification|date('Y-m-d H:i:s') : '' }}</td>
                 <td>
-                    <a href="{{ path('app_achat_show', {'id': achat.id}) }}">show</a>
-                    <a href="{{ path('app_achat_edit', {'id': achat.id}) }}">edit</a>
+                    <a href="{{ path('app_achat_show', {'id': achat.id}) }}">Afficher</a>
+                    <a href="{{ path('app_achat_edit', {'id': achat.id}) }}">Modifier</a>
                 </td>
             </tr>
         {% else %}
@@ -39,5 +39,5 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_achat_new') }}">Create new</a>
+    <a href="{{ path('app_achat_new') }}">Ajouter un achat</a>
 {% endblock %}

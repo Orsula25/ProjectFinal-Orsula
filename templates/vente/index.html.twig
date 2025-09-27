@@ -27,8 +27,8 @@
                 <td>{{ vente.dateCreation ? vente.dateCreation|date('Y-m-d H:i:s') : '' }}</td>
                 <td>{{ vente.dateModification ? vente.dateModification|date('Y-m-d H:i:s') : '' }}</td>
                 <td>
-                    <a href="{{ path('app_vente_show', {'id': vente.id}) }}">show</a>
-                    <a href="{{ path('app_vente_edit', {'id': vente.id}) }}">edit</a>
+                    <a href="{{ path('app_vente_show', {'id': vente.id}) }}">Afficher</a>
+                    <a href="{{ path('app_vente_edit', {'id': vente.id}) }}">Modifier</a>
                 </td>
             </tr>
         {% else %}
@@ -39,5 +39,5 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_vente_new') }}">Create new</a>
+    <a href="{{ path('app_vente_new') }}">Ajouter une vente</a>
 {% endblock %}

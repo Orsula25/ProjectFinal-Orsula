@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Vente;
 use App\Form\VenteType;
 use App\Repository\VenteRepository;
+use App\Repository\MouvementStockRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +21,11 @@ final class VenteController extends AbstractController
         return $this->render('vente/index.html.twig', [
             'ventes' => $venteRepository->findAll(),
         ]);
+        $mouvementRepo -> enregistrerMouvement(
+            $produit,
+            $quantite,
+            typeMouvement::SORTIE
+        );
     }
 
     #[Route('/new', name: 'app_vente_new', methods: ['GET', 'POST'])]
@@ -78,4 +84,16 @@ final class VenteController extends AbstractController
 
         return $this->redirectToRoute('app_vente_index', [], Response::HTTP_SEE_OTHER);
     }
+
+
+    public function findMouvementsByProduit(Produit $produit): array
+    {
+        return $this->createQueryBuilder('m')
+        ->where('m.produit = :prod')
+        ->setParameter('prod', $produit)
+        ->orderBy('m.dateMouvement', 'DESC')
+        ->getQuery()
+        ->getResult();
+    }
 }
+

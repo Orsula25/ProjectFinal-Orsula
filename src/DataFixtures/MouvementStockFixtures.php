@@ -28,11 +28,11 @@ final class MouvementStockFixtures extends Fixture implements DependentFixtureIn
             $type = $f->randomElement([TypeMouvement::ENTREE, TypeMouvement::SORTIE, TypeMouvement::AJUSTEMENT]);
 
             $m->setQuantite($qty);
-            $m->setTypeMouvement($type);
             $m->setDateCreation(new \DateTimeImmutable());
             $m->setDateModification(new \DateTimeImmutable());
 
             // Lier soit à un achat (ENTREE) soit à une vente (SORTIE), pas les deux
+            $m->setTypeMouvement($type);
             if ($type === TypeMouvement::ENTREE) {
                 /** @var Achat $a */ $a = $this->getReference('achat'.rand(1,10), Achat::class);
                 $m->setAchat($a);
@@ -40,6 +40,7 @@ final class MouvementStockFixtures extends Fixture implements DependentFixtureIn
                 /** @var Vente $v */ $v = $this->getReference('vente'.rand(1,10), Vente::class);
                 $m->setVente($v);
             }
+
 
             $manager->persist($m);
             $this->addReference('mouvementStock'.$i, $m);

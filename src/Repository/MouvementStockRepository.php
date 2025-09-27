@@ -40,4 +40,23 @@ class MouvementStockRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    public function enregistrerMouvementStock (Produit $produit, int $quantite, typeMouvement $type):void
+    {
+       $m = new MouvementStock();
+       $m->setProduit($produit);
+       $m->setQuantite($quantite);
+       $m->setTypeMouvement($type);
+       $m->setDateMouvement(new \DateTimeImmutable());
+       $m->setDateModification(new \DateTimeImmutable());
+
+       $this -> _em->persist($m);
+
+       // mise à jour du stock produit 
+       if ($type === typeMouvement::ENTREE) {
+           $produit->setQuantiteStock($produit->getQuantiteStock() + $quantite);
+       }elseif ($type === typeMouvement::SORTIE) {
+           $produit->setQuantiteStock(max(0, $produit->getQuantiteStock()-$quantite));
+           $this->_em->flush();
+       }
+    }
 }

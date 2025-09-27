@@ -253,4 +253,21 @@ class Produit
 
         return $this;
     }
+
+    public function getValeurStock():float
+    {
+        return $this->quantiteStock * (float)$this->getPrixUnitaire();
+    }
+
+    public function getEtatStock():string
+    {
+        if ($this->getQuantiteStock() === 0) {
+            return 'rupture';
+        }
+
+        if ($this->getStockMin() !==null && $this->getQuantiteStock() < $this->getStockMin()) {
+            return 'sous_seuil';
+        }
+        return 'ok';
+    }   
 }
