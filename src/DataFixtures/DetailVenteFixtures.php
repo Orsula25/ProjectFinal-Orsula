@@ -29,6 +29,7 @@ class DetailVenteFixtures extends Fixture implements DependentFixtureInterface
             $detailVente->setQuantite($faker->numberBetween(1, 10));
             $detailVente->setPrixUnitaire($faker->randomFloat(2, 10, 100));
             $detailVente->setSousTotal($detailVente->getQuantite() * $detailVente->getPrixUnitaire());
+            $detailVente -> calculerSousTotal();
 
             /** @var Vente $vente */
             $vente = $this->getReference('vente' . rand(1, 10), Vente::class); 
@@ -38,9 +39,11 @@ class DetailVenteFixtures extends Fixture implements DependentFixtureInterface
             $detailVente->setProduit($produit);
             $manager->persist($detailVente);
 
-
+            $this -> addReference('detailVente' . $i, $detailVente);
             
         }
+       
+        
 
         $manager->flush();
     }
@@ -51,4 +54,6 @@ class DetailVenteFixtures extends Fixture implements DependentFixtureInterface
             ProduitFixtures::class,
         ];
     }
+
+    
 }

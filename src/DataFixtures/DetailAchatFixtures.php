@@ -28,9 +28,11 @@ final class DetailAchatFixtures extends Fixture implements DependentFixtureInter
                 ->setQuantite($qte)
                 ->setPrixUnitaire($pu)
                 ->setSousTotal($qte * $pu);
+                $da -> calculerSousTotal();
 
             $manager->persist($da);
             $this->addReference('detailAchat' . $i, $da);
+          
         }
         $manager->flush();
     }

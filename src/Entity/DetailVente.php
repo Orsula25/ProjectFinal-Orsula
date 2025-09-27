@@ -102,4 +102,12 @@ class DetailVente
 
         return $this;
     }
+
+
+    public function calculerSousTotal(): void
+    {
+       if ($this -> quantite !== null && $this -> prixUnitaire !== null) {
+           $this -> sousTotal = $this -> quantite * $this -> prixUnitaire;
+       }
+    }
 }
