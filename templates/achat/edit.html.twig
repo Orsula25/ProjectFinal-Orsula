@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modifier un achat{% endblock %}
+{% block titre %}Modifier un achat — Logix G-Stock{% endblock %}
 
-{% block body %}
+{% block contenu %}
     <h1>Modifier un achat</h1>
 
-    {{ include('achat/_form.html.twig', {'button_label': 'Update'}) }}
+    {{ include('achat/_form.html.twig', {'button_label': 'Modifier'}) }}
 
     <a href="{{ path('app_achat_index') }}">Retour à la liste</a>
 

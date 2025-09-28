@@ -10,6 +10,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AchatRepository::class)]
+#[ORM\HasLifecycleCallbacks] // Permet de gérer les dates de création et de modification
 class Achat
 {
     #[ORM\Id]
@@ -39,7 +40,7 @@ class Achat
     /**
      * @var Collection<int, DetailAchat>
      */
-    #[ORM\OneToMany(targetEntity: DetailAchat::class, mappedBy: 'achat', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: DetailAchat::class, mappedBy: 'achat', orphanRemoval: true, cascade: ['persist', 'remove'])]
     private Collection $detailAchats;
 
     public function __construct()
@@ -165,6 +166,24 @@ class Achat
         }
 
         return $this;
+    }
+
+
+    #[ORM\PrePersist]
+    public function setDatCreationValue(): void
+    {
+        if ($this->dateCreation === null) {
+            $this->dateCreation = new \DateTimeImmutable();
+        }
+        
+    }
+
+    #[ORM\PreUpdate]
+    public function setDatModificationValue(): void
+    {
+        if ($this->dateModification === null) {
+            $this->dateModification = new \DateTimeImmutable();
+        }
     }
 }
 

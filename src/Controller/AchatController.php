@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Enum\TypeMouvement;
 
 #[Route('/achat')]
 final class AchatController extends AbstractController
@@ -79,6 +80,18 @@ final class AchatController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            //calcule des sous totaux pour chaque détail 
+            foreach ($achat->getDetailAchats() as $detail) {
+                $detail->setAchat($achat);
+                $detail->calculerSousTotal();
+            }
+
+            // recalcul du total de l'achat 
+            $total = 0;
+            foreach ($achat->getDetailAchats() as $detail) {
+                $total += (float)$detail->getSousTotal();
+            }
+            $achat ->setMontantTotal($total);
             $entityManager->flush();
 
             $this->addFlash('success', 'Achat modifié avec succès✅');

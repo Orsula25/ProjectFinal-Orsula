@@ -1,73 +1,54 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% endblock %}
+{% block titre %}Connexion — Logix G-Stock{% endblock %}
 
-{% block navigation %}
+{% block contenu %}
+<div class="d-flex justify-content-center align-items-center" style="min-height: 75vh;">
+  <div class="card shadow-sm" style="max-width: 400px; width: 100%;">
+    <div class="card-body">
+      <h1 class="h4 mb-3 text-center">🔐 Connexion</h1>
 
-{# il n'y a rien de spécifique dans la navigation de la page de login #}
-{% endblock %}
-
-{% block body %}
-<h1> Logix G-Stock</h1>
-<h5> Votre logiciel sur mesure</h5>
-<h4> Se connecter </h4>
-    <form method="post">
-        {% if error %}
-
-            <div class="alert-danger"> 
-              ⚠️ Identifiant ou mot de passe incorrect.<br>
-             
-        {% endif %}
-
-        {% if app.user %}
-            <div class="mb-3">
-                Vous êtes connecté en tant que {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
-            </div>
-        {% endif %}
-
-        
-       <label for="username">Email</label>
-    <input type="email" id="username" name="_username" value="{{ last_username }}" required autofocus>
-
-    <label for="password">Mot de passe</label>
-    <input type="password" id="password" name="_password" required>
-
-    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-
-    <div> 
-     <a href="{{path('app_forgot_password_request')}}">Mot de passe oublié ?</a>
-    </div>   
-
-        {#
-            Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
-            See https://symfony.com/doc/current/security/remember_me.html
-
-            <div class="checkbox mb-3">
-                <input type="checkbox" name="_remember_me" id="_remember_me">
-                <label for="_remember_me">Remember me</label>
-            </div>
-        #}
-
-        <button class="btn btn-lg btn-primary" type="submit">
-            Se connecter
-        </button>
-    
-
-    </form>
-
-<br>
-
-        {% if not app.user %}
-        <div class="mb-3">
-            Vous n'êtes pas enregistré! <a href="{{ path('app_register') }}">S'enregistrer</a> 
+      {% if error %}
+        <div class="alert alert-danger">
+          ⚠️ Identifiant ou mot de passe incorrect.
         </div>
-        {% endif %}
+      {% endif %}
 
+      {% if app.user %}
+        <div class="mb-3">
+          Vous êtes connecté en tant que {{ app.user.userIdentifier }},
+          <a href="{{ path('app_logout') }}">Déconnexion</a>
+        </div>
+      {% endif %}
 
+      <form method="post">
+        <div class="mb-3">
+          <label for="username" class="form-label">Email</label>
+          <input type="email" id="username" name="_username" class="form-control"
+                 value="{{ last_username }}" required autofocus>
+        </div>
 
+        <div class="mb-3">
+          <label for="password" class="form-label">Mot de passe</label>
+          <input type="password" id="password" name="_password" class="form-control" required>
+        </div>
 
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <a href="{{ path('app_forgot_password_request') }}">Mot de passe oublié ?</a>
+        </div>
 
-    
+        <div class="d-grid">
+          <button class="btn btn-primary" type="submit">Se connecter</button>
+        </div>
+      </form>
 
+      <hr>
+      <div class="text-center">
+        <small>Pas encore de compte ? <a href="{{ path('app_register') }}">S’enregistrer</a></small>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

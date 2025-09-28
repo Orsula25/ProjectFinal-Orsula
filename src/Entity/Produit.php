@@ -270,4 +270,21 @@ class Produit
         }
         return 'ok';
     }   
+
+    #[ORM\PrePersist]
+    public function setDatCreationValue(): void
+    {
+        if ($this->dateCreation === null) {
+            $this->dateCreation = new \DateTimeImmutable();
+        }
+        
+    }
+
+    #[ORM\PreUpdate]
+    public function setDatModificationValue(): void
+    {
+        if ($this->dateModification === null) {
+            $this->dateModification = new \DateTimeImmutable();
+        }
+    }
 }

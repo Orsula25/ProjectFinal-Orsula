@@ -1,43 +1,43 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Achat index{% endblock %}
+{% block titre %}Achats — Logix G-Stock{% endblock %}
 
-{% block body %}
-    <h1>Achat index</h1>
+{% block contenu %}
+<h1 class="mb-4">📦 Liste des achats</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>DateAchat</th>
-                <th>MontantTotal</th>
-                <th>Etat</th>
-                <th>DateCreation</th>
-                <th>DateModification</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for achat in achats %}
-            <tr>
-                <td>{{ achat.id }}</td>
-                <td>{{ achat.dateAchat ? achat.dateAchat|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ achat.montantTotal }}</td>
-                <td>{{ achat.etat }}</td>
-                <td>{{ achat.dateCreation ? achat.dateCreation|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ achat.dateModification ? achat.dateModification|date('Y-m-d H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('app_achat_show', {'id': achat.id}) }}">Afficher</a>
-                    <a href="{{ path('app_achat_edit', {'id': achat.id}) }}">Modifier</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="7">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+<table class="table table-hover table-bordered align-middle">
+  <thead class="table-dark">
+    <tr>
+      <th>Id</th>
+      <th>Date</th>
+      <th>Montant total</th>
+      <th>État</th>
+      <th>Créé le</th>
+      <th>Modifié le</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for achat in achats %}
+    <tr>
+      <td>{{ achat.id }}</td>
+      <td>{{ achat.dateAchat ? achat.dateAchat|date('d/m/Y H:i') : '' }}</td>
+      <td>{{ achat.montantTotal|number_format(2, ',', ' ') }} €</td>
+      <td>{{ achat.etat }}</td>
+      <td>{{ achat.dateCreation ? achat.dateCreation|date('d/m/Y H:i') : '' }}</td>
+      <td>{{ achat.dateModification ? achat.dateModification|date('d/m/Y H:i') : '' }}</td>
+      <td>
+        <a class="btn btn-sm btn-outline-primary" href="{{ path('app_achat_show', {'id': achat.id}) }}">Afficher</a>
+        <a class="btn btn-sm btn-outline-warning" href="{{ path('app_achat_edit', {'id': achat.id}) }}">Modifier</a>
+      </td>
+    </tr>
+  {% else %}
+    <tr>
+      <td colspan="7" class="text-center">⚠️ Aucun achat trouvé</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
 
-    <a href="{{ path('app_achat_new') }}">Ajouter un achat</a>
+<a class="btn btn-success" href="{{ path('app_achat_new') }}">➕ Ajouter un achat</a>
 {% endblock %}

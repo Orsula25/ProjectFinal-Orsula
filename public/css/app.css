@@ -1,0 +1,93 @@
+:root {
+    --lgx-primary: #0d6efd;   
+    --lgx-success: #198754;   
+    --lgx-danger: #dc3545;   
+}
+
+
+body{
+    font-family: system-ui, -apple-system, "ssegoe ui", Roboto, "Helvetica Neue", Helvetica, Arial;
+    background-color: #f8f9fa;
+    color: #212529;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+
+}
+
+main{
+    flex: 1;
+}
+
+
+/* ---------- Titres ---------- */
+.page-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+  
+  /* ---------- Navbar ---------- */
+  .navbar-brand {
+    font-weight: bold;
+    letter-spacing: 0.5px;
+  }
+  
+  .nav-pills .nav-link.active {
+    font-weight: 600;
+  }
+  
+  /* ---------- Cards ---------- */
+  .card {
+    border-radius: .75rem;
+  }
+  
+  .card-title {
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 1rem;
+  }
+  
+/* ---------- Titres ---------- */
+.page-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+  
+  /* ---------- Navbar ---------- */
+  .navbar-brand {
+    font-weight: bold;
+    letter-spacing: 0.5px;
+  }
+  
+  .nav-pills .nav-link.active {
+    font-weight: 600;
+  }
+  
+  /* ---------- Cards ---------- */
+  .card {
+    border-radius: .75rem;
+  }
+  
+  .card-title {
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 1rem;
+  }
+  
+  /* ---------- Formulaires ---------- */
+  form label {
+    font-weight: 500;
+  }
+  form .btn {
+    border-radius: .5rem;
+  }

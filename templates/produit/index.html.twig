@@ -1,60 +1,61 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Produit index{% endblock %}
+{% block titre %}Produits — Logix G-Stock{% endblock %}
 
-{% block body %}
-    <h1>Produit index</h1>
+{% block contenu %}
+<h1 class="mb-4">📦 Liste des produits</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Nom</th>
-                <th>Description</th>
-                <th>PrixUnitaire</th>
-                <th>QuantiteStock</th>
-                <th>Reference</th>
-                <th>DateCreation</th>
-                <th>DateModification</th>
-                <th>Tva</th>
-                <th>StockMin</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for produit in produits %}
-            <tr>
-                <td>{{ produit.id }}</td>
-                <td>{{ produit.nom }}</td>
-                <td>{{ produit.description }}</td>
-                <td>{{ produit.prixUnitaire }}</td>
-                <td>{{ produit.quantiteStock }}</td>
-                <td>{{ produit.reference }}</td>
-                <td>{{ produit.dateCreation ? produit.dateCreation|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ produit.dateModification ? produit.dateModification|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ produit.tva }}</td>
-                <td>{{ produit.stockMin }}</td>
-                <td>
-                {% if produit.etatStock == 'rupture'%}
-                    ❌ Rupture
-                {% elseif produit.etatStock == 'sous_seuil'%}
-                    ⚠️ Sous Seuil
-                {% else %}
-                    ✅ Ok
-                {% endif %}
-                </td>
-                <td>
-                    <a href="{{ path('app_produit_show', {'id': produit.id}) }}">Afficher</a>
-                    <a href="{{ path('app_produit_edit', {'id': produit.id}) }}">Modifier</a>
-                </td>
-            </tr>
+<table class="table table-hover table-bordered align-middle">
+  <thead class="table-dark">
+    <tr>
+      <th>ID</th>
+      <th>Nom</th>
+      <th>Description</th>
+      <th>Prix</th>
+      <th>Stock</th>
+      <th>Référence</th>
+      <th>Créé le</th>
+      <th>Modifié le</th>
+      <th>TVA</th>
+      <th>Stock min</th>
+      <th>État</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for produit in produits %}
+    <tr>
+      <td>{{ produit.id }}</td>
+      <td>{{ produit.nom }}</td>
+      <td>{{ produit.description }}</td>
+      <td>{{ produit.prixUnitaire|number_format(2, ',', ' ') }} €</td>
+      <td>{{ produit.quantiteStock }}</td>
+      <td>{{ produit.reference }}</td>
+      <td>{{ produit.dateCreation ? produit.dateCreation|date('d/m/Y H:i') : '' }}</td>
+      <td>{{ produit.dateModification ? produit.dateModification|date('d/m/Y H:i') : '' }}</td>
+      <td>{{ produit.tva }} %</td>
+      <td>{{ produit.stockMin }}</td>
+      <td>
+        {% if produit.etatStock == 'rupture' %}
+          <span class="badge bg-danger">❌ Rupture</span>
+        {% elseif produit.etatStock == 'sous_seuil' %}
+          <span class="badge bg-warning text-dark">⚠️ Sous Seuil</span>
         {% else %}
-            <tr>
-                <td colspan="11">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+          <span class="badge bg-success">✅ OK</span>
+        {% endif %}
+      </td>
+      <td>
+        <a class="btn btn-sm btn-outline-primary" href="{{ path('app_produit_show', {'id': produit.id}) }}">Afficher</a>
+        <a class="btn btn-sm btn-outline-warning" href="{{ path('app_produit_edit', {'id': produit.id}) }}">Modifier</a>
+      </td>
+    </tr>
+  {% else %}
+    <tr>
+      <td colspan="12" class="text-center">⚠️ Aucun produit trouvé</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
 
-    <a href="{{ path('app_produit_new') }}">Ajouter un produit</a>
+<a class="btn btn-success" href="{{ path('app_produit_new') }}">➕ Ajouter un produit</a>
 {% endblock %}

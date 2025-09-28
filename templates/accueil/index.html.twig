@@ -1,76 +1,64 @@
 {% extends 'base.html.twig' %}
 
-{% block body %}
-<header>
-    <h1>Logix G-Stock</h1>
-    <nav>
-        <ul>
-            {# visible pour tous #}
-           
-            <li><a href="{{ path('app_vente_index') }}">Ventes</a></li>
-            <li><a href="{{ path('app_achat_index') }}">Achats</a></li>
-            <li><a href="{{ path('app_produit_index') }}">Stocks</a></li>
-        </ul>
-    </nav>
-    
-</header>
+{% block titre %}Accueil — Logix G-Stock{% endblock %}
 
-    
-<main>
-    {% if is_granted('ROLE_ADMIN') %}
-       
-            <h2>Tableau de bord</h2>
+{% block contenu %}
+{% if is_granted('ROLE_ADMIN') %}
+  <h1 class="page-title">📊 Tableau de bord</h1>
 
-            <div class="cards">
-            <div class="card">
-            <h3>Chiffre d'affaires</h3>
-            <p>{{chiffreAffaire | number_format(2, ",", " ")}} €</p>
-                
-            </div>
-            <div class="card">
-            <h3>Total Achat</h3>
-            <p>{{totalAchats | number_format(2, ",", " ")}} €</p>
-                
-            </div>
-            <div class="card">
-            <h3>Valeur du stock</h3>
-            <p>{{valeurStock | number_format(2, ",", " ")}} €</p>
-                
-            </div>
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-body">
+          <h5 class="card-title text-primary">Chiffre d'affaires</h5>
+          <p class="display-6 fw-bold">{{ chiffreAffaire|number_format(2, ',', ' ') }} €</p>
+        </div>
+      </div>
+    </div>
 
-            <div class="card alert">
-            <h3>Produits sous seuil</h3>
-            <p>{{nbSousSeuil}} </p>
-                
-            </div>
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-body">
+          <h5 class="card-title text-warning">Total Achats</h5>
+          <p class="display-6 fw-bold">{{ totalAchats|number_format(2, ',', ' ') }} €</p>
+        </div>
+      </div>
+    </div>
 
-            <div class="card alert">
-            <h3>Produits en rupture</h3>
-            <p>{{nbRuptures}} </p>
-                
-            </div>
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-body">
+          <h5 class="card-title text-success">Valeur du stock</h5>
+          <p class="display-6 fw-bold">{{ valeurStock|number_format(2, ',', ' ') }} €</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
-            </div>
+  <div class="row g-4 mt-2">
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-body">
+          <h5 class="card-title text-danger">Produits sous seuil</h5>
+          <p class="display-5 fw-bold">{{ nbSousSeuil }}</p>
+        </div>
+      </div>
+    </div>
 
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-body">
+          <h5 class="card-title text-danger">Produits en rupture</h5>
+          <p class="display-5 fw-bold">{{ nbRuptures }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
-            
-        {% else %}
-        <section>
-            <section>
-                <h2> Bienvenue </h2> 
-                <p> Utilser le menu ci-dessus pour gérer vos ventes, achats et stocks.</p>
-                
-            </section>
-            
-    
-
-    {% endif %}
-
-</main>
-
-
-    
-
-
-
+{% else %}
+  <section class="text-center">
+    <h2>Bienvenue 👋</h2>
+    <p>Utilisez le menu ci-dessus pour gérer vos ventes, achats et stocks.</p>
+  </section>
+{% endif %}
 {% endblock %}

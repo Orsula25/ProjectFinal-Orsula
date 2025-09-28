@@ -8,6 +8,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType as DoctrineEntityType;
@@ -24,6 +25,13 @@ class AchatType extends AbstractType
             ->add('dateAchat', DateTimeType::class, [
                 'widget' => 'single_text',
                 'html5' => true,
+            ])
+            ->add('etat', ChoiceType::class, [
+                'choices' => [
+                    'En cours' => 'En cours',
+                    'Terminé' => 'Terminé',
+                ],
+                'label' => 'État',
             ])
             ->add('fournisseur', DoctrineEntityType::class, [
                 'class' => Fournisseur::class,
