@@ -5,11 +5,10 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\VenteRepository;
 use App\Repository\AchatRepository;
 use App\Repository\ProduitRepository;
-// importer les entité 
+use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Produit;
 
 final class AccueilController extends AbstractController
@@ -20,6 +19,7 @@ final class AccueilController extends AbstractController
         VenteRepository $venteRepo,
         AchatRepository $achatRepo,
         ProduitRepository $produitRepo
+
     ): Response
     {
         $chiffreAffaire= $venteRepo->getChiffreAffaire();
@@ -27,6 +27,7 @@ final class AccueilController extends AbstractController
         $totalAchats = $achatRepo->getTotalAchats();
         $nbSousSeuil = $produitRepo->getProduitSousSeuil();
         $nbRuptures = $produitRepo->countProduitsEnRupture();
+       
      
         
         
@@ -54,6 +55,8 @@ final class AccueilController extends AbstractController
        return $this->render('accueil/test_Modele.html.twig', $vars);
     }
 
+
+  
 
 
 

@@ -5,12 +5,13 @@ namespace App\Controller;
 use App\Entity\Vente;
 use App\Form\VenteType;
 use App\Repository\VenteRepository;
-use App\Repository\MouvementStockRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Enum\TypeMouvement;
+use App\Repository\MouvementStockRepository;
 
 #[Route('/vente')]
 final class VenteController extends AbstractController
@@ -24,7 +25,7 @@ final class VenteController extends AbstractController
         $mouvementRepo -> enregistrerMouvement(
             $produit,
             $quantite,
-            typeMouvement::SORTIE
+            TypeMouvement::SORTIE
         );
     }
 

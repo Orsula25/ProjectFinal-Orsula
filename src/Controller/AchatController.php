@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\Achat;
 use App\Form\AchatType;
 use App\Repository\AchatRepository;
-use App\Repository\MouvementStockRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,8 +25,9 @@ final class AchatController extends AbstractController
         $mouvementRepo -> enregistrerMouvement(
             $produit,
             $quantite,
-            typeMouvement::ENTREE
+            TypeMouvement::ENTREE
         );
+        
     }
 
     #[Route('/new', name: 'app_achat_new', methods: ['GET', 'POST'])]
@@ -116,4 +116,6 @@ final class AchatController extends AbstractController
 
         return $this->redirectToRoute('app_achat_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    
 }

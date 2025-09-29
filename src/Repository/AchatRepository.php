@@ -14,6 +14,7 @@ class AchatRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Achat::class);
+        
     }
 
     //    /**
@@ -47,5 +48,17 @@ class AchatRepository extends ServiceEntityRepository
         ->select('SUM(a.montantTotal)')
         ->getQuery()
         ->getSingleScalarResult();
+    }
+// cette méthode permet de trouver les clients par nom
+    public function findClientsByNom(string $nom, ManagerRegistry $doctrine){
+        $em = $doctrine->getManager(); 
+        $query = $em->createQuery("SELECT client FROM App\Entity\Client where client.nom = :nom");
+        $query->setParameter('nom', $nom);
+        $clients = $query->getResult();
+        dd($clients);
+        
+   
+        
+
     }
 }
