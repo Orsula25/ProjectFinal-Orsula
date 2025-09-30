@@ -22,6 +22,7 @@
                 <th>Adresse</th>
                 <th>Telephone</th>
                 <th>Email</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -33,6 +34,11 @@
                     <td>{{client.adresse}}</td>
                     <td>{{client.telephone}}</td>
                     <td>{{client.email}}</td>
+                    <td>
+                        <a href="{{ path('app_client_show', {'id': client.id}) }}" class="btn btn-primary">Afficher</a>
+                        <a href="{{ path('app_client_edit', {'id': client.id}) }}" class="btn btn-warning">Modifier</a>
+                        {{ include('client/_delete_form.html.twig',{'client': client})}}
+                    </td>
              
                 </tr>
           

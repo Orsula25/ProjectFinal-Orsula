@@ -29,6 +29,7 @@ class ProduitType extends AbstractType
                 'widget' => 'single_text',
             ])
             ->add('tva' , NumberType::class)
+            ->add('stockMin', NumberType::class)
             ->add('categorieProduit', EntityType::class, [
                 'class' => CategorieProduit::class,
                 'choice_label' => 'id',

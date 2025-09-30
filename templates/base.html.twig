@@ -17,7 +17,7 @@
 <body class="bg-light">
 
   {# --- NAVBAR PRINCIPALE (sombre) --- #}
-  <nav class="navbar navbar-dark bg-dark">
+  <nav class="navbar navbar-dark bg-black">
     <div class="container-fluid">
       <a class="navbar-brand" href="{{ path('app_accueil') }}">Logix G-Stock</a>
 
@@ -62,6 +62,18 @@
       </div>
     </div>
   {% endif %}
+
+  {# si on a un msg dans le controller #}
+  <div class="container mt-3">
+  {% for label, messages in app.flashes %}
+    {% for message in messages %}
+      <div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+      </div>
+    {% endfor %}
+  {% endfor %}
+</div>
 
   {# --- CONTENU PRINCIPAL --- #}
   <main class="container my-4">
