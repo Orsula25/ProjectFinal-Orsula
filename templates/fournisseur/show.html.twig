@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block titre %}Clients — Logix G-Stock{% endblock %}
+{% block titre %}Fournisseurs — Logix G-Stock{% endblock %}
 
 {% block contenu %}
 
@@ -15,10 +15,6 @@
             <td>{{fournisseur.nom}}</td>
             </tr>
             <tr>
-            <th>Prenom</th>
-            <td>{{fournisseur.prenom}}</td>
-            </tr>
-            <tr>
             <th>Adresse</th>
             <td>{{fournisseur.adresse}}</td>
             </tr>
@@ -30,6 +26,10 @@
             <th>Email</th>
             <td>{{fournisseur.email}}</td>
             </tr>
+            <tr>
+            <th>NumTVA</th>
+            <td>{{fournisseur.numTva}}</td>
+            </tr>
 
             <tr>
             <th>Actions</th>
@@ -39,9 +39,17 @@
                 {{ include('fournisseur/_delete_form.html.twig',{'fournisseur': fournisseur})}}
             </td>
             </tr>
+
+
+
+
     </tbody>
 
 
 
 
 </table>
+
+{% endblock contenu %}
+
+

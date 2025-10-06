@@ -16,19 +16,37 @@
 </head>
 <body class="bg-light">
 
-  {# --- NAVBAR PRINCIPALE (sombre) --- #}
-  <nav class="navbar navbar-dark bg-black">
+{% set current = app.request.attributes.get('_route')|default('') %}
+
+{% set hideMenu = current in ['app_login','app_register','app_forgot_password_request','app_reset_password'] %}
+
+{% if not hideMenu %}
+  {# --- NAVBAR PRINCIPALE (sombre, avec menu burger) --- #}
+  <nav class="navbar navbar-expand-lg navbar-dark bg-black">
     <div class="container-fluid">
       <a class="navbar-brand" href="{{ path('app_accueil') }}">Logix G-Stock</a>
 
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal">
+      <!-- Bouton burger -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal"
+              aria-controls="menuPrincipal" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
       <div id="menuPrincipal" class="collapse navbar-collapse">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link {{ current starts with 'app_client_' ? 'active' : '' }}"
+               href="{{ path('app_client_index') }}">👤 Clients</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {{ current starts with 'app_fournisseur_' ? 'active' : '' }}"
+               href="{{ path('app_fournisseur_index') }}">🏭 Fournisseurs</a>
+          </li>
+        </ul>
+
         <ul class="navbar-nav ms-auto">
           {% if app.user %}
-            <li class="nav-item"><span class="navbar-text me-2">Salut {{ app.user.nom }}</span></li>
+            <li class="nav-item"><span class="navbar-text me-2">Bonjour {{ app.user.nom }}</span></li>
             <li class="nav-item"><a class="btn btn-outline-light btn-sm" href="{{ path('app_logout') }}">Déconnexion</a></li>
           {% else %}
             <li class="nav-item"><a class="btn btn-outline-light btn-sm" href="{{ path('app_login') }}">Connexion</a></li>
@@ -37,6 +55,7 @@
       </div>
     </div>
   </nav>
+{% endif %}
 
   {# --- MENU HORIZONTAL (modules principaux) --- #}
   {% set current = app.request.get('_route') %}
@@ -63,17 +82,17 @@
     </div>
   {% endif %}
 
-  {# si on a un msg dans le controller #}
+  {# --- Messages flash (succès, erreur, etc.) --- #}
   <div class="container mt-3">
-  {% for label, messages in app.flashes %}
-    {% for message in messages %}
-      <div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-      </div>
+    {% for label, messages in app.flashes %}
+      {% for message in messages %}
+        <div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+        </div>
+      {% endfor %}
     {% endfor %}
-  {% endfor %}
-</div>
+  </div>
 
   {# --- CONTENU PRINCIPAL --- #}
   <main class="container my-4">
@@ -83,5 +102,8 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   {% block script %}{% endblock %}
+
+  
 </body>
 </html>
+

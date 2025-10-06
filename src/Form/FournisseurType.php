@@ -17,10 +17,10 @@ class FournisseurType extends AbstractType
     {
         $builder
             ->add('nom', TextType::class)
-            ->add('prenom', TextType::class)
             ->add('email', EmailType::class)
             ->add('telephone', TelType::class)
             ->add('adresse', TextType::class)
+            ->add('numTva', TextType::class)
             ->add('dateCreation', DateTimeType::class, [
                 'widget' => 'single_text',
             ])

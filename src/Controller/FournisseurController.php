@@ -18,7 +18,7 @@ final class FournisseurController extends AbstractController
     public function index(FournisseurRepository $FournisseurRepository): Response
     {
         return $this->render('fournisseur/index.html.twig', [
-            'Fournisseurs' => $FournisseurRepository->findAll(),
+            'fournisseurs' => $FournisseurRepository->findAll(),
         ]);
     }
 
@@ -54,7 +54,6 @@ final class FournisseurController extends AbstractController
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()){
-            $entityManager->persist($fournisseur);
             $entityManager->Flush();
             $this->addFlash('success', 'Fournisseur modifié avec succès✅');
             return $this->redirectToRoute('app_fournisseur_index',[],Response::HTTP_SEE_OTHER);
@@ -78,7 +77,7 @@ final class FournisseurController extends AbstractController
 
 
     #[Route('/fournisseur/{id}', name:'app_fournisseur_delete', methods:['POST'])]
-    public function delete(Request $request, Fournisseur $fournisseur, EntityManagerInterface $intityManager): Response
+    public function delete(Request $request, Fournisseur $fournisseur, EntityManagerInterface $entityManager): Response
     {
         if($this->isCsrfTokenValid('delete'.$fournisseur->getId(), $request->request->get('_token'))){
             $entityManager->remove($fournisseur);
