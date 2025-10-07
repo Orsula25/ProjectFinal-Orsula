@@ -22,12 +22,11 @@ final class AchatController extends AbstractController
             'achats' => $achatRepository->findAll(),
         ]);
 
-        $mouvementRepo -> enregistrerMouvement(
+        $mouvementRepo->enregistrerMouvement(
             $produit,
             $quantite,
             TypeMouvement::ENTREE
         );
-        
     }
 
     #[Route('/new', name: 'app_achat_new', methods: ['GET', 'POST'])]
@@ -38,10 +37,20 @@ final class AchatController extends AbstractController
         $form->handleRequest($request);
 
 
-
+        // on enregistre l'Achat
         if ($form->isSubmitted() && $form->isValid()) {
+            // dd($form->getData());
             //calcule des sous totaux pour chaque détail 
             foreach ($achat->getDetailAchats() as $detail) {
+
+                // updater la quantité du produit
+                $qteActuelle = $detail->getProduit()->getQuantiteStock();
+                $qteFinale = $qteActuelle + $detail->getQuantite();
+                $detail->getProduit()->setQuantiteStock($qteFinale);
+                
+                
+                
+                // on fixe l'Achat
                 $detail->setAchat($achat);
                 $detail->calculerSousTotal();
             }
@@ -51,7 +60,7 @@ final class AchatController extends AbstractController
             foreach ($achat->getDetailAchats() as $detail) {
                 $total += (float)$detail->getSousTotal();
             }
-            $achat ->setMontantTotal($total);
+            $achat->setMontantTotal($total);
             $entityManager->persist($achat);
             $entityManager->flush();
 
@@ -91,7 +100,7 @@ final class AchatController extends AbstractController
             foreach ($achat->getDetailAchats() as $detail) {
                 $total += (float)$detail->getSousTotal();
             }
-            $achat ->setMontantTotal($total);
+            $achat->setMontantTotal($total);
             $entityManager->flush();
 
             $this->addFlash('success', 'Achat modifié avec succès✅');
@@ -107,7 +116,7 @@ final class AchatController extends AbstractController
     #[Route('/{id}', name: 'app_achat_delete', methods: ['POST'])]
     public function delete(Request $request, Achat $achat, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$achat->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $achat->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($achat);
             $entityManager->flush();
 
@@ -116,6 +125,4 @@ final class AchatController extends AbstractController
 
         return $this->redirectToRoute('app_achat_index', [], Response::HTTP_SEE_OTHER);
     }
-
-    
 }

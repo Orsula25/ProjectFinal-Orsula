@@ -12,8 +12,9 @@
       <th>Date</th>
       <th>Montant total</th>
       <th>État</th>
-      <th>Créé le</th>
+      {# <th>Créé le</th> #}
       <th>Modifié le</th>
+      <th>Fournisseur</th>
       <th>Actions</th>
     </tr>
   </thead>
@@ -24,8 +25,10 @@
       <td>{{ achat.dateAchat ? achat.dateAchat|date('d/m/Y H:i') : '' }}</td>
       <td>{{ achat.montantTotal|number_format(2, ',', ' ') }} €</td>
       <td>{{ achat.etat }}</td>
-      <td>{{ achat.dateCreation ? achat.dateCreation|date('d/m/Y H:i') : '' }}</td>
+      {# <td>{{ achat.dateCreation ? achat.dateCreation|date('d/m/Y H:i') : '' }}</td> #}
       <td>{{ achat.dateModification ? achat.dateModification|date('d/m/Y H:i') : '' }}</td>
+      <td><a href="{{ path ('app_fournisseur_show', {'id': achat.fournisseur.id})}}">{{ achat.fournisseur.nom ? achat.fournisseur.nom : '' }}</a></td>
+
       <td>
         <a class="btn btn-sm btn-outline-primary" href="{{ path('app_achat_show', {'id': achat.id}) }}">Afficher</a>
         <a class="btn btn-sm btn-outline-warning" href="{{ path('app_achat_edit', {'id': achat.id}) }}">Modifier</a>
@@ -41,3 +44,6 @@
 
 <a class="btn btn-success" href="{{ path('app_achat_new') }}">➕ Ajouter un achat</a>
 {% endblock %}
+
+
+  

@@ -37,10 +37,30 @@ final class VenteController extends AbstractController
         $form->handleRequest($request);
 
 
-
+        // on traite le détail de chaque produit dans la vente
         if ($form->isSubmitted() && $form->isValid()) {
             foreach ($vente->getDetailVentes() as $detail) {
+                // on fixe la Vente
                 $detail->setVente($vente);
+                // updater la quantité du produit
+                $qteActuelle = $detail->getProduit()->getQuantiteStock();
+                $qteFinale = $qteActuelle - $detail->getQuantite();
+                $detail->getProduit()->setQuantiteStock($qteFinale);
+
+                // si le stock est sous le seuil, créer une commande
+                // - Créer objet Commande
+                // - Fixer le fournisseur
+                // - Fixer la date
+                // - Fixer le statut
+                // - Fixer le total
+                // - Fixer la vente
+                // - Enregistrer
+
+                // opt: créer un MouvementStock et l'enregistrer
+
+                
+
+
                 $detail->calculerSousTotal();
             }
             // calcul total 
@@ -50,6 +70,9 @@ final class VenteController extends AbstractController
                 $total += (float)$detail->getSousTotal();
             }
             $vente ->setMontantTotal($total);
+
+            // generer un evenement pour creer commande si le stock  
+
             $entityManager->persist($vente);
             $entityManager->flush();
 
