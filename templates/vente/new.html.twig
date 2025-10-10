@@ -11,12 +11,112 @@
     {{ form_widget(form.client) }}
 
 <h3>Produits vendus</h3>
-<div data-prototype="{{ form_widget(form.detailVentes.vars.prototype) }}">
 
-    {{ form_widget(form.detailVentes) }}
-</div>
+{# preparer le prototype #}
+<h3>Produits vendus</h3>
 
+<ul class="detailVentes"
+    data-index="{{ form.detailVentes|length > 0 ? form.detailVentes|last.vars.name + 1 : 0 }}">
+  {% for detail in form.detailVentes %}
+   <li>
+      {{ form_widget(detail) }}   {#  rend idem que le prototype (même markup/labels) #}
+    </li>
+  {% endfor %}
+</ul>
+
+<template id="detailVente-prototype">
+  {{ form_widget(form.detailVentes.vars.prototype) }}
+</template>
+
+<button type="button" class="add_item_link" data-collection-holder-class="detailVentes">➕</button>
+
+
+   
     {{ include('vente/_form.html.twig') }}
 
     <a href="{{ path('app_vente_index') }}">Retour à la liste</a>
+
+<script>
+
+{#fonction pour mettre à jour le prix unitaire #}
+
+function updatePrixFromSelectedOption(selectEl) {
+  {#récupère l'option sélectionnée#}
+  const option = selectEl.options[selectEl.selectedIndex];
+  {# Lit le prix depuis l'attribut data-prix#}
+  const prix = option ? option.getAttribute('data-prix') : null;
+
+  {# Trouve l'input correspondant au prix unitaire dans le même <li>#}
+  const prixInput = selectEl.closest('li')?.querySelector('input[name$="[prixUnitaire]"]');
+  if (prixInput) {
+    prixInput.value = prix ? parseFloat(prix).toFixed(2) : '';
+  }
+
+}
+
+{# ajout d'un ecouteur sur le <select> produit #}
+
+function attachProduitChangeListener(container) {
+  container.querySelectorAll('select[name$="[produit]"]').forEach(function(selectEl) {
+    if (!selectEl.dataset.listenerAttached) {
+      selectEl.addEventListener('change', function() {
+        updatePrixFromSelectedOption(selectEl);
+      });
+      {# Initialise directement le prix si un produit est déjà sélectionné#}
+      updatePrixFromSelectedOption(selectEl);
+      selectEl.dataset.listenerAttached = '1';
+        }
+    });
+}
+
+
+{#rajoute chaque nouveau detail#}
+function addFormToCollection(e) {
+  const holder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
+  const li = document.createElement('li');
+
+  {#Récupérer le prototype NON échappé depuis le <template>#}
+  const tpl = document.getElementById('detailVente-prototype');
+  const tplHtml = tpl ? tpl.innerHTML : '';
+
+  {# Remplacer l’index magique __name__#}
+  const formHtml = tplHtml.replace(/__name__/g, holder.dataset.index);
+
+  {# Injecter HTML#}
+  li.innerHTML = formHtml;
+
+  {# Ajouter au <ul> et incrémenter l’index#}
+  holder.appendChild(li);
+  holder.dataset.index++;
+
+  {# Bouton "−" + écouteurs#}
+  addDetailFormDeleteLink(li);
+  attachProduitChangeListener(li);
+}
+
+
+{#rajoute le bouton de delete#}
+function addDetailFormDeleteLink(item) {
+  const removeFormButton = document.createElement('button');
+  removeFormButton.textContent = '-';
+  removeFormButton.title = 'supprimer la ligne';
+  item.append(removeFormButton);
+
+  removeFormButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    item.remove();
+  });
+}
+  
+document.querySelectorAll('.add_item_link').forEach(btn => {
+  btn.addEventListener('click', addFormToCollection);
+});
+
+document.querySelectorAll('ul.detailVentes li').forEach(tag => {
+  addDetailFormDeleteLink(tag);
+  attachProduitChangeListener(tag);
+});
+
+</script>
+
 {% endblock %}

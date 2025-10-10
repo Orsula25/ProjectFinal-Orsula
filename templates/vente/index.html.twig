@@ -10,10 +10,13 @@
     <tr>
       <th>ID</th>
       <th>Date</th>
+      <th>TVA</th>
       <th>Montant total</th>
-      <th>État</th>
-      <th>Créé le</th>
+      <th>Client</th>
+       <th>État</th>
+      <!--<th>Créé le</th>-->
       <th>Modifié le</th>
+
       <th>Actions</th>
     </tr>
   </thead>
@@ -22,9 +25,11 @@
     <tr>
       <td>{{ vente.id }}</td>
       <td>{{ vente.dateVente ? vente.dateVente|date('d/m/Y H:i') : '' }}</td>
+      <td>{{ vente.tauxTvaLabel }}</td>
       <td>{{ vente.montantTotal|number_format(2, ',', ' ') }} €</td>
+      <td>{{ vente.client ? vente.client.nom ~ ' ' ~ vente.client.prenom: '-'}}</td>
+      <!--<td>{{ vente.dateCreation ? vente.dateCreation|date('d/m/Y H:i') : '' }}</td>-->
       <td>{{ vente.etat }}</td>
-      <td>{{ vente.dateCreation ? vente.dateCreation|date('d/m/Y H:i') : '' }}</td>
       <td>{{ vente.dateModification ? vente.dateModification|date('d/m/Y H:i') : '' }}</td>
       <td>
         <a class="btn btn-sm btn-outline-primary" href="{{ path('app_vente_show', {'id': vente.id}) }}">Afficher</a>
@@ -33,11 +38,12 @@
     </tr>
   {% else %}
     <tr>
-      <td colspan="7" class="text-center">⚠️ Aucune vente trouvée</td>
+      <td colspan="8" class="text-center">⚠️ Aucune vente trouvée</td>
     </tr>
   {% endfor %}
   </tbody>
 </table>
 
 <a class="btn btn-success" href="{{ path('app_vente_new') }}">➕ Ajouter une vente</a>
+<a class="btn btn-outiline-secondary ms-2" href="{{path('app_accueil')}}">🏠Retour à l'accueil</a>
 {% endblock %}

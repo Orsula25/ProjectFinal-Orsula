@@ -5,23 +5,102 @@
 {% block contenu %}
 
 
-    <h1>Ajouter un achat</h1>
+<h1>Ajouter un achat</h1>
 
 {{ form_start(form) }}
 {{ form_widget(form.dateAchat) }}
+{{ form_widget(form.etat) }}
+
 {{ form_widget(form.fournisseur) }}
 
-<h3>Produits achetés</h3>
-<div data-prototype="{{ form_widget(form.detailAchats.vars.prototype) }}">
+    <h3>Produits achetés</h3>
+    
+<ul class="detailAchats"
+    data-index="{{ form.detailAchats|length > 0 ? form.detailAchats|last.vars.name + 1 : 0 }}"
+    data-prototype="{{ form_widget(form.detailAchats.vars.prototype)|e('html_attr') }}">
+</ul>
+<button type="button" class="add_item_link" data-collection-holder-class="detailAchats">➕ </button>    
+<a href="{{ path('app_achat_index') }}">Retour à la liste</a>
 
-    {{ form_widget(form.detailAchats) }}
-</div>
+<input type="submit">
+{{ form_end(form)}}
+
+<script>
+
+{# fonction pour mettre à jour le prix unitaire #}
+
+function updatePrixFromSelectedOption(selectEl) {
+  {# Récupère l'option sélectionnée #}
+  const option = selectEl.options[selectEl.selectedIndex];
+  {# Lit le prix depuis l'attribut data-prix #}
+  const prix = option ? option.getAttribute('data-prix') : null;
+
+  {# Trouve l'input correspondant au prix unitaire dans le même <li>#}
+  const prixInput = selectEl.closest('li')?.querySelector('input[name$="[prixUnitaire]"]');
+  if (prixInput) {
+    prixInput.value = prix ? parseFloat(prix).toFixed(2) : '';
+  }
+
+}
+
+{# ajout d'un ecouteur sur le <select> produit #}
+
+function attachProduitChangeListener(container) {
+  container.querySelectorAll('select[name$="[produit]"]').forEach(function(selectEl) {
+    if (!selectEl.dataset.listenerAttached) {
+      selectEl.addEventListener('change', function() {
+        updatePrixFromSelectedOption(selectEl);
+      });
+      {# Initialise directement le prix si un produit est déjà sélectionné#}
+      updatePrixFromSelectedOption(selectEl);
+      selectEl.dataset.listenerAttached = '1';
+        }
+    });
+}
 
 
+{#rajoute chaque nouveau detail#}
+function addFormToCollection(e) {
+  const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
+  const item = document.createElement('li');
+
+  item.innerHTML = collectionHolder.dataset.prototype.replace(/__name__/g, collectionHolder.dataset.index);
+  collectionHolder.appendChild(item);
+  collectionHolder.dataset.index++;
+
+  {# Ajoute bouton delete #}
+  addDetailFormDeleteLink(item);
+  {#attache la logique de mise à jour du prix sur le nouveau select#}
+  attachProduitChangeListener(item);
+
+    
+  };
+
+{#rajoute le bouton de delete#}
+function addDetailFormDeleteLink(item) {
+  const removeFormButton = document.createElement('button');
+  removeFormButton.textContent = '-';
+  removeFormButton.title = 'supprimer la ligne';
+  item.append(removeFormButton);
+
+  removeFormButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    item.remove();
+  });
+}
+  
+document.querySelectorAll('.add_item_link').forEach(btn => {
+  btn.addEventListener('click', addFormToCollection);
+});
+
+document.querySelectorAll('ul.detailAchats li').forEach(tag => {
+  addDetailFormDeleteLink(tag);
+  attachProduitChangeListener(tag);
+});
+
+</script>
 
 
-
-    {{ include('achat/_form.html.twig') }}
-
-    <a href="{{ path('app_achat_index') }}">Retour à la liste</a>
 {% endblock %}
+
+    

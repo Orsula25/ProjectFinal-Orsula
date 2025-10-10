@@ -19,6 +19,11 @@ class DetailAchatType extends AbstractType
             ->add('produit', EntityType::class, [
                 'class' => Produit::class,
                 'choice_label' => 'nom',
+                // je récupère leprix de ms produit pour les integrer dans prix unitaire 
+                'choice_attr' => function(Produit $produit){
+                    // on ajoute un data attr pour stocker le prix unitaire
+                    return ['data-prix' => $produit->getPrixUnitaire()];
+                },
                 'label' => 'Produit',
             ])
             ->add('quantite', IntegerType::class, [

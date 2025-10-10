@@ -19,6 +19,9 @@ class DetailVenteType extends AbstractType
             ->add('produit', EntityType::class, [
                 'class' => Produit::class,
                 'choice_label' => 'nom',
+                'choice_attr' => function(Produit $produit){
+                    return ['data-prix' => $produit->getPrixUnitaire()];
+                },
                 'label' => 'Produit',
             ])
             ->add('quantite', IntegerType::class, [
