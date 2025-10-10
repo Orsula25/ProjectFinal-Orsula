@@ -14,16 +14,29 @@
 {{ form_widget(form.fournisseur) }}
 
     <h3>Produits achetés</h3>
-    
-<ul class="detailAchats"
-    data-index="{{ form.detailAchats|length > 0 ? form.detailAchats|last.vars.name + 1 : 0 }}"
-    data-prototype="{{ form_widget(form.detailAchats.vars.prototype)|e('html_attr') }}">
-</ul>
-<button type="button" class="add_item_link" data-collection-holder-class="detailAchats">➕ </button>    
-<a href="{{ path('app_achat_index') }}">Retour à la liste</a>
 
-<input type="submit">
+<ul class="detailAchats list-unstyled"
+    data-index="{{ form.detailAchats|length }}"
+    data-prototype="{{ form_widget(form.detailAchats.vars.prototype)|e('html_attr') }}">
+  {% for detailForm in form.detailAchats %}
+    <li class="mb-3">
+      {{ form_row(detailForm) }}
+    </li>
+  {% endfor %}
+</ul>
+
+<div class="mt-3 d-flex gap-2">
+  <button type="button" class="btn btn-outline-secondary add_item_link" data-collection-holder-class="detailAchats">➕</button>
+  <button type="submit" class="btn btn-success">Ajouter</button>
+</div>
+
+
+
+
 {{ form_end(form)}}
+
+<a class="btn btn-link mt-2" href="{{ path('app_achat_index') }}">Retour à la liste</a>
+
 
 <script>
 

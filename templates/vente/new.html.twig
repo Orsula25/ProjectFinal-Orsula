@@ -28,6 +28,7 @@
   {{ form_widget(form.detailVentes.vars.prototype) }}
 </template>
 
+
 <button type="button" class="add_item_link" data-collection-holder-class="detailVentes">➕</button>
 
 
@@ -35,6 +36,8 @@
     {{ include('vente/_form.html.twig') }}
 
     <a href="{{ path('app_vente_index') }}">Retour à la liste</a>
+
+
 
 <script>
 
@@ -118,5 +121,9 @@ document.querySelectorAll('ul.detailVentes li').forEach(tag => {
 });
 
 </script>
+
+
+
+
 
 {% endblock %}

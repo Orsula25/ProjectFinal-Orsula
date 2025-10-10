@@ -185,6 +185,30 @@ class Achat
             $this->dateModification = new \DateTimeImmutable();
         }
     }
+
+
+// renvoie les taux de TVA distincts de l'achat, formatés pour l’index (ex. "6 %, 21 %").
+public function getTauxTvaLabel(): string
+{
+    $unique = [];
+
+    foreach ($this->detailAchats as $detail) {
+        $tvaStr = $detail->getProduit()?->getTva();
+        if ($tvaStr === null || $tvaStr === '') continue;
+
+        $raw = (float) $tvaStr;                 // "21.00" -> 21 ; "0.21" -> 0.21
+        $pct = $raw > 1 ? $raw : $raw * 100;    // normalise en %
+        $key = number_format($pct, 2, ',', ''); // "21,00"
+        $unique[$key] = true;
+    }
+
+    if (!$unique) return '-';
+
+    $rates = array_keys($unique);
+    $rates = array_map(static fn(string $s) => preg_replace('/,00$/', '', $s).' %', $rates);
+
+    return implode(', ', $rates);
+}
 }
 
 
