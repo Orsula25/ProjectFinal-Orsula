@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}Commande d'achat - {{ commande.reference }}{% endblock %}
+
+{% block contenu %}
+
+<h1>Commande d'achat - {{ commande.reference }}</h1>
+
+<p><strong>Statut:</strong> {{ commande.statut }}</p>
+<p><strong>Fournisseur:</strong> {{ commande.fournisseur.nom }}</p>
+<p><strong>Date:</strong> {{ commande.date ? commande.date|date('d/m/Y H:i') : '—' }}</p>
+
+<h3>Lignes de commande</h3>
+
+<table class="table table-bordered">
+
+<thead>
+    <tr>
+        <th>Produit</th>
+        <th>Quantité</th>
+    </tr>
+</thead>
+
+<tbody>
+    {% for ligne in commande.lignesCommande %}
+    <tr>
+        <td>{{ ligne.produit.nom }}</td>
+        <td>{{ ligne.quantite }}</td>
+
+    </tr>
+    {%else%}
+    <tr>
+        <td colspan="2" class="text-center">Aucune ligne de commande</td>
+    </tr>
+    {% endfor %}
+</tbody>
+
+</table>
+
+
+{% if commande.statut == 'DRAFT' %}
+  <form method="post"
+        action="{{ path('app_commande_achat_reception', {id: commande.id}) }}"
+        onsubmit="return confirm('Confirmer la réception de la commande ?');">
+    <input type="hidden" name="_token" value="{{ csrf_token('reception' ~ commande.id) }}">
+    <button class="btn btn-success mb-3">Réceptionner</button>
+  </form>
+{% endif %}
+
+<a class="btn btn-outline-secondary" href="{{ path('app_produit_index') }}">⬅ Retour produits</a>
+{% endblock %}
+
+
+

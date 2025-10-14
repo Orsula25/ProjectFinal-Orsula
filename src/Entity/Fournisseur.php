@@ -53,10 +53,17 @@ class Fournisseur
     #[ORM\OneToMany(targetEntity: ProduitFournisseur::class, mappedBy: 'fournisseur', orphanRemoval: true)]
     private Collection $produitFournisseurs;
 
+    /**
+     * @var Collection<int, CommandeAchat>
+     */
+    #[ORM\OneToMany(targetEntity: CommandeAchat::class, mappedBy: 'fournisseur', orphanRemoval: true)]
+    private Collection $commandeAchats;
+
     public function __construct()
     {
         $this->achats = new ArrayCollection();
         $this->produitFournisseurs = new ArrayCollection();
+        $this->commandeAchats = new ArrayCollection();
 
        
     }
@@ -207,6 +214,36 @@ class Fournisseur
                 $pf->setFournisseur(null);
             }
         }
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CommandeAchat>
+     */
+    public function getCommandeAchats(): Collection
+    {
+        return $this->commandeAchats;
+    }
+
+    public function addCommandeAchat(CommandeAchat $commandeAchat): static
+    {
+        if (!$this->commandeAchats->contains($commandeAchat)) {
+            $this->commandeAchats->add($commandeAchat);
+            $commandeAchat->setFournisseur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommandeAchat(CommandeAchat $commandeAchat): static
+    {
+        if ($this->commandeAchats->removeElement($commandeAchat)) {
+            // set the owning side to null (unless already changed)
+            if ($commandeAchat->getFournisseur() === $this) {
+                $commandeAchat->setFournisseur(null);
+            }
+        }
+
         return $this;
     }
 }

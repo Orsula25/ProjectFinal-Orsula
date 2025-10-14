@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\LigneCommande;
 
 #[ORM\Entity(repositoryClass: ProduitRepository::class)]
 #[ORM\Table(name: 'produit')]
@@ -79,6 +80,17 @@ class Produit
     #[ORM\Column(nullable: true)]
     private ?int $stockMin = null;
 
+    /**
+     * @var Collection<int, LigneCommande>
+     */
+    #[ORM\OneToMany(targetEntity: LigneCommande::class, mappedBy: 'produit')]
+    private Collection $lignesCommande;
+
+    // la quantité en commande (car le stock ne peut pas etre augmenté directement apres la commande)
+
+    #[ORM\Column(type: 'integer', options: ['default' => 0])]
+    private int $enCommande = 0;
+
     public function __construct()
     {
         // init collections
@@ -86,6 +98,7 @@ class Produit
         $this->detailAchats = new ArrayCollection();
         $this->detailVentes = new ArrayCollection();
         $this->mouvementStocks = new ArrayCollection();
+        $this->lignesCommande = new ArrayCollection();
 
         // timestamps
         $now = new \DateTimeImmutable();
@@ -259,6 +272,8 @@ class Produit
         return $this->quantiteStock * (float)$this->getPrixUnitaire();
     }
 
+    // État basé sur le stock physique uniquement
+
     public function getEtatStock():string
     {
         if ($this->getQuantiteStock() === 0) {
@@ -287,4 +302,55 @@ class Produit
             $this->dateModification = new \DateTimeImmutable();
         }
     }
+
+    /**
+     * @return Collection<int, LigneCommande>
+     */
+    public function getLignesCommande(): Collection
+    {
+        return $this->lignesCommande;
+    }       
+
+    public function addLignesCommande(LigneCommande $lignesCommande): static
+    {
+        if (!$this->lignesCommande->contains($lignesCommande)) {
+            $this->lignesCommande->add($lignesCommande);
+            $lignesCommande->setProduit($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLignesCommande(LigneCommande $lignesCommande): static
+    {
+        if ($this->lignesCommande->removeElement($lignesCommande)) {
+            // set the owning side to null (unless already changed)
+            if ($lignesCommande->getProduit() === $this) {
+                $lignesCommande->setProduit(null);
+            }
+        }
+
+        return $this;
+    }
+
+
+
+// getters/setters pour enCommande
+
+ public function getEnCommande(): int { return $this->enCommande; }
+ public function setEnCommande(int $v): self { $this->enCommande = max(0, $v); return $this; }
+ public function incEnCommande(int $v): self { $this->enCommande = max(0, $this->enCommande + $v); return $this; }
+ public function decEnCommande(int $v): self { $this->enCommande = max(0, $this->enCommande - $v); return $this; }
+
+
+//état projeté = stock + enCommande
+    public function getEtatStockProjete(): string
+    {
+        $projete = $this->getQuantiteStock() + $this->getEnCommande();
+        if ($projete === 0) return 'rupture';
+        if ($this->getStockMin() !== null && $projete < $this->getStockMin()) return 'sous_seuil';
+        return 'ok';
+    }
+   
+
 }

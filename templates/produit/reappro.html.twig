@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+{% block titre %}Reapprovisionner - {{ produit.nom }}{% endblock %}
+
+{% block contenu %}
+<h1>Reapprovisionner - {{ produit.nom }}</h1>
+
+
+<p>Stock actuel : <strong>{{ produit.quantiteStock }}</strong></p>
+<p>Stock min: <strong>{{ produit.stockMin ?? '-' }}</strong></p>
+
+{{ form_start(form) }}
+{% if suggestion %}
+    <div class="alert alert-info">Quantité suggérée : <strong>{{ suggestion }}</strong></div>
+
+
+
+    <div class="row g-3">
+
+        <div class="col-md-6">
+            {{ form_row(form.quantite) }}
+        </div>
+        <div class="col-md-6">
+            {{ form_row(form.fournisseur) }}
+        </div>
+    </div>
+
+    <button class="btn btn-success mt-3">créer la commande</button>
+{% endif %}
+{{ form_end(form) }}
+
+    
+<a class="btn btn-outline-secondary mt-2" href="{{ path('app_produit_index') }}">Retour à la liste</a>
+
+{% endblock %}

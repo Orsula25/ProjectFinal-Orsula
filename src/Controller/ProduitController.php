@@ -4,12 +4,20 @@ namespace App\Controller;
 
 use App\Entity\Produit;
 use App\Form\ProduitType;
+use App\Form\ReapprovisionnementType;
 use App\Repository\ProduitRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Service\ReapprovisionnementService;
+use App\Entity\CommandeAchat;
+use App\Entity\LigneCommande;
+
+
+
+
 
 #[Route('/produit')]
 final class ProduitController extends AbstractController
@@ -78,4 +86,97 @@ final class ProduitController extends AbstractController
 
         return $this->redirectToRoute('app_produit_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    // route pour le reapprovisionnement
+
+    #[Route('/{id}/reappro', name: 'produit_reappro', methods: ['GET', 'POST'])]
+    public function reappro(Produit $produit, Request $request, ReapprovisionnementService $proposer, EntityManagerInterface $entityManager): Response
+
+    {
+
+        // pour eviter que l'accès direct quand le prouit nest pas en seuil 
+
+        $sousSeuil = $produit->getStockMin()!== null && $produit->getQuantiteStock() <= $produit->getStockMin();
+        $rupture = $produit->getQuantiteStock() <= 0;
+
+        if (!$sousSeuil && !$rupture) {
+            $this->addFlash('warning', 'Le produit n\'est ni seuil ni en rupture');
+            return $this->redirectToRoute('app_produit_index');
+        }
+
+        // pour initialiser le formulaire avec les données du produit
+
+       $suggestion = $proposer->quantiteProposee($produit);
+
+    // Récupérer les fournisseurs liés au produit via la table pivot
+    $fournisseurChoices = [];
+    foreach ($produit->getProduitFournisseurs() as $pf) {
+        if ($pf->getFournisseur()) {
+            $fournisseurChoices[] = $pf->getFournisseur();
+        }
+    }
+
+    // Pré-sélection par défaut 
+    $defaultFournisseur = $fournisseurChoices[0] ?? null;
+
+    $form = $this->createForm(ReapprovisionnementType::class, null, [
+        'data' => [
+            'quantite'    => $suggestion,
+            'fournisseur' => $defaultFournisseur, // peut être null, pas grave
+        ],
+        // option custom qu'on lit dans le FormType
+        'fournisseur_choices' => $fournisseurChoices,
+    ]);
+
+        // pour traiter le formulaire
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+          $fournisseur = $form->get('fournisseur')->getData();
+          $quantite = (int)$form->get('quantite')->getData();
+
+          //1 creer la commande 
+          $commande = new CommandeAchat();
+          $commande->setReference($this->genRef());
+          $commande->setFournisseur($fournisseur);
+          $commande->setDate(new \DateTime());
+          $commande->setStatut('DRAFT');
+
+          //2.Ligne unique pour CE produit 
+
+          $ligne = new LigneCommande();
+          $ligne->setProduit($produit);
+          $ligne->setQuantite($quantite);
+         
+          // attacher avec add (important pour la cascade)
+          $commande->addLignesCommande($ligne);
+
+          //on augmente la commande pas le stock 
+          $produit->incEnCommande($quantite);
+// persister les objets
+          $entityManager->persist($commande);
+          $entityManager->flush();
+
+// rediriger vers la page commande
+
+        return $this->redirectToRoute('app_commande_achat_show', ['id' => $commande->getId()]);
+    }
+
+
+
+      return $this->render('produit/reappro.html.twig', [
+        'produit' => $produit,
+        'form' => $form ->createView(),
+        'suggestion' => $suggestion,
+    ]);
+    }
+
+    // helper pour la reference 
+    private function genRef(): string
+    {
+        return 'PO-' . (new \DateTime())->format('Ymd') . '-' . random_int(100, 999);
+    }
 }
+
+  
+
