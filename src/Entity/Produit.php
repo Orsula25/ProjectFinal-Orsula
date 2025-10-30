@@ -338,18 +338,28 @@ class Produit
 // getters/setters pour enCommande
 
  public function getEnCommande(): int { return $this->enCommande; }
- public function setEnCommande(int $v): self { $this->enCommande = max(0, $v); return $this; }
- public function incEnCommande(int $v): self { $this->enCommande = max(0, $this->enCommande + $v); return $this; }
- public function decEnCommande(int $v): self { $this->enCommande = max(0, $this->enCommande - $v); return $this; }
+ 
+ public function setEnCommande(int $v): self
+  { $this->enCommande = max(0, $v); 
+    return $this; }
+
+ public function incEnCommande(int $v): self 
+ { $this->enCommande = max(0, $this->enCommande + $v);
+     return $this; }
+
+ public function decEnCommande(int $v): self
+  { $this->enCommande = max(0, $this->enCommande - $v);
+     return $this; }
 
 
 //état projeté = stock + enCommande
     public function getEtatStockProjete(): string
-    {
-        $projete = $this->getQuantiteStock() + $this->getEnCommande();
-        if ($projete === 0) return 'rupture';
-        if ($this->getStockMin() !== null && $projete < $this->getStockMin()) return 'sous_seuil';
-        return 'ok';
+    {$projete = $this->getQuantiteStock() + $this->getEnCommande();
+
+    if ($projete === 0) return 'rupture';
+    if ($this->getStockMin() !== null && $projete < $this->getStockMin()) return 'sous_seuil';
+    return 'ok';
+
     }
    
 

@@ -6,49 +6,68 @@
 
 <h1>Commande d'achat - {{ commande.reference }}</h1>
 
-<p><strong>Statut:</strong> {{ commande.statut }}</p>
+{# Statut sous forme de badge #}
+<p>
+    <strong>Statut :</strong>
+    {% if commande.isBrouillon %}
+        <span class="badge bg-secondary">Brouillon</span>
+    {% elseif commande.isEnvoyee %}
+        <span class="badge bg-info text-dark">Envoyée</span>
+    {% elseif commande.isReceptionnee %}
+        <span class="badge bg-success">Réceptionnée</span>
+    {% else %}
+        <span class="badge bg-light text-dark">{{ commande.statut }}</span>
+    {% endif %}
+</p>
+
 <p><strong>Fournisseur:</strong> {{ commande.fournisseur.nom }}</p>
 <p><strong>Date:</strong> {{ commande.date ? commande.date|date('d/m/Y H:i') : '—' }}</p>
+
+<hr>
 
 <h3>Lignes de commande</h3>
 
 <table class="table table-bordered">
-
-<thead>
-    <tr>
-        <th>Produit</th>
-        <th>Quantité</th>
-    </tr>
-</thead>
-
-<tbody>
-    {% for ligne in commande.lignesCommande %}
-    <tr>
-        <td>{{ ligne.produit.nom }}</td>
-        <td>{{ ligne.quantite }}</td>
-
-    </tr>
-    {%else%}
-    <tr>
-        <td colspan="2" class="text-center">Aucune ligne de commande</td>
-    </tr>
-    {% endfor %}
-</tbody>
-
+    <thead>
+        <tr>
+            <th>Produit</th>
+            <th>Quantité</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ligne in commande.lignesCommande %}
+            <tr>
+                <td>{{ ligne.produit.nom }}</td>
+                <td>{{ ligne.quantite }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="2" class="text-center">Aucune ligne de commande</td>
+            </tr>
+        {% endfor %}
+    </tbody>
 </table>
 
-
-{% if commande.statut == 'DRAFT' %}
-  <form method="post"
-        action="{{ path('app_commande_achat_reception', {id: commande.id}) }}"
-        onsubmit="return confirm('Confirmer la réception de la commande ?');">
-    <input type="hidden" name="_token" value="{{ csrf_token('reception' ~ commande.id) }}">
-    <button class="btn btn-success mb-3">Réceptionner</button>
-  </form>
+{# Bouton ENVOYER visible seulement si BROUILLON #}
+{% if commande.isBrouillon %}
+<form method="post"
+      action="{{ path('app_commande_achat_envoyer', {id: commande.id}) }}"
+      onsubmit="return confirm('Confirmer l\'envoi de cette commande au fournisseur ?');">
+    <input type="hidden" name="_token" value="{{ csrf_token('envoyer' ~ commande.id) }}">
+    <button class="btn btn-sm btn-primary">Envoyer la commande</button>
+</form>
 {% endif %}
 
-<a class="btn btn-outline-secondary" href="{{ path('app_produit_index') }}">⬅ Retour produits</a>
+{# Bouton RÉCEPTIONNER visible seulement si ENVOYÉE #}
+{% if commande.isEnvoyee %}
+<form method="post"
+      action="{{ path('app_commande_achat_reception', {id: commande.id}) }}"
+      onsubmit="return confirm('Confirmer la réception ? Le stock va être ajouté.');">
+    <input type="hidden" name="_token" value="{{ csrf_token('reception' ~ commande.id) }}">
+    <button class="btn btn-sm btn-success mt-2">Marquer comme reçue</button>
+</form>
+{% endif %}
+
+<a class="btn btn-outline-secondary mt-3" href="{{ path('app_produit_index') }}">⬅ Retour produits</a>
+
 {% endblock %}
-
-
-

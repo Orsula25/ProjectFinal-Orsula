@@ -77,6 +77,10 @@
             <a class="nav-link {{ current starts with 'app_vente_' ? 'active' : '' }}"
                href="{{ path('app_vente_index') }}">Ventes</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link {{ current starts with 'app_commande_achat_index' ? 'active' : '' }}"
+               href="{{ path('app_commande_achat_index') }}">Commandes d'achat</a>
+          </li>
         </ul>
       </div>
     </div>
@@ -102,6 +106,23 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   {% block script %}{% endblock %}
+
+  <!-- --- JS pour les lignes cliquables --- -->
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('tr.row-click[data-href]').forEach(function (row) {
+          row.style.cursor = 'pointer';
+          row.addEventListener('click', function (e) {
+              // éviter de déclencher si on clique sur un bouton ou un lien dans la ligne
+              if (e.target.tagName.toLowerCase() === 'a' || e.target.closest('a')) {
+                  return;
+              }
+              window.location = this.dataset.href;
+          });
+      });
+  });
+</script>
+
 
   
 </body>

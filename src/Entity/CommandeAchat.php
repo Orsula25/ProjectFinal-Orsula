@@ -10,10 +10,21 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: CommandeAchatRepository::class)]
 class CommandeAchat
 {
+    // statut de la commande
+    public const STATUT_BROUILLON     = 'DRAFT';
+    public const STATUT_ENVOYEE       = 'SENT';
+    public const STATUT_RECEPTIONNEE  = 'RECEIVED';
+    public const STATUT_ANNULEE       = 'annulee';
+
+ 
+  
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
+
+
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $reference = null;
@@ -26,7 +37,7 @@ class CommandeAchat
     private ?\DateTime $date = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $statut = null;
+    private ?string $statut = self::STATUT_BROUILLON;
 
     /**
      * @var Collection<int, LigneCommande>
@@ -37,6 +48,9 @@ class CommandeAchat
     public function __construct()
     {
         $this->lignesCommande = new ArrayCollection();
+       if ($this->statut === null) {
+           $this->statut = self::STATUT_BROUILLON;
+       } 
        
     }
 
@@ -92,6 +106,7 @@ class CommandeAchat
     {
         return $this->statut;
     }
+    
 
     public function setStatut(?string $statut): static
     {
@@ -99,6 +114,30 @@ class CommandeAchat
 
         return $this;
     }
+
+    // Helpers lisibles pour twig / controleur 
+    public function isBrouillon(): bool
+    {
+        return $this->statut === self::STATUT_BROUILLON;
+    }
+
+    public function isEnvoyee(): bool
+    {
+        return $this->statut === self::STATUT_ENVOYEE;
+    }
+
+    public function isReceptionnee(): bool
+    {
+        return $this->statut === self::STATUT_RECEPTIONNEE;
+    }
+
+    public function isAnnulee(): bool
+    {
+        return $this->statut === self::STATUT_ANNULEE;
+    }
+
+
+
 
     /**
      * @return Collection<int, LigneCommande>

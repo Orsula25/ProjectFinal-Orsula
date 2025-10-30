@@ -19,15 +19,15 @@
       <th>TVA</th>
       <th>Stock min</th>
       <th>En commande</th>
-      <th>Stock projeté</th>
       <th>État</th>
       <th>Réappro</th>
-      <th>Actions</th>
     </tr>
   </thead>
+
   <tbody>
   {% for produit in produits %}
-    <tr>
+    <tr class="row-click"
+      data-href="{{ path('app_produit_show', {id: produit.id}) }}">
       <td>{{ produit.id }}</td>
       <td>{{ produit.nom }}</td>
       <td>{{ produit.description }}</td>
@@ -39,7 +39,6 @@
       <td>{{ produit.tva }} %</td>
       <td>{{ produit.stockMin }}</td>
       <td>{{ produit.enCommande }}</td>
-      <td>{{ produit.quantiteStock + produit.enCommande }}</td>
       <td>
         {% if produit.etatStock == 'rupture' %}
           <span class="badge bg-danger">❌ Rupture</span>
@@ -67,12 +66,7 @@
         {% else %}
           <span class="text-muted" title="Stock projeté {{ projete }} ≥ seuil {{ seuil ?? '-' }}">—</span>
         {% endif %}
-      </td>
-
-      <td>
-        <a class="btn btn-sm btn-outline-primary" href="{{ path('app_produit_show', {'id': produit.id}) }}">Afficher</a>
-        <a class="btn btn-sm btn-outline-warning" href="{{ path('app_produit_edit', {'id': produit.id}) }}">Modifier</a>
-      </td>
+      </td> 
     </tr>
   {% else %}
     <tr>
