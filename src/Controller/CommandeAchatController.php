@@ -21,15 +21,37 @@ use App\Form\CommandeAchatType;
 
         //liste 
 
-       // LISTE
+       
     #[Route('/', name: 'app_commande_achat_index', methods: ['GET'])]
-    public function index(CommandeAchatRepository $repo): Response
+    public function index(Request $request,CommandeAchatRepository $repo): Response
     {
-        $commandes = $repo->findBy([], ['date' => 'DESC']);
+             // page 1 (par defait) 
+        $page = max(1, $request->query->get('page', 1));
+
+        // nombre elemen par page 
+
+        $limit = 5;
+
+        // à partir de quel enregistrement on commence 
+        $offset = ($page - 1) * $limit;
+
+        // combien de produit au total 
+        $total = $repo->count([]);
+
+        // on récupère uniquement les 5 prosuits de la page + tri par le dernier ajouter d'abord 
+        $commandes = $repo->createQueryBuilder('p')
+            ->orderBy('p.id', 'DESC')      // derniers ajoutés en premier
+            ->setFirstResult($offset)      // on saute les précédents
+            ->setMaxResults($limit)        // on en prend 5
+            ->getQuery()
+            ->getResult()
+        ;
 
         return $this->render('commande_achat/index.html.twig', [
             'commandes' => $commandes,
-        ]);
+            'page'     => $page,
+            'pages'    => (int) ceil($total / $limit),
+        ]);;
     }
 
     // nouvelle commande 

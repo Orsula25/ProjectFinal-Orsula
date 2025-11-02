@@ -15,10 +15,33 @@ use App\Entity\Fournisseur;
 final class FournisseurController extends AbstractController
 {
     #[Route('/fournisseur', name: 'app_fournisseur_index')]
-    public function index(FournisseurRepository $FournisseurRepository): Response
+    public function index(Request $request,FournisseurRepository $fournisseurRepository): Response
     {
+        $q     = trim($request->query->get('q', ''));
+        $sort  = $request->query->get('sort', 'recent');
+        $page  = max(1, $request->query->getInt('page', 1));
+        $limit = 5;
+        $offset = ($page - 1) * $limit;
+
+        [$fournisseurs, $total] = $fournisseurRepository->searchPaginated($q, $sort, $limit, $offset);
+        $pages = (int) ceil($total / $limit);
+
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('fournisseur/_liste.html.twig', [
+                'fournisseurs' => $fournisseurs,
+                'q'            => $q,
+                'sort'         => $sort,
+                'page'         => $page,
+                'pages'        => $pages,
+            ]);
+        }
+
         return $this->render('fournisseur/index.html.twig', [
-            'fournisseurs' => $FournisseurRepository->findAll(),
+            'fournisseurs' => $fournisseurs,
+            'q'            => $q,
+            'sort'         => $sort,
+            'page'         => $page,
+            'pages'        => $pages,
         ]);
     }
 

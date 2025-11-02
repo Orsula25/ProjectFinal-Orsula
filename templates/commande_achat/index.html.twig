@@ -89,4 +89,25 @@
     </tbody>
 </table>
 
+{# pagination #}
+{% if pages > 1 %}
+  <nav aria-label="Pagination commandes">
+    <ul class="pagination mt-3">
+      <li class="page-item {{ page == 1 ? 'disabled' : '' }}">
+        <a class="page-link" href="{{ path('app_commande_achat_index', {page: page - 1}) }}">Précédent</a>
+      </li>
+
+      {% for i in 1..pages %}
+        <li class="page-item {{ i == page ? 'active' : '' }}">
+          <a class="page-link" href="{{ path('app_commande_achat_index', {page: i}) }}">{{ i }}</a>
+        </li>
+      {% endfor %}
+
+      <li class="page-item {{ page == pages ? 'disabled' : '' }}">
+        <a class="page-link" href="{{ path('app_commande_achat_index', {page: page + 1}) }}">Suivant</a>
+      </li>
+    </ul>
+  </nav>
+{% endif %}
+
 {% endblock %}

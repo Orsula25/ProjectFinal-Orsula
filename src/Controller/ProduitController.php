@@ -23,10 +23,71 @@ use App\Entity\LigneCommande;
 final class ProduitController extends AbstractController
 {
     #[Route(name: 'app_produit_index', methods: ['GET'])]
-    public function index(ProduitRepository $produitRepository): Response
+    public function index(Request $request, ProduitRepository $produitRepository): Response
     {
+        // 1) paramètres de recherche / tri / pagination
+        $q     = trim($request->query->get('q', ''));
+        $sort  = $request->query->get('sort', 'recent');   // recent | name_asc | name_desc
+        $page  = max(1, $request->query->getInt('page', 1));
+        $limit = 5;
+        $offset = ($page - 1) * $limit;
+
+        // 2) si on a une recherche
+        if ($q !== '') {
+            // total des résultats filtrés
+            $total = $produitRepository->countSearch($q);
+
+            // résultats de la page courante
+            // (si tu veux que la recherche soit aussi triée par nom,
+            // il faudra adapter la méthode du repository)
+            $produits = $produitRepository->findBySearch($q, $sort, $limit, $offset);
+
+        } else {
+            // 3) pas de recherche → liste normale avec tri
+
+            // on part d’un query builder
+            $qb = $produitRepository->createQueryBuilder('p')
+                ->setFirstResult($offset)
+                ->setMaxResults($limit);
+
+            // gestion du tri
+            switch ($sort) {
+                case 'name_asc':
+                    $qb->orderBy('p.nom', 'ASC');
+                    break;
+                case 'name_desc':
+                    $qb->orderBy('p.nom', 'DESC');
+                    break;
+                default: // 'recent'
+                    $qb->orderBy('p.id', 'DESC');
+                    break;
+            }
+
+            // total (non filtré)
+            $total = $produitRepository->count([]);
+
+            // exécution
+            $produits = $qb->getQuery()->getResult();
+        }
+
+        // 4) si c'est une requête AJAX → on renvoie seulement le fragment
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('produit/_liste.html.twig', [
+                'produits' => $produits,
+                'page'     => $page,
+                'pages'    => (int) ceil($total / $limit),
+                'q'        => $q,
+                'sort'     => $sort,
+            ]);
+        }
+
+        // 5) rendu normal
         return $this->render('produit/index.html.twig', [
-            'produits' => $produitRepository->findAll(),
+            'produits' => $produits,
+            'page'     => $page,
+            'pages'    => (int) ceil($total / $limit),
+            'q'        => $q,
+            'sort'     => $sort,
         ]);
     }
 

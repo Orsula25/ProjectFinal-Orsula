@@ -18,10 +18,34 @@ use Symfony\Component\Routing\Attribute\Route;
 final class VenteController extends AbstractController
 {
     #[Route(name: 'app_vente_index', methods: ['GET'])]
-    public function index(VenteRepository $venteRepository): Response
+    public function index(Request $request,VenteRepository $venteRepository): Response
     {
+            // page 1 (par defait) 
+        $page = max(1, $request->query->get('page', 1));
+
+        // nombre elemen par page 
+
+        $limit = 5;
+
+        // à partir de quel enregistrement on commence 
+        $offset = ($page - 1) * $limit;
+
+        // combien de produit au total 
+        $total = $venteRepository->count([]);
+
+        // on récupère uniquement les 5 prosuits de la page + tri par le dernier ajouter d'abord 
+        $ventes = $venteRepository->createQueryBuilder('p')
+            ->orderBy('p.id', 'DESC')      // derniers ajoutés en premier
+            ->setFirstResult($offset)      // on saute les précédents
+            ->setMaxResults($limit)        // on en prend 5
+            ->getQuery()
+            ->getResult()
+        ;
+
         return $this->render('vente/index.html.twig', [
-            'ventes' => $venteRepository->findAll(),
+            'ventes' => $ventes,
+            'page'     => $page,
+            'pages'    => (int) ceil($total / $limit),
         ]);
         
     }

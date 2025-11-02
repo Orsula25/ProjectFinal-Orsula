@@ -10,41 +10,69 @@
 
 
 
-    <h1 class="mb-4">liste des clients</h1>
 
-    <table class="table table-hover table-bordered align-middle">
-        <thead class="table-dark">
 
-            <tr>
-                <th>Id</th>
-                <th>Nom</th>
-                <th>Prenom</th>
-                <th>Adresse</th>
-                <th>Telephone</th>
-                <th>Email</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-                {% for client in clients%}
-                <tr>
-                    <td>{{client.id}}</td>
-                    <td>{{client.nom}}</td>
-                    <td>{{client.prenom}}</td>
-                    <td>{{client.adresse}}</td>
-                    <td>{{client.telephone}}</td>
-                    <td>{{client.email}}</td>
-                    <td>
-                        <a href="{{ path('app_client_show', {'id': client.id}) }}" class="btn btn-primary">Afficher</a>
-                        <a href="{{ path('app_client_edit', {'id': client.id}) }}" class="btn btn-warning">Modifier</a>
-                        {{ include('client/_delete_form.html.twig',{'client': client})}}
-                    </td>
-             
-                </tr>
-          
-                {% endfor %}
-        </tbody>
-    </table>
-       <a href="{{ path('app_client_new') }}"> ➕ Ajouter un client</a>  
-       <a class="btn btn-outiline-secondary ms-2" href="{{path('app_accueil')}}">🏠Retour à l'accueil</a>    
+
+<form id="client-search-form" method="get" action="{{ path('app_client_index') }}" class="row g-2 mb-3">
+  <div class="col-auto">
+    <input
+      type="text"
+      name="q"
+      value="{{ q ?? '' }}"
+      class="form-control"
+      placeholder="Rechercher par nom..."
+    >
+  </div>
+  <div class="col-auto">
+    <button class="btn btn-primary" type="submit">Rechercher</button>
+  </div>
+  {% if q %}
+    <div class="col-auto">
+      <a class="btn btn-outline-secondary" href="{{ path('app_client_index') }}">Réinitialiser</a>
+    </div>
+  {% endif %}
+</form>
+
+<div id="client-table-wrapper">
+  {% include 'client/_liste.html.twig' %}
+</div>
+
+<a class="btn btn-success mt-3" href="{{ path('app_client_new') }}">➕ Nouveau client</a>
 {% endblock contenu %}
+
+{% block javascripts %}
+  {{ parent() }}
+  <script>
+    const form = document.getElementById('client-search-form');
+    const input = form.querySelector('input[name="q"]');
+    const wrapper = document.getElementById('client-table-wrapper');
+
+    function loadClients(queryString) {
+      fetch('{{ path('app_client_index') }}' + queryString, {
+        headers: {'X-Requested-With': 'XMLHttpRequest'}
+      })
+      .then(r => r.text())
+      .then(html => {
+        wrapper.innerHTML = html;
+        bindClientPagination();
+      });
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const q = input.value;
+      loadClients('?q=' + encodeURIComponent(q) + '&page=1');
+    });
+
+    function bindClientPagination() {
+      wrapper.querySelectorAll('.js-page').forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          loadClients(this.getAttribute('href'));
+        });
+      });
+    }
+
+    bindClientPagination();
+  </script>
+{% endblock %}

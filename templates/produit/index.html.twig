@@ -5,77 +5,126 @@
 {% block contenu %}
 <h1 class="mb-4">📦 Liste des produits</h1>
 
-<table class="table table-hover table-bordered align-middle">
-  <thead class="table-dark">
-    <tr>
-      <th>ID</th>
-      <th>Nom</th>
-      <th>Description</th>
-      <th>Prix</th>
-      <th>Stock</th>
-      <th>Référence</th>
-      <th>Créé le</th>
-      <th>Modifié le</th>
-      <th>TVA</th>
-      <th>Stock min</th>
-      <th>En commande</th>
-      <th>État</th>
-      <th>Réappro</th>
-    </tr>
-  </thead>
+{# barre de recherche #}
+<form id="produit-search-form" method="get" action="{{ path('app_produit_index') }}" class="row g-2 mb-3">
+  <div class="col-auto">
+    <input
+      type="text"
+      name="q"
+      value="{{ q ?? '' }}"  {# ← pour garder la valeur tapée #}
+      class="form-control"
+      placeholder="Rechercher par nom ou référence..."
+    >
+  </div>
+  <div class="col-auto">
+    <button class="btn btn-primary" type="submit">Rechercher</button>
+  </div>
+  {% if q is defined and q %}
+    <div class="col-auto">
+      <a class="btn btn-outline-secondary" href="{{ path('app_produit_index') }}">Réinitialiser</a>
+    </div>
+  {% endif %}
+</form>
 
-  <tbody>
-  {% for produit in produits %}
-    <tr class="row-click"
-      data-href="{{ path('app_produit_show', {id: produit.id}) }}">
-      <td>{{ produit.id }}</td>
-      <td>{{ produit.nom }}</td>
-      <td>{{ produit.description }}</td>
-      <td>{{ produit.prixUnitaire|number_format(2, ',', ' ') }} €</td>
-      <td>{{ produit.quantiteStock }}</td>
-      <td>{{ produit.reference }}</td>
-      <td>{{ produit.dateCreation ? produit.dateCreation|date('d/m/Y H:i') : '' }}</td>
-      <td>{{ produit.dateModification ? produit.dateModification|date('d/m/Y H:i') : '' }}</td>
-      <td>{{ produit.tva }} %</td>
-      <td>{{ produit.stockMin }}</td>
-      <td>{{ produit.enCommande }}</td>
-      <td>
-        {% if produit.etatStock == 'rupture' %}
-          <span class="badge bg-danger">❌ Rupture</span>
-        {% elseif produit.etatStock == 'sous_seuil' %}
-          <span class="badge bg-warning text-dark">⚠️ Sous Seuil</span>
-        {% else %}
-          <span class="badge bg-success">✅ OK</span>
-        {% endif %}
-      </td>
+{% if q is defined and q %}
+  <p class="text-muted mb-2">Résultats pour : <strong>{{ q }}</strong></p>
+{% endif %}
 
-     {# --- Réappro (basé sur le stock projeté = stock + enCommande) --- #}
-      <td>
-        {% set stock_actuel = produit.quantiteStock %}
-        {% set en_commande  = produit.enCommande %}
-        {% set projete      = stock_actuel + en_commande %}
-        {% set seuil        = produit.stockMin %}
-        {% set rupture_phys = stock_actuel <= 0 %}
-        {% set sous_seuil_projete = seuil is not null and projete < seuil %}
+{# liste des produits #}
+<div id="produit-table-wrapper">
+  {% include 'produit/_liste.html.twig' %}
+</div>
 
-        {% if rupture_phys or sous_seuil_projete %}
-          <a class="btn btn-sm btn-warning"
-            href="{{ path('produit_reappro', {'id': produit.id}) }}">
-            Réapprovisionner
-          </a>
-        {% else %}
-          <span class="text-muted" title="Stock projeté {{ projete }} ≥ seuil {{ seuil ?? '-' }}">—</span>
-        {% endif %}
-      </td> 
-    </tr>
-  {% else %}
-    <tr>
-      <td colspan="15" class="text-center">⚠️ Aucun produit trouvé</td>
-    </tr>
-  {% endfor %}
-  </tbody>
-</table>
 
 <a class="btn btn-success" href="{{ path('app_produit_new') }}">➕ Ajouter un produit</a>
 <a class="btn btn-outiline-secondary ms-2" href="{{path('app_accueil')}}">🏠Retour à l'accueil</a>
+
+
+
 {% endblock %}
+{# Ajax #}
+{% block javascripts %}
+  {{ parent() }}
+  <script>
+
+  document.getElementById('produit-search-form').addEventListener('submit', function (e) {
+  e.preventDefault();
+})
+     // empêcher le submit classique (rechargement)
+    const searchForm = document.getElementById('produit-search-form');
+    if (searchForm) {
+      searchForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+      });
+    }
+
+    const searchInput = document.querySelector('#produit-search-form input[name="q"]');
+    const wrapper = document.getElementById('produit-table-wrapper');
+
+    if (searchInput) {
+  searchInput.addEventListener('input', function () {
+    const q = this.value;
+    const sort = sortSelect ? sortSelect.value : 'recent';
+    loadProduits('?q=' + encodeURIComponent(q) + '&sort=' + encodeURIComponent(sort) + '&page=1');
+  });
+}
+
+if (sortSelect) {
+  sortSelect.addEventListener('change', function () {
+    const q = searchInput ? searchInput.value : '';
+    const sort = this.value;
+    loadProduits('?q=' + encodeURIComponent(q) + '&sort=' + encodeURIComponent(sort) + '&page=1');
+  });
+}
+
+    
+    // charge la liste en AJAX
+    function loadProduits(queryString) {
+      fetch('{{ path('app_produit_index') }}' + queryString, {
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then(r => r.text())
+      .then(html => {
+        wrapper.innerHTML = html;
+        bindPagination();
+        bindRowClick();
+      });
+    }
+
+    // recherche en direct
+    if (searchInput) {
+      searchInput.addEventListener('input', function () {
+        const q = this.value;
+        loadProduits('?q=' + encodeURIComponent(q) + '&page=1');
+      });
+    }
+
+    // pagination AJAX
+    function bindPagination() {
+      wrapper.querySelectorAll('.js-page').forEach(link => {
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          const href = this.getAttribute('href');
+          loadProduits(href);
+        });
+      });
+    }
+
+    // clic sur la ligne
+    function bindRowClick() {
+      wrapper.querySelectorAll('.row-click').forEach(row => {
+        row.addEventListener('click', function () {
+          const url = this.dataset.href;
+          if (url) window.location.href = url;
+        });
+      });
+    }
+
+    // premier branchement au chargement initial
+    bindPagination();
+    bindRowClick();
+  </script>
+
+  {% endblock %}

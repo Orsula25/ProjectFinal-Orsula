@@ -17,11 +17,35 @@ use App\Enum\TypeMouvement;
 final class AchatController extends AbstractController
 {
     #[Route(name: 'app_achat_index', methods: ['GET'])]
-    public function index(AchatRepository $achatRepository): Response
+    public function index(Request $request,AchatRepository $achatRepository): Response
     {
+              // page 1 (par defait) 
+        $page = max(1, $request->query->get('page', 1));
+
+        // nombre elemen par page 
+
+        $limit = 5;
+
+        // à partir de quel enregistrement on commence 
+        $offset = ($page - 1) * $limit;
+
+        // combien de produit au total 
+        $total = $achatRepository->count([]);
+
+        // on récupère uniquement les 5 prosuits de la page + tri par le dernier ajouter d'abord 
+        $achats = $achatRepository->createQueryBuilder('p')
+            ->orderBy('p.id', 'DESC')      // derniers ajoutés en premier
+            ->setFirstResult($offset)      // on saute les précédents
+            ->setMaxResults($limit)        // on en prend 5
+            ->getQuery()
+            ->getResult()
+        ;
+
         return $this->render('achat/index.html.twig', [
-            'achats' => $achatRepository->findAll(),
-        ]);
+            'achats' => $achats,
+            'page'     => $page,
+            'pages'    => (int) ceil($total / $limit),
+        ]);;
 
     }
 

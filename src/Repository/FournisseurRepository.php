@@ -40,4 +40,54 @@ class FournisseurRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+
+    public function searchPaginated(?string $q, string $sort, int $limit, int $offset): array
+{
+    $qb = $this->createQueryBuilder('f');
+
+    // recherche
+    if ($q) {
+        $qb
+            ->andWhere(
+                'f.nom LIKE :q
+                 OR f.email LIKE :q
+                 OR f.telephone LIKE :q
+                 OR f.adresse LIKE :q
+                 OR f.numTva LIKE :q'
+            )
+            ->setParameter('q', '%'.$q.'%');
+    }
+
+    // tri
+    switch ($sort) {
+        case 'name_asc':
+            $qb->addOrderBy('f.nom', 'ASC');
+            break;
+        case 'name_desc':
+            $qb->addOrderBy('f.nom', 'DESC');
+            break;
+        default:
+            $qb->addOrderBy('f.id', 'DESC');
+            break;
+    }
+
+    // total pour pagination
+    $total = (clone $qb)
+        ->select('COUNT(f.id)')
+        ->resetDQLPart('orderBy')
+        ->getQuery()
+        ->getSingleScalarResult();
+
+    // résultats paginés
+    $fournisseurs = $qb
+        ->setFirstResult($offset)
+        ->setMaxResults($limit)
+        ->getQuery()
+        ->getResult();
+
+    return [$fournisseurs, $total];
+}
+
+
 }

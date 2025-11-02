@@ -16,11 +16,35 @@ use Symfony\Component\Routing\Attribute\Route;
 final class ClientController extends AbstractController
 {
     #[Route('/client', name: 'app_client_index')]
-    public function index(ClientRepository $ClientRepository): Response
+    public function index(Request $request,ClientRepository $clientRepository): Response
     {
 
+       $q     = trim($request->query->get('q', ''));
+        $sort  = $request->query->get('sort', 'recent'); // recent | name_asc | name_desc
+        $page  = max(1, $request->query->getInt('page', 1));
+        $limit = 5;
+        $offset = ($page - 1) * $limit;
+
+        [$clients, $total] = $clientRepository->searchPaginated($q, $sort, $limit, $offset);
+        $pages = (int) ceil($total / $limit);
+
+        // AJAX (pour pagination ou recherche live)
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('client/_liste.html.twig', [
+                'clients' => $clients,
+                'q'       => $q,
+                'sort'    => $sort,
+                'page'    => $page,
+                'pages'   => $pages,
+            ]);
+        }
+
         return $this->render('client/index.html.twig', [
-            'clients' => $ClientRepository->findAll(),
+            'clients' => $clients,
+            'q'       => $q,
+            'sort'    => $sort,
+            'page'    => $page,
+            'pages'   => $pages,
         ]);
     }
 

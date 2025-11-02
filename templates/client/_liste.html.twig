@@ -1,0 +1,73 @@
+
+
+
+{# templates/client/_liste.html.twig #}
+
+    <table class="table table-hover table-bordered align-middle">
+        <thead class="table-dark">
+
+            <tr>
+                <th>Id</th>
+                <th>
+                    {% set params = app.request.query.all %}
+                    {% set nextSort = sort == 'name_asc' ? 'name_desc' : 'name_asc' %}
+                    {% set params = params|merge({'sort': nextSort, 'page': 1}) %}
+
+                    <a href="{{ path('app_client_index', params) }}" class="text-decoration-none d-inline-flex align-items-center gap-1">
+                    Nom
+                    {% if sort == 'name_asc' %}
+                        ↑
+                    {% elseif sort == 'name_desc' %}
+                        ↓
+                    {% else %}
+                        ↕
+                    {% endif %}
+                    </a>
+                </th>
+                <th>Prenom</th>
+                <th>Adresse</th>
+                <th>Telephone</th>
+                <th>Email</th>
+               
+            </tr>
+        </thead>
+        <tbody>
+                {% for client in clients%}
+                <tr class="row-click"
+                  data-href="{{ path('app_client_show', {id: client.id}) }}">
+                    <td>{{client.id}}</td>
+                    <td>{{client.nom}}</td>
+                    <td>{{client.prenom}}</td>
+                    <td>{{client.adresse}}</td>
+                    <td>{{client.telephone}}</td>
+                    <td>{{client.email}}</td>
+             
+                </tr>
+          
+                {% endfor %}
+        </tbody>
+    </table>
+       <a href="{{ path('app_client_new') }}"> ➕ Ajouter un client</a>  
+       <a class="btn btn-outiline-secondary ms-2" href="{{path('app_accueil')}}">🏠Retour à l'accueil</a>    
+
+{# pagination #}
+{% if pages > 1 %}
+  <nav aria-label="Pagination clients">
+    <ul class="pagination mt-3">
+      <li class="page-item {{ page == 1 ? 'disabled' : '' }}">
+            <a class="page-link js-page" href="?page={{ page - 1 }}&q={{ q|default('') }}&sort={{ sort|default('recent') }}">Précédent</a>
+      </li>
+
+      {% for i in 1..pages %}
+        <li class="page-item {{ i == page ? 'active' : '' }}">
+          <a class="page-link js-page" href="?page={{ i }}&q={{ q|default('') }}&sort={{ sort|default('recent') }}">{{ i }}</a>
+        </li>
+      {% endfor %}
+
+      <li class="page-item {{ page == pages ? 'disabled' : '' }}">
+       <a class="page-link js-page" href="?page={{ page + 1 }}&q={{ q|default('') }}&sort={{ sort|default('recent') }}">Suivant</a>
+      </li>
+    </ul>
+  </nav>
+{% endif %}
+       

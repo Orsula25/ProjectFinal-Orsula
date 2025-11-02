@@ -17,12 +17,12 @@
       <!--<th>Créé le</th>-->
       <th>Modifié le</th>
 
-      <th>Actions</th>
     </tr>
   </thead>
   <tbody>
   {% for vente in ventes %}
-    <tr>
+    <tr class="row-click"
+      data-href="{{ path('app_vente_show', {id: vente.id}) }}">
       <td>{{ vente.id }}</td>
       <td>{{ vente.dateVente ? vente.dateVente|date('d/m/Y H:i') : '' }}</td>
       <td>{{ vente.tauxTvaLabel }}</td>
@@ -31,10 +31,6 @@
       <!--<td>{{ vente.dateCreation ? vente.dateCreation|date('d/m/Y H:i') : '' }}</td>-->
       <td>{{ vente.etat }}</td>
       <td>{{ vente.dateModification ? vente.dateModification|date('d/m/Y H:i') : '' }}</td>
-      <td>
-        <a class="btn btn-sm btn-outline-primary" href="{{ path('app_vente_show', {'id': vente.id}) }}">Afficher</a>
-        <a class="btn btn-sm btn-outline-warning" href="{{ path('app_vente_edit', {'id': vente.id}) }}">Modifier</a>
-      </td>
     </tr>
   {% else %}
     <tr>
@@ -46,4 +42,29 @@
 
 <a class="btn btn-success" href="{{ path('app_vente_new') }}">➕ Ajouter une vente</a>
 <a class="btn btn-outiline-secondary ms-2" href="{{path('app_accueil')}}">🏠Retour à l'accueil</a>
+
+{# pagination #}
+{% if pages > 1 %}
+    <nav aria-label="Pagination produits">
+        <ul class="pagination mt-3">
+            {# ← précédent #}
+            <li class="page-item {{ page == 1 ? 'disabled' : '' }}">
+                <a class="page-link" href="{{ path('app_vente_index', {page: page - 1}) }}">Précédent</a>
+            </li>
+
+            {# ← les numéros de pages #}
+            {% for i in 1..pages %}
+                <li class="page-item {{ i == page ? 'active' : '' }}">
+                    <a class="page-link" href="{{ path('app_vente_index', {page: i}) }}">{{ i }}</a>
+                </li>
+            {% endfor %}
+
+            {# → suivant #}
+            <li class="page-item {{ page == pages ? 'disabled' : '' }}">
+                <a class="page-link" href="{{ path('app_vente_index', {page: page + 1}) }}">Suivant</a>
+            </li>
+        </ul>
+    </nav>
+{% endif %}
+
 {% endblock %}

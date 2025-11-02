@@ -2,45 +2,60 @@
 
 {% block titre %}Liste des fournisseurs — Logix G-Stock{% endblock %}
 
+
+
 {% block contenu %}
+<h1 class="mb-4">🏭 Fournisseurs</h1>
 
-<h1 class="mb-4">Liste des fournisseurs</h1>
+<form id="fournisseur-search-form" method="get" action="{{ path('app_fournisseur_index') }}" class="row g-2 mb-3">
+  <div class="col-auto">
+    <input type="text" name="q" value="{{ q ?? '' }}" class="form-control" placeholder="Rechercher par nom...">
+  </div>
+  <div class="col-auto">
+    <button class="btn btn-primary" type="submit">Rechercher</button>
+  </div>
+</form>
 
-<table class="table table-hover table-bordered align-middle">
-    <thead class="table-dark">
-        <tr>
-            <th>Id</th>
-            <th>Nom</th>
-            <th>NumTVA</th>
-            <th>Adresse</th>
-            <th>Telephone</th>
-            <th>Email</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for fournisseur in fournisseurs %}
-        <tr>
-            <td>{{ fournisseur.id }}</td>
-            <td>{{ fournisseur.nom }}</td>
-            <td>{{ fournisseur.numTva }}</td>
-            <td>{{ fournisseur.adresse }}</td>
-            <td>{{ fournisseur.telephone }}</td>
-            <td>{{ fournisseur.email }}</td>
-            <td>
-                <a href="{{ path('app_fournisseur_show', {'id': fournisseur.id}) }}" class="btn btn-primary">Afficher</a>
-                <a href="{{ path('app_fournisseur_edit', {'id': fournisseur.id}) }}" class="btn btn-warning">Modifier</a>
-            
-            </td>
-               
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div id="fournisseur-table-wrapper">
+  {% include 'fournisseur/_liste.html.twig' %}
+</div>
+{% endblock %}
 
 
-<a href="{{ path('app_fournisseur_new') }}"> ➕ Ajouter un fournisseur</a>
-<a class="btn btn-outiline-secondary ms-2" href="{{path('app_accueil')}}">🏠Retour à l'accueil</a>
 
+{% block javascripts %}
+  {{ parent() }}
+  <script>
+    const form = document.getElementById('client-search-form');
+    const input = form.querySelector('input[name="q"]');
+    const wrapper = document.getElementById('client-table-wrapper');
 
-{% endblock contenu %}
+    function loadClients(queryString) {
+      fetch('{{ path('app_client_index') }}' + queryString, {
+        headers: {'X-Requested-With': 'XMLHttpRequest'}
+      })
+      .then(r => r.text())
+      .then(html => {
+        wrapper.innerHTML = html;
+        bindClientPagination();
+      });
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const q = input.value;
+      loadClients('?q=' + encodeURIComponent(q) + '&page=1');
+    });
+
+    function bindClientPagination() {
+      wrapper.querySelectorAll('.js-page').forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          loadClients(this.getAttribute('href'));
+        });
+      });
+    }
+
+    bindClientPagination();
+  </script>
+{% endblock %}
