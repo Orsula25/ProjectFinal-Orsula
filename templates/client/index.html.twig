@@ -26,6 +26,8 @@
   <div class="col-auto">
     <button class="btn btn-primary" type="submit">Rechercher</button>
   </div>
+
+  <a class="btn btn-success mt-3" href="{{ path('app_client_new') }}">➕ Nouveau client</a>
   {% if q %}
     <div class="col-auto">
       <a class="btn btn-outline-secondary" href="{{ path('app_client_index') }}">Réinitialiser</a>

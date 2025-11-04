@@ -106,9 +106,9 @@ h1, h2 {
 /* -------- CARDS -------- */
 .card,
 .app-card {
-  background: var(--lgx-surface) !important;
-  border: 1px solid var(--lgx-border) !important;
-  border-radius: var(--lgx-radius) !important;
+  background: var(--lgx-surface) ;
+  border: 1px solid var(--lgx-border) ;
+  border-radius: var(--lgx-radius) ;
   box-shadow: var(--lgx-shadow);
 }
 
@@ -127,7 +127,7 @@ h1, h2 {
 }
 
 .table thead th {
-  border: 0 !important;
+  border: 0 ;
   font-size: .7rem;
   text-transform: uppercase;
   letter-spacing: .04em;
@@ -143,17 +143,17 @@ h1, h2 {
 form .form-control,
 form select,
 form textarea {
-  border-radius: .7rem !important;
-  border: 1px solid rgba(15,23,42,.12) !important;
-  box-shadow: none !important;
+  border-radius: .7rem ;
+  border: 1px solid rgba(15,23,42,.12) ;
+  box-shadow: none ;
   background: #fff;
 }
 
 form .form-control:focus,
 form select:focus,
 form textarea:focus {
-  border-color: rgba(13,110,253,.6) !important;
-  box-shadow: 0 0 0 .2rem rgba(13,110,253,.06) !important;
+  border-color: rgba(13,110,253,.6) ;
+  box-shadow: 0 0 0 .2rem rgba(13,110,253,.06) ;
 }
 
 form label {
@@ -169,9 +169,9 @@ form label {
 
 /* Boutons principaux (dont Se connecter) */
 .btn-primary {
-  background-color: var(--lgx-primary) !important;
-  border-color: var(--lgx-primary) !important;
-  color: #fff !important;
+  background-color: var(--lgx-primary) ;
+  border-color: var(--lgx-primary) ;
+  color: #fff ;
   border-radius: .8rem;
   padding: .55rem 1.25rem;
   font-weight: 600;
@@ -239,3 +239,122 @@ form[action*="_delete"] .btn {
       url("/Images/background.png") center top / 105% no-repeat fixed;
   }
 }
+
+
+
+/* =========================================================
+   FORMULAIRES — Logix G-Stock
+   ========================================================= */
+
+:root {
+  --lgx-primary: #2563eb;        /* bleu principal */
+  --lgx-primary-hover: #1d4ed8;
+  --lgx-bg: #f0f4fa;
+  --lgx-surface: #ffffff;
+  --lgx-border: rgba(15, 23, 42, 0.1);
+  --lgx-text: #0f172a;
+  --lgx-muted: #6b7280;
+  --lgx-radius: 0.8rem;
+  --lgx-shadow: 0 8px 25px rgba(15, 23, 42, 0.08);
+}
+
+/* -------- Page -------- */
+body {
+   background:
+      linear-gradient(rgba(148, 189, 239, 0.751), rgba(148, 189, 239, 0.9)),
+      url("/Images/background.png") center top / 105% no-repeat fixed;
+  
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--lgx-text);
+}
+
+/* -------- Titre -------- */
+h1 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--lgx-primary);
+  font-weight: 700;
+}
+
+/* -------- Bloc principal -------- */
+form {
+  background: var(--lgx-surface);
+  border: 1px solid var(--lgx-border);
+  border-radius: var(--lgx-radius);
+  box-shadow: var(--lgx-shadow);
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* -------- Champs -------- */
+form label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+  color: var(--lgx-text);
+}
+
+form input,
+form select,
+form textarea {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--lgx-border);
+  border-radius: var(--lgx-radius);
+  background-color: #f9fafb;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+form input:focus,
+form select:focus,
+form textarea:focus {
+  border-color: var(--lgx-primary);
+  outline: none;
+  background-color: #fff;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+/* -------- Bouton principal -------- */
+form button {
+  width: 100%;
+  background-color: var(--lgx-primary);
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--lgx-radius);
+  padding: 0.8rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+form button:hover {
+  background-color: var(--lgx-primary-hover);
+}
+
+/* -------- Lien retour -------- */
+a {
+  display: block;
+  text-align: center;
+  margin-top: 1rem;
+  color: var(--lgx-primary);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* -------- Responsive -------- */
+@media (max-width: 600px) {
+  form {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+}
+
+
+

@@ -19,6 +19,8 @@
   <div class="col-auto">
     <button class="btn btn-primary" type="submit">Rechercher</button>
   </div>
+
+  <a class="btn btn-success" href="{{ path('app_produit_new') }}">➕ Ajouter un produit</a>
   {% if q is defined and q %}
     <div class="col-auto">
       <a class="btn btn-outline-secondary" href="{{ path('app_produit_index') }}">Réinitialiser</a>
@@ -36,7 +38,6 @@
 </div>
 
 
-<a class="btn btn-success" href="{{ path('app_produit_new') }}">➕ Ajouter un produit</a>
 <a class="btn btn-outiline-secondary ms-2" href="{{path('app_accueil')}}">🏠Retour à l'accueil</a>
 
 
