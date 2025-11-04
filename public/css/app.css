@@ -1,97 +1,241 @@
+/* =========================================================
+   LOGIX G-STOCK - THEME GLOBAL
+   ========================================================= */
+
+/* -------- PALETTE -------- */
 :root {
-    --lgx-primary: #0d6efd;   
-    --lgx-success: #198754;   
-    --lgx-danger: #dc3545;   
+  --lgx-body: #e9edf2;        /* fond général */
+  --lgx-surface: #ffffff;     /* cartes */
+  --lgx-border: rgba(15, 23, 42, 0.06);
+  --lgx-border-dark: rgba(15, 23, 42, 0.12);
+  --lgx-primary: #2563eb;     /* 🔹 bleu plus vibrant */
+  --lgx-primary-soft: rgba(37, 99, 235, 0.12);
+  --lgx-text: #0f172a;
+  --lgx-muted: #6b7280;
+  --lgx-radius: .9rem;
+  --lgx-shadow: 0 16px 35px rgba(15, 23, 42, .04);
 }
 
-
-body{
-    font-family: system-ui, -apple-system, "ssegoe ui", Roboto, "Helvetica Neue", Helvetica, Arial;
-    background-color: #f8f9fa;
-    color: #212529;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-
+/* -------- GLOBAL -------- */
+body {
+  background:
+    linear-gradient(rgba(148, 189, 239, 0.751), rgba(148, 189, 239, 0.9)),
+    url("/Images/background.png") center/cover no-repeat fixed;
+  min-height: 100vh;
+  color: var(--lgx-text);
 }
 
-main{
-    flex: 1;
+/* -------- PAGE CONNEXION -------- */
+.app-brand {
+  text-align: center;
+  margin-bottom: 1.5rem;
 }
 
+.app-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--lgx-primary);
+  text-transform: uppercase;
+}
 
-/* ---------- Titres ---------- */
-.page-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-  }
-  
-  /* ---------- Navbar ---------- */
-  .navbar-brand {
-    font-weight: bold;
-    letter-spacing: 0.5px;
-  }
-  
-  .nav-pills .nav-link.active {
-    font-weight: 600;
-  }
-  
-  /* ---------- Cards ---------- */
-  .card {
-    border-radius: .75rem;
-  }
-  
-  .card-title {
-    font-size: 0.95rem;
-    text-transform: uppercase;
-    letter-spacing: .5px;
-    margin-bottom: 1rem;
-  }
-  
-/* ---------- Titres ---------- */
-.page-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-  }
-  
-  /* ---------- Navbar ---------- */
-  .navbar-brand {
-    font-weight: bold;
-    letter-spacing: 0.5px;
-  }
-  
-  .nav-pills .nav-link.active {
-    font-weight: 600;
-  }
-  
-  /* ---------- Cards ---------- */
-  .card {
-    border-radius: .75rem;
-  }
-  
-  .card-title {
-    font-size: 0.95rem;
-    text-transform: uppercase;
-    letter-spacing: .5px;
-    margin-bottom: 1rem;
-  }
-  
-  /* ---------- Formulaires ---------- */
-  form label {
-    font-weight: 500;
-  }
-  form .btn {
-    border-radius: .5rem;
-  }
+.app-sub {
+  font-size: 0.95rem;
+  color: #4b5563;
+  margin-top: 0.35rem;
+  font-style: italic;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+}
 
-  .navbar-dark .navbar-toggler-icon {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+.app-name::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 3px;
+  background: linear-gradient(90deg, #2563eb, #1d4ed8);
+  border-radius: 3px;
+  margin: 0.5rem auto 0 auto;
+}
+
+/* container principal (base.html.twig) */
+main.container {
+  max-width: 1150px;
+}
+
+/* -------- NAVBAR -------- */
+.navbar.bg-black,
+.navbar.bg-dark,
+.navbar.navbar-dark {
+  box-shadow: 0 10px 30px rgba(0,0,0,.12);
+}
+
+.navbar .navbar-brand {
+  font-weight: 700;
+  letter-spacing: .01em;
+}
+
+/* -------- MENU -------- */
+.bg-light.border-bottom.shadow-sm {
+  background: #fff !important;
+  border-bottom: 1px solid rgba(15,23,42,.035) !important;
+}
+
+.nav-pills .nav-link {
+  border-radius: .7rem;
+  font-weight: 500;
+  color: #334155;
+}
+
+.nav-pills .nav-link.active {
+  background: var(--lgx-primary-soft);
+  color: var(--lgx-primary);
+  box-shadow: inset 0 0 0 1px rgba(13,110,253,.25);
+}
+
+/* -------- TITRES -------- */
+.page-title,
+h1, h2 {
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+}
+
+/* -------- CARDS -------- */
+.card,
+.app-card {
+  background: var(--lgx-surface) !important;
+  border: 1px solid var(--lgx-border) !important;
+  border-radius: var(--lgx-radius) !important;
+  box-shadow: var(--lgx-shadow);
+}
+
+/* -------- TABLES -------- */
+.table {
+  background: #fff;
+  border-radius: .8rem;
+  overflow: hidden;
+  border: 1px solid rgba(15,23,42,.04);
+  box-shadow: 0 10px 30px rgba(15,23,42,.015);
+}
+
+.table thead {
+  background: #0f172a;
+  color: #fff;
+}
+
+.table thead th {
+  border: 0 !important;
+  font-size: .7rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  padding-top: .9rem;
+  padding-bottom: .9rem;
+}
+
+.table tbody tr:hover {
+  background: rgba(13,110,253,.03);
+}
+
+/* -------- FORMULAIRES -------- */
+form .form-control,
+form select,
+form textarea {
+  border-radius: .7rem !important;
+  border: 1px solid rgba(15,23,42,.12) !important;
+  box-shadow: none !important;
+  background: #fff;
+}
+
+form .form-control:focus,
+form select:focus,
+form textarea:focus {
+  border-color: rgba(13,110,253,.6) !important;
+  box-shadow: 0 0 0 .2rem rgba(13,110,253,.06) !important;
+}
+
+form label {
+  font-weight: 500;
+  color: #0f172a;
+}
+
+/* -------- BOUTONS (GLOBAL) -------- */
+.btn {
+  border-radius: .65rem;
+  font-weight: 500;
+}
+
+/* Boutons principaux (dont Se connecter) */
+.btn-primary {
+  background-color: var(--lgx-primary) !important;
+  border-color: var(--lgx-primary) !important;
+  color: #fff !important;
+  border-radius: .8rem;
+  padding: .55rem 1.25rem;
+  font-weight: 600;
+  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.35);
+  transition: transform .08s ease, box-shadow .08s ease, background-color .12s ease;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: #1d4ed8 ;
+  border-color: #1d4ed8 ;
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(37, 99, 235, 0.45);
+}
+
+/* État disabled (mais sans effet "grisé fantôme") */
+.btn-primary:disabled,
+.btn-primary.disabled {
+  opacity: 1 ;
+  background-color: #93c5fd ;
+  border-color: #93c5fd ;
+  box-shadow: none ;
+  cursor: not-allowed;
+}
+
+/* Bouton supprimer */
+form[action*="delete"] .btn,
+form[action*="_delete"] .btn {
+  background-color: #dc3545 ;
+  border: 1px solid rgba(220,53,69,.12) ;
+  color: #fff ;
+}
+
+/* -------- ALERTES -------- */
+.alert {
+  border-radius: .6rem;
+  border: 0;
+  box-shadow: 0 8px 22px rgba(15,23,42,.08);
+}
+
+/* -------- RESPONSIVE -------- */
+@media (max-width: 992px) {
+  main.container {
+    max-width: 100%;
   }
+  .table {
+    font-size: .85rem;
+  }
+}
+
+/* écran moyen (≥ 992px) : fond adapté */
+@media (min-width: 992px) {
+  body {
+    background:
+      linear-gradient(rgba(148, 189, 239, 0.751), rgba(148, 189, 239, 0.9)),
+      url("/Images/background.png") center top / 115% no-repeat fixed;
+  }
+}
+
+/* très grand écran (≥ 1400px) : léger dézoom */
+@media (min-width: 1400px) {
+  body {
+    background:
+      linear-gradient(rgba(148, 189, 239, 0.751), rgba(148, 189, 239, 0.9)),
+      url("/Images/background.png") center top / 105% no-repeat fixed;
+  }
+}

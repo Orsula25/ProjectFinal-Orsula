@@ -5,11 +5,14 @@
 {% block contenu %}
 <h1>Nouvelle commande d'achat</h1>
 
+
+ <h3>Produits</h3>
+
 {{ form_start(form) }}
     {{ form_row(form.reference) }}
     {{ form_row(form.fournisseur) }}
 
-    <h3>Produits</h3>
+   
 
     <div id="lignes-commande"
          data-prototype="{{ form_widget(form.lignesCommande.vars.prototype)|e('html_attr') }}">
