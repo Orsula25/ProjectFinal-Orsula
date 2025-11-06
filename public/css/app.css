@@ -356,5 +356,329 @@ a:hover {
   }
 }
 
+.topbar-user,
+.navbar-nav.ms-auto {
+  align-items: center;
+}
+
+.btn-user-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: transparent;
+  color: #f9fafb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+}
+
+.btn-user-circle:hover {
+  background-color: #f9fafb;
+  color: #111827;
+  border-color: #f9fafb;
+}
+
+/* Dropdown utilisateur plus compact */
+.user-dropdown {
+  font-size: 0.85rem;      /* texte plus petit */
+  padding: 0.25rem 0;      /* moins de marge interne */
+  min-width: 180px;        /* un peu plus étroit si tu veux */
+}
+
+.user-dropdown .dropdown-header {
+  padding: 0.35rem 0.75rem;
+}
+
+.user-dropdown .dropdown-item {
+  padding: 0.4rem 0.75rem;
+}
+
+/* Neutraliser le style "grosse carte" pour le formulaire du dropdown user */
+.user-dropdown form {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Et on simplifie le bouton du logout dans ce menu */
+.user-dropdown form .dropdown-item {
+  width: 100%;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0.35rem 0.75rem;   /* tu peux réduire encore si tu veux */
+}
+
+
+/* 1) Ne pas transformer les petits formulaires d'actions en grosses cartes */
+.table td form {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* 2) Boutons d'actions vraiment petits */
+.table td .btn-sm {
+  padding: 0.15rem 0.55rem;
+  font-size: 0.75rem;
+  box-shadow: none;
+}
+
+/* Optionnel : retirer le width:100% si ça venait à s'appliquer */
+.table td form button {
+  width: auto;
+}
+/* ===== Actions dans le tableau des commandes ===== */
+
+.commande-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;   /* ou flex-start si tu préfères à gauche */
+  gap: 0.35rem;
+}
+
+/* On neutralise le style "form carte" pour ces formulaires */
+.commande-actions .action-form {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  max-width: none;
+}
+
+/* Boutons ronds (œil, check, croix) */
+.action-btn {
+  width: 26px;
+  height: 26px;
+  margin: 0;                 /* 🔴 IMPORTANT : enlève le margin-top du <a> global */
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 2px solid #111827;
+  background: #ffffff;
+  font-size: 0.8rem;
+  line-height: 1;            /* pour bien centrer l’icône */
+  cursor: pointer;
+  box-shadow: none;
+  transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease, color .12s ease;
+}
+
+.action-btn i {
+  pointer-events: none;
+}
+
+/* Styles par type d’action */
+.action-view {
+  border-color: #6b7280;   /* gris */
+  color: #6b7280;
+}
+
+.action-ok {
+  background-color: #22c55e;   /* vert */
+  border-color: #15803d;
+  color: #ffffff;
+}
+
+.action-cancel {
+  background-color: #f97316;   /* orange */
+  border-color: #ea580c;
+  color: #ffffff;
+}
+
+/* Hover */
+.action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(15,23,42,.25);
+}
+/* ===== Barre de recherche type "pill" ===== */
+
+.search-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #ffffff;
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  max-width: 700px;
+  margin: 0 auto 1rem auto;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.18);
+}
+
+/* On efface tous les styles globaux hérités sur cet input */
+.search-pill-input {
+  all: unset;                 /* 🔥 remet à zéro width, margin, border, etc. */
+  flex: 1;
+  font-size: 0.95rem;
+  color: #111827;
+  padding: 0.35rem 0.2rem;
+}
+
+.search-pill-input::placeholder {
+  color: #9ca3af;
+}
+
+/* On efface aussi les styles globaux du bouton et on repart propre */
+.search-pill-btn {
+  all: unset;                 
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: #1d4ed8;
+}
+
+.search-pill-btn i {
+  pointer-events: none;
+}
+
+/* Focus sympa quand on clique dans la zone */
+.search-pill:focus-within {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25);
+}
+
+/* Enlever le carré bleu sur la loupe */
+.search-pill-btn:focus {
+  outline: none;
+}
+
+.produit-add-btn {
+  margin-bottom: 1rem;  /* espace de 16px sous le bouton */
+}
+
+.client-add-btn {
+  margin-bottom: 1rem;  /* espace de 16px sous le bouton */
+}
+
+.fournisseur-add-btn {
+  margin-bottom: 1rem;  /* espace de 16px sous le bouton */
+}
+
+/* ===== Boutons page détail produit ===== */
+
+.detail-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* On annule ton style global sur <a> dans cette zone */
+.detail-actions a {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 0;
+}
+
+/* On neutralise le style "form carte" et width:100% pour ce petit form */
+.detail-actions form {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  max-width: none;
+}
+
+.detail-actions form button {
+  width: auto;
+}
+
+/* ===== Boutons page détail produit ===== */
+
+.detail-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* On annule le a { display:block; margin-top:1rem; } pour ces liens */
+.detail-actions a {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 0;
+}
+
+/* On neutralise le style "form carte" pour le delete */
+.detail-actions form {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Le bouton à l'intérieur ne doit pas être full-width */
+.detail-actions form button {
+  width: auto !important;
+}
+
+/* Style commun : petits boutons arrondis */
+.btn-detail {
+  padding: 0.25rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+  background: #ffffff;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color .12s ease, color .12s ease,
+              box-shadow .12s ease, border-color .12s ease;
+}
+
+/* Afficher la liste */
+.btn-detail-secondary {
+  border-color: #cbd5e1;
+  color: #334155;
+}
+.btn-detail-secondary:hover {
+  background-color: #e5e7eb;
+}
+
+/* Modifier */
+.btn-detail-primary {
+  background-color: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+}
+.btn-detail-primary:hover {
+  background-color: #1d4ed8;
+}
+
+/* Supprimer : juste contour rouge, fond transparent */
+.btn-detail-danger {
+  background-color: transparent;
+  border-color: #ef4444;
+  color: #ef4444;
+}
+.btn-detail-danger:hover {
+  background-color: #ef4444;
+  color: #ffffff;
+}
+
+
+
 
 

@@ -14,6 +14,9 @@
 
  <link rel="stylesheet" href="{{ asset('css/app.css') }}?v=123">
 
+ <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
  
 
   {# JS global #}
@@ -53,14 +56,44 @@
           </li>
         </ul>
 
-        <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto">
           {% if app.user %}
-            <li class="nav-item"><span class="navbar-text me-2">Bonjour {{ app.user.nom }}</span></li>
-            <li class="nav-item"><a class="btn btn-outline-light btn-sm" href="{{ path('app_logout') }}">Déconnexion</a></li>
+            <li class="nav-item d-flex align-items-center me-2">
+              <span class="navbar-text text-light">
+                Bonjour <strong>{{ app.user.nom }}</strong>
+              </span>
+            </li>
+
+            <li class="nav-item dropdown">
+              <button class="btn btn-user-circle dropdown-toggle" type="button"
+                      id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fa-solid fa-user"></i>
+              </button>
+
+         <ul class="dropdown-menu dropdown-menu-end user-dropdown" aria-labelledby="userMenu">
+            <li class="dropdown-header small text-muted px-3">
+              Connecté en tant que<br>
+              <strong>{{ app.user.nom }}</strong>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <form method="post" action="{{ path('app_logout') }}">
+                <button type="submit" class="dropdown-item text-danger">
+                  <i class="fa-solid fa-right-from-bracket me-2"></i>
+                  Se déconnecter
+                </button>
+              </form>
+            </li>
+          </ul>
+            </li>
           {% else %}
-            <li class="nav-item"><a class="btn btn-outline-light btn-sm" href="{{ path('app_login') }}">Connexion</a></li>
+            <li class="nav-item">
+              <a class="btn btn-outline-light btn-sm" href="{{ path('app_login') }}">Connexion</a>
+            </li>
           {% endif %}
         </ul>
+
+
       </div>
     </div>
   </nav>

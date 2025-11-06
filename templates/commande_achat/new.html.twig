@@ -28,9 +28,11 @@
     </button>
 
     <button class="btn btn-primary mt-4">Enregistrer le brouillon</button>
+
+{% do form.lignesCommande.setRendered %}
 {{ form_end(form) }}
 
-<a class="btn btn-link mt-3" href="{{ path('app_commande_achat_index') }}">⬅ Retour à la liste</a>
+<a class="btn btn-secondary mt-3" href="{{ path('app_commande_achat_index') }}">Retour à la liste</a>
 
 {# petit JS pour dupliquer une ligne #}
 <script>

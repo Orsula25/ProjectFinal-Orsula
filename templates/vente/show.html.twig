@@ -98,10 +98,12 @@
 
          
 
+<div class="detail-actions">
 
-    <a href="{{ path('app_vente_index') }}">Retour à la liste</a>
+    <a href="{{ path('app_vente_index') }}" class="btn-detail btn-detail-secondary" >Afficher la liste</a>
 
-    <a href="{{ path('app_vente_edit', {'id': vente.id}) }}">Modifier</a>
+    <a href="{{ path('app_vente_edit', {'id': vente.id}) }}" class="btn-detail btn-detail-secondary" >Modifier</a>
 
     {{ include('vente/_delete_form.html.twig') }}
+</div>
 {% endblock %}

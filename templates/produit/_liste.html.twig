@@ -30,11 +30,11 @@
 </th>
       <th>Description</th>
       <th>Prix</th>
-      <th>Stock</th>
       <th>Référence</th>
       <th>Créé le</th>
       <th>Modifié le</th>
       <th>TVA</th>
+      <th>Stock</th>
       <th>Stock min</th>
       <th>En commande</th>
       <th>État</th>
@@ -47,12 +47,12 @@
         <td>{{ produit.id }}</td>
         <td>{{ produit.nom }}</td>
         <td>{{ produit.description }}</td>
-        <td>{{ produit.prixUnitaire|number_format(2, ',', ' ') }} €</td>
-        <td>{{ produit.quantiteStock }}</td>
-        <td>{{ produit.reference }}</td>
+        <td class="col-price text-end text-nowrap">{{ produit.prixUnitaire|number_format(2, ',', ' ') }} €</td>        
+        <td class="col-price text-end text-nowrap">{{ produit.reference }}</td>
         <td>{{ produit.dateCreation ? produit.dateCreation|date('d/m/Y H:i') : '' }}</td>
         <td>{{ produit.dateModification ? produit.dateModification|date('d/m/Y H:i') : '' }}</td>
-        <td>{{ produit.tva }} %</td>
+        <td class="col-price text-end text-nowrap">{{ produit.tva }} %</td>
+        <td>{{ produit.quantiteStock }}</td>
         <td>{{ produit.stockMin }}</td>
         <td>{{ produit.enCommande }}</td>
         <td>

@@ -39,80 +39,86 @@
 
 
 <script>
+  // --- Met à jour le prix unitaire (20% de moins) à partir du produit choisi ---
+  function updatePrixFromSelectedOption(selectEl) {
+    // option sélectionnée
+    const option = selectEl.options[selectEl.selectedIndex];
+    // prix du produit dans data-prix
+    const prix = option ? option.getAttribute('data-prix') : null;
 
-{# fonction pour mettre à jour le prix unitaire #}
+    // input du prix dans le même <li>
+    const prixInput = selectEl.closest('li')?.querySelector('input[name$="[prixUnitaire]"]');
 
-function updatePrixFromSelectedOption(selectEl) {
-  {# Récupère l'option sélectionnée #}
-  const option = selectEl.options[selectEl.selectedIndex];
-  {# Lit le prix depuis l'attribut data-prix #}
-  const prix = option ? option.getAttribute('data-prix') : null;
+    if (prixInput) {
+      if (prix) {
+        const prixUnitaire = parseFloat(prix);
+        const prixAchat = prixUnitaire * 0.8; // 20% de moins
 
-  {# Trouve l'input correspondant au prix unitaire dans le même <li>#}
-  const prixInput = selectEl.closest('li')?.querySelector('input[name$="[prixUnitaire]"]');
-  if (prixInput) {
-    prixInput.value = prix ? parseFloat(prix).toFixed(2) : '';
+        prixInput.value = prixAchat.toFixed(2);
+      } else {
+        prixInput.value = '';
+      }
+    }
   }
 
-}
+  // --- Ajoute l'écouteur sur le <select> produit ---
+  function attachProduitChangeListener(container) {
+    container.querySelectorAll('select[name$="[produit]"]').forEach(function (selectEl) {
+      if (!selectEl.dataset.listenerAttached) {
+        selectEl.addEventListener('change', function () {
+          updatePrixFromSelectedOption(selectEl);
+        });
 
-{# ajout d'un ecouteur sur le <select> produit #}
-
-function attachProduitChangeListener(container) {
-  container.querySelectorAll('select[name$="[produit]"]').forEach(function(selectEl) {
-    if (!selectEl.dataset.listenerAttached) {
-      selectEl.addEventListener('change', function() {
+        // initialise le prix si un produit est déjà sélectionné
         updatePrixFromSelectedOption(selectEl);
-      });
-      {# Initialise directement le prix si un produit est déjà sélectionné#}
-      updatePrixFromSelectedOption(selectEl);
-      selectEl.dataset.listenerAttached = '1';
-        }
+
+        selectEl.dataset.listenerAttached = '1';
+      }
     });
-}
+  }
 
+  // --- Ajoute une nouvelle ligne de détail ---
+  function addFormToCollection(e) {
+    const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
+    const item = document.createElement('li');
 
-{#rajoute chaque nouveau detail#}
-function addFormToCollection(e) {
-  const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
-  const item = document.createElement('li');
+    item.classList.add('mb-3');
+    item.innerHTML = collectionHolder.dataset.prototype.replace(/__name__/g, collectionHolder.dataset.index);
+    collectionHolder.appendChild(item);
+    collectionHolder.dataset.index++;
 
-  item.innerHTML = collectionHolder.dataset.prototype.replace(/__name__/g, collectionHolder.dataset.index);
-  collectionHolder.appendChild(item);
-  collectionHolder.dataset.index++;
+    // bouton supprimer
+    addDetailFormDeleteLink(item);
+    // écouteur pour le prix
+    attachProduitChangeListener(item);
+  }
 
-  {# Ajoute bouton delete #}
-  addDetailFormDeleteLink(item);
-  {#attache la logique de mise à jour du prix sur le nouveau select#}
-  attachProduitChangeListener(item);
+  // --- Ajoute le bouton "-" pour supprimer la ligne ---
+  function addDetailFormDeleteLink(item) {
+    const removeFormButton = document.createElement('button');
+    removeFormButton.type = 'button';
+    removeFormButton.textContent = '−';          // le petit "moins"
+    removeFormButton.title = 'Supprimer la ligne';
+    removeFormButton.classList.add('btn-remove-detail');
+    item.append(removeFormButton);
 
-    
-  };
+    removeFormButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      item.remove();
+    });
+  }
 
-{#rajoute le bouton de delete#}
-function addDetailFormDeleteLink(item) {
-  const removeFormButton = document.createElement('button');
-  removeFormButton.textContent = '-';
-  removeFormButton.title = 'supprimer la ligne';
-  item.append(removeFormButton);
-
-  removeFormButton.addEventListener('click', (e) => {
-    e.preventDefault();
-    item.remove();
+  // --- branche les boutons "+" existants ---
+  document.querySelectorAll('.add_item_link').forEach(btn => {
+    btn.addEventListener('click', addFormToCollection);
   });
-}
-  
-document.querySelectorAll('.add_item_link').forEach(btn => {
-  btn.addEventListener('click', addFormToCollection);
-});
 
-document.querySelectorAll('ul.detailAchats li').forEach(tag => {
-  addDetailFormDeleteLink(tag);
-  attachProduitChangeListener(tag);
-});
-
+  // --- pour les lignes déjà présentes au chargement ---
+  document.querySelectorAll('ul.detailAchats li').forEach(tag => {
+    addDetailFormDeleteLink(tag);
+    attachProduitChangeListener(tag);
+  });
 </script>
-
 
 {% endblock %}
 

@@ -41,45 +41,46 @@
                     <span class="badge bg-light text-dark">{{ c.statut }}</span>
                 {% endif %}
             </td>
-            <td class="d-flex flex-wrap gap-1">
+  <td>
+  <div class="commande-actions">
 
-                {# Voir détail #}
-                <a class="btn btn-sm btn-outline-secondary"
-                   href="{{ path('app_commande_achat_show', {id: c.id}) }}">
-                    Voir
-                </a>
+    {# Voir : toujours affiché #}
+    <a href="{{ path('app_commande_achat_show', {id: c.id}) }}"
+       class="action-btn action-view"
+       title="Voir la commande">
+      <i class="fa-solid fa-eye"></i>
+    </a>
 
-                {# Envoyer si brouillon #}
-                {% if c.isBrouillon %}
-                    <form method="post"
-                          action="{{ path('app_commande_achat_envoyer', {id: c.id}) }}"
-                          onsubmit="return confirm('Envoyer cette commande au fournisseur ?');">
-                        <input type="hidden" name="_token" value="{{ csrf_token('envoyer' ~ c.id) }}">
-                        <button class="btn btn-sm btn-primary">Envoyer</button>
-                    </form>
-                {% endif %}
+    {# Réceptionner si envoyée #}
+    {% if c.isEnvoyee %}
+      <form method="post"
+            action="{{ path('app_commande_achat_reception', {id: c.id}) }}"
+            class="action-form"
+            onsubmit="return confirm('Confirmer la réception ? Le stock va être ajouté.');">
+        <input type="hidden" name="_token" value="{{ csrf_token('reception' ~ c.id) }}">
+        <button type="submit" class="action-btn action-ok" title="Réceptionner">
+          <i class="fa-solid fa-check"></i>
+        </button>
+      </form>
+    {% endif %}
 
-                {# Réceptionner si envoyée #}
-                {% if c.isEnvoyee %}
-                    <form method="post"
-                          action="{{ path('app_commande_achat_reception', {id: c.id}) }}"
-                          onsubmit="return confirm('Confirmer la réception ? Le stock va être ajouté.');">
-                        <input type="hidden" name="_token" value="{{ csrf_token('reception' ~ c.id) }}">
-                        <button class="btn btn-sm btn-success">Réceptionner</button>
-                    </form>
-                {% endif %}
+    {# Annuler si brouillon OU envoyée (mais pas déjà réceptionnée) #}
+    {% if (c.isBrouillon or c.isEnvoyee) and not c.isReceptionnee %}
+      <form method="post"
+            action="{{ path('app_commande_achat_annuler', {id: c.id}) }}"
+            class="action-form"
+            onsubmit="return confirm('Annuler cette commande ?');">
+        <input type="hidden" name="_token" value="{{ csrf_token('annuler' ~ c.id) }}">
+        <button type="submit" class="action-btn action-cancel" title="Annuler">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </form>
+    {% endif %}
 
-                {# Annuler si brouillon OU envoyée (mais pas déjà réceptionnée) #}
-                {% if (c.isBrouillon or c.isEnvoyee) and not c.isReceptionnee %}
-                    <form method="post"
-                          action="{{ path('app_commande_achat_annuler', {id: c.id}) }}"
-                          onsubmit="return confirm('Annuler cette commande ?');">
-                        <input type="hidden" name="_token" value="{{ csrf_token('annuler' ~ c.id) }}">
-                        <button class="btn btn-sm btn-outline-danger">Annuler</button>
-                    </form>
-                {% endif %}
+  </div>
+</td>
 
-            </td>
+
         </tr>
     {% else %}
         <tr>

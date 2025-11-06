@@ -39,7 +39,6 @@ class DetailAchat
     public function setId(?int $id): static
     {
         $this->id = $id;
-
         return $this;
     }
 
@@ -51,7 +50,6 @@ class DetailAchat
     public function setAchat(?Achat $achat): static
     {
         $this->achat = $achat;
-
         return $this;
     }
 
@@ -63,7 +61,6 @@ class DetailAchat
     public function setProduit(?Produit $produit): static
     {
         $this->produit = $produit;
-
         return $this;
     }
 
@@ -75,7 +72,6 @@ class DetailAchat
     public function setQuantite(?int $quantite): static
     {
         $this->quantite = $quantite;
-
         return $this;
     }
 
@@ -87,7 +83,6 @@ class DetailAchat
     public function setPrixUnitaire(?string $prixUnitaire): static
     {
         $this->prixUnitaire = $prixUnitaire;
-
         return $this;
     }
 
@@ -99,16 +94,18 @@ class DetailAchat
     public function setSousTotal(?string $sousTotal): static
     {
         $this->sousTotal = $sousTotal;
-
         return $this;
     }
 
     public function calculerSousTotal(): void
     {
-       if ($this -> quantite !== null && $this -> prixUnitaire !== null) {
-           $this -> sousTotal = $this -> quantite * $this -> prixUnitaire;
-       }
-    }
-    
+        if ($this->quantite !== null && $this->prixUnitaire !== null) {
+            $quantite = (float) $this->quantite;
+            $prix     = (float) $this->prixUnitaire;
 
+            $this->sousTotal = (string) ($quantite * $prix);
+        } else {
+            $this->sousTotal = null;
+        }
+    }
 }

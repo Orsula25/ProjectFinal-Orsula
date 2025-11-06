@@ -6,27 +6,29 @@
 <h1 class="mb-4">📦 Liste des produits</h1>
 
 {# barre de recherche #}
-<form id="produit-search-form" method="get" action="{{ path('app_produit_index') }}" class="row g-2 mb-3">
-  <div class="col-auto">
-    <input
-      type="text"
-      name="q"
-      value="{{ q ?? '' }}"  {#  pour garder la valeur tapée #}
-      class="form-control"
-      placeholder="Rechercher par nom ou référence..."
-    >
-  </div>
-  <div class="col-auto">
-    <button class="btn btn-primary" type="submit">Rechercher</button>
-  </div>
+<form id="produit-search-form"
+      method="get"
+      action="{{ path('app_produit_index') }}"
+      class="search-pill mb-3">
 
-  <a class="btn btn-success" href="{{ path('app_produit_new') }}">➕ Ajouter un produit</a>
-  {% if q is defined and q %}
-    <div class="col-auto">
-      <a class="btn btn-outline-secondary" href="{{ path('app_produit_index') }}">Réinitialiser</a>
-    </div>
-  {% endif %}
+  <input
+    type="text"
+    name="q"
+    value="{{ q ?? '' }}"
+    class="search-pill-input"
+    placeholder="Rechercher par nom ou référence..."
+  >
+
+  <button class="search-pill-btn" type="submit" aria-label="Rechercher">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
 </form>
+
+ <a class="btn btn-success btn-sm produit-add-btn"
+     href="{{ path('app_produit_new') }}">
+    ➕ Ajouter un produit
+  </a>
+
 
 {% if q is defined and q %}
   <p class="text-muted mb-2">Résultats pour : <strong>{{ q }}</strong></p>

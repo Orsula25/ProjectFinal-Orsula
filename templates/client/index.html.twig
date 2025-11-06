@@ -8,32 +8,29 @@
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
 </style>
 
+{# barre de recherche #}
+<form id="client-search-form"
+      method="get"
+      action="{{ path('app_client_index') }}"
+      class="search-pill mb-3">
 
+  <input
+    type="text"
+    name="q"
+    value="{{ q ?? '' }}"
+    class="search-pill-input"
+    placeholder="Rechercher par nom ou référence..."
+  >
 
-
-
-
-<form id="client-search-form" method="get" action="{{ path('app_client_index') }}" class="row g-2 mb-3">
-  <div class="col-auto">
-    <input
-      type="text"
-      name="q"
-      value="{{ q ?? '' }}"
-      class="form-control"
-      placeholder="Rechercher par nom..."
-    >
-  </div>
-  <div class="col-auto">
-    <button class="btn btn-primary" type="submit">Rechercher</button>
-  </div>
-
-  <a class="btn btn-success mt-3" href="{{ path('app_client_new') }}">➕ Nouveau client</a>
-  {% if q %}
-    <div class="col-auto">
-      <a class="btn btn-outline-secondary" href="{{ path('app_client_index') }}">Réinitialiser</a>
-    </div>
-  {% endif %}
+  <button class="search-pill-btn" type="submit" aria-label="Rechercher">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
 </form>
+
+ <a class="btn btn-success btn-sm client-add-btn"
+     href="{{ path('app_client_new') }}">
+    ➕ Ajouter un client
+  </a>
 
 <div id="client-table-wrapper">
   {% include 'client/_liste.html.twig' %}

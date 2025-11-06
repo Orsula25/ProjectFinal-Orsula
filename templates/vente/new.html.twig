@@ -10,7 +10,7 @@
     {{ form_widget(form.dateVente) }}
     {{ form_widget(form.client) }}
 
-<h3>Produits vendus</h3>
+
 
 {# preparer le prototype #}
 <h3>Produits vendus</h3>
@@ -25,19 +25,19 @@
 </ul>
 
 <template id="detailVente-prototype">
+
   {{ form_widget(form.detailVentes.vars.prototype) }}
 </template>
 
 
-<button type="button" class="add_item_link" data-collection-holder-class="detailVentes">➕</button>
-
+<div class="mt-3 d-flex gap-2">
+  <button type="button" class="btn btn-outline-secondary add_item_link" data-collection-holder-class="detailVentes">➕</button>
+  <button type="submit" class="btn btn-success">Ajouter</button>
+</div>
+   
+{{ include('vente/_form.html.twig') }}
 
    
-    {{ include('vente/_form.html.twig') }}
-
-    <a href="{{ path('app_vente_index') }}">Retour à la liste</a>
-
-
 
 <script>
 
