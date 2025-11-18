@@ -1,0 +1,64 @@
+{# templates/vente/facture.html.twig #}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Facture n°{{ vente.id }}</title>
+  <style>
+    body { font-family: DejaVu Sans, sans-serif; font-size: 12px; }
+    h1 { text-align: center; font-size: 18px; margin-bottom: 20px; }
+    .header, .footer { margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ddd; padding: 6px; }
+    th { background: #f3f4f6; }
+    .totaux { text-align: right; margin-top: 15px; }
+  </style>
+</head>
+<body>
+  <h1>Facture</h1>
+
+  <div class="header">
+    <strong>Facture n° :</strong> {{ vente.id }}<br>
+    <strong>Date :</strong> {{ vente.dateVente|date('d/m/Y') }}<br>
+  </div>
+
+  <div class="client">
+    <strong>Client :</strong><br>
+    {{ vente.client.nom }}<br>
+    {{ vente.client.adresse }}<br>
+    {{ vente.client.email }}
+  </div>
+
+ <h3>Détail de la vente</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Produit</th>
+      <th>Quantité</th>
+      <th>Prix unitaire</th>
+      <th>Sous-total</th>
+    </tr>
+  </thead>
+  <tbody>
+    {# on utilise bien vente.detailVentes (getDetailVentes()) #}
+    {% for detail in vente.detailVentes %}
+      <tr>
+        <td>{{ detail.produit.nom }}</td>
+        <td>{{ detail.quantite }}</td>
+        <td>
+          {{ detail.prixUnitaire|number_format(2, ',', ' ') }} €
+        </td>
+        <td>
+          {{ detail.sousTotal|number_format(2, ',', ' ') }} €
+        </td>
+      </tr>
+    {% else %}
+      <tr>
+        <td colspan="4">Aucune ligne de vente</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+</body>
+</html>
