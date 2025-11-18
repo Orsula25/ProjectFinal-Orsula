@@ -90,15 +90,18 @@ class CommandeAchatController extends AbstractController
             return $this->redirectToRoute('app_commande_achat_index');
         }
 
-        foreach ($commande->getLignesCommande() as $ligne) {
-            $produit = $ligne->getProduit();
-            $qte     = $ligne->getQuantite();
+      foreach ($commande->getLignesCommande() as $ligne) {
+    $produit = $ligne->getProduit();
+    $qte     = $ligne->getQuantite();
 
-            if ($produit && $qte > 0) {
-                $produit->setEnCommande($produit->getEnCommande() + $qte);
-                $em->persist($produit);
-            }
-        }
+    if ($produit && $qte > 0) {
+        
+       
+        $produit->incEnCommande($qte);
+
+        $em->persist($produit);
+    }
+}
 
         $commande->setStatut(CommandeAchat::STATUT_ENVOYEE);
         $em->flush();
@@ -116,7 +119,6 @@ class CommandeAchatController extends AbstractController
         ]);
     }
 
-        // RÉCEPTIONNER LA COMMANDE + CRÉER L'ACHAT
     // RÉCEPTIONNER LA COMMANDE + CRÉER L'ACHAT
 #[Route('/{id}/recevoir', name: 'app_commande_achat_reception', methods: ['POST'])]
 #[Route('/commande-achat/{id}/reception', name: 'app_commande_achat_reception_legacy', methods: ['POST'])]
@@ -136,34 +138,34 @@ public function recevoir(CommandeAchat $commande, Request $request, EntityManage
         return $this->redirectToRoute('app_commande_achat_show', ['id' => $commande->getId()]);
     }
 
-    // 1) Mise à jour des stocks
-    foreach ($commande->getLignesCommande() as $ligne) {
-        $p   = $ligne->getProduit();
-        $qte = $ligne->getQuantite();
+    // Mise à jour des stocks
+  foreach ($commande->getLignesCommande() as $ligne) {
+    $p   = $ligne->getProduit();
+    $qte = $ligne->getQuantite();
 
-        if ($p && $qte > 0) {
-            // on enlève du "en commande"
-            $p->setEnCommande(
-                max(0, $p->getEnCommande() - $qte)
-            );
+    if ($p && $qte > 0) {
+        
 
-            // on ajoute au stock réel
-            $p->setQuantiteStock(
-                $p->getQuantiteStock() + $qte
-            );
+        //on utilise le helper
+        $p->decEnCommande($qte);
 
-            $em->persist($p);
-        }
+        // on ajoute au stock réel
+        $p->setQuantiteStock(
+            $p->getQuantiteStock() + $qte
+        );
+
+        $em->persist($p);
     }
+}
 
-    // 2) Créer l'achat
+    // Créer l'achat
     $achat = new Achat();
     $achat->setDateAchat(new \DateTimeImmutable());
     $achat->setFournisseur($commande->getFournisseur());
     $achat->setEtat('Réceptionné');
     $achat->setReference($commande->getReference());
 
-    // 3) Créer les détails d'achat
+    // Créer les détails d'achat
     foreach ($commande->getLignesCommande() as $ligneCmd) {
         $produit = $ligneCmd->getProduit();
 
@@ -189,10 +191,10 @@ public function recevoir(CommandeAchat $commande, Request $request, EntityManage
         $em->persist($detail);
     }
 
-    // 4) recalculer explicitement le montant total de l'achat
+    // recalculer explicitement le montant total de l'achat
     $achat->recalculerMontantTotal();
 
-    // 5) Mettre à jour le statut de la commande
+    // Mettre à jour le statut de la commande
     $commande->setStatut(CommandeAchat::STATUT_RECEPTIONNEE);
 
     $em->persist($achat);

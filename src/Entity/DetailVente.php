@@ -104,10 +104,34 @@ class DetailVente
     }
 
 
-    public function calculerSousTotal(): void
-    {
-       if ($this -> quantite !== null && $this -> prixUnitaire !== null) {
-           $this -> sousTotal = $this -> quantite * $this -> prixUnitaire;
-       }
+   public function calculerSousTotal(): void
+{
+    // Si pas de quantité → rien à faire
+    if ($this->quantite === null) {
+        $this->sousTotal = null;
+        return;
     }
+
+    $quantite = (float) $this->quantite;
+
+    // Si un prix unitaire est renseigné sur la ligne, on l'utilise
+    if ($this->prixUnitaire !== null) {
+        $prix = (float) $this->prixUnitaire;
+    }
+    // Sinon, si un produit est lié → on prend son prix de vente
+    elseif ($this->produit !== null) {
+        $prix = (float) $this->produit->getPrixUnitaire();
+        // On garde la trace en base
+        $this->prixUnitaire = number_format($prix, 2, '.', '');
+    }
+    // Sinon, on ne sait pas calculer
+    else {
+        $this->sousTotal = null;
+        return;
+    }
+
+    // Sous-total = quantité × prix
+    $this->sousTotal = number_format($quantite * $prix, 2, '.', '');
+}
+
 }
