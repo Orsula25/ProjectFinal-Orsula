@@ -1,0 +1,56 @@
+{# entreprise/show.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block titre %}Entreprise{% endblock %}
+
+{% block contenu %}
+    <h1>Entreprise</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ entreprise.id }}</td>
+            </tr>
+            <tr>
+                <th>Nom</th>
+                <td>{{ entreprise.nom }}</td>
+            </tr>
+            <tr>
+                <th>Adresse</th>
+                <td>{{ entreprise.adresse }}</td>
+            </tr>
+            <tr>
+                <th>Telephone</th>
+                <td>{{ entreprise.telephone }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ entreprise.email }}</td>
+            </tr>
+            <tr>
+                <th>NumTva</th>
+                <td>{{ entreprise.numTva }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+  <div class="detail-actions">
+    <a href="{{ path('app_accueil') }}" class="btn-detail btn-detail-secondary">
+        Retour à l'accueil
+    </a>
+
+    <a href="{{ path('app_entreprise_edit', {'id': entreprise.id}) }}" class="btn-detail btn-detail-primary">
+        Modifier
+    </a>
+
+    <form method="post"
+          action="{{ path('app_entreprise_delete', {'id': entreprise.id}) }}"
+          onsubmit="return confirm('Êtes-vous sûr·e de vouloir supprimer cette entreprise ?');">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ entreprise.id) }}">
+        <button class="btn-detail btn-detail-danger" type="submit">
+            Supprimer
+        </button>
+    </form>
+</div>
+{% endblock %}

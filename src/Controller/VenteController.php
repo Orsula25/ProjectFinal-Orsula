@@ -10,7 +10,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Attribute\Route;  
+use Dompdf\Dompdf;
+use Dompdf\Options;
 // use App\Enum\TypeMouvement;
 // use App\Repository\MouvementStockRepository;
 
@@ -204,6 +206,40 @@ final class VenteController extends AbstractController
     //     ->getQuery()
     //     ->getResult();
     // }
+
+
+    //facture 
+    #[Route('/vente/{id}/facture', name: 'app_vente_facture', methods: ['GET'])]
+    public function facture(Vente $vente): Response
+    {
+        // Options Dompdf
+        $options = new Options();
+        $options->set('isRemoteEnabled', true); // des images / fonts externes
+
+        $dompdf = new Dompdf($options);
+
+        // HTML à partir du Twig
+        $html = $this->renderView('vente/facture.html.twig', [
+            'vente' => $vente,
+        ]);
+
+        // Générer le PDF
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        $output = $dompdf->output();
+
+        // Réponse HTTP avec headers PDF
+        return new Response(
+            $output,
+            200,
+            [
+                'Content-Type'        => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="facture-'.$vente->getId().'.pdf"',
+            ]
+        );
+    }
 }
 
 

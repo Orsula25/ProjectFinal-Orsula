@@ -212,8 +212,7 @@ final class ProduitController extends AbstractController
           // attacher avec add (important pour la cascade)
           $commande->addLignesCommande($ligne);
 
-          //on augmente la commande pas le stock 
-          $produit->incEnCommande($quantite);
+          
 // persister les objets
           $entityManager->persist($commande);
           $entityManager->flush();

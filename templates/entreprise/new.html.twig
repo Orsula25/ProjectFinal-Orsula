@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block titre %}Créer ma société{% endblock %}
+
+{% block contenu %}
+    <h1>Créer ma société</h1>
+
+    {{ include('entreprise/_form.html.twig', {'button_label': 'Enregistrer'}) }}
+
+    <div class="detail-actions">
+        <a href="{{ path('app_accueil') }}" class="btn-detail btn-detail-secondary">
+            Retour à l'accueil
+        </a>
+    </div>
+{% endblock %}

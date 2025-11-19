@@ -267,9 +267,10 @@ class Produit
         return $this;
     }
 
-    public function getValeurStock():float
+   public function getValeurStock(): float
     {
-        return $this->quantiteStock * (float)$this->getPrixUnitaire();
+        // Valeur du stock = quantité × prix d'achat
+        return $this->quantiteStock * $this->getPrixAchat();
     }
 
     // État basé sur le stock physique uniquement
@@ -360,6 +361,18 @@ class Produit
     if ($this->getStockMin() !== null && $projete < $this->getStockMin()) return 'sous_seuil';
     return 'ok';
 
+    }
+
+
+       
+     //Prix d'achat virtuel = prix de vente - 25%
+     
+    public function getPrixAchat(): float
+    {
+        $prixVente = (float) $this->getPrixUnitaire();
+
+        // Prix d'achat = -25%
+        return round($prixVente * 0.75, 2);
     }
    
 

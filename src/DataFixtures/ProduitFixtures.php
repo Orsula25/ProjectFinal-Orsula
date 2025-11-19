@@ -19,18 +19,23 @@ final class ProduitFixtures extends Fixture implements DependentFixtureInterface
             $produit = new Produit();
             $produit->setNom(ucfirst($faker->words(5, true)));
             $produit->setDescription($faker->paragraph());
+
+            // Prix de vente (TTC ou HT selon ton modèle, on garde ta logique)
             $produit->setPrixUnitaire($faker->randomFloat(2, 10, 1000));
-            $produit->setQuantiteStock($faker->numberBetween(0, 100));
+
+            // on part de 0, le stock sera alimenté par les achats
+            $produit->setQuantiteStock(0);
+
             $produit->setReference(sprintf('REF-%s-%04d', strtoupper($faker->lexify('????')), $i));
             $produit->setTva($faker->randomElement([5.5, 10, 20]));
-            $produit -> setStockMin($faker->numberBetween(0, 30));
-            $produit->setEnCommande($faker->numberBetween(0, 100));
-            
+            $produit->setStockMin($faker->numberBetween(0, 30));
+
+            // Rien en commande au départ
+            $produit->setEnCommande(0);
 
             /** @var CategorieProduit $cat */
             $cat = $this->getReference('categorieProduit' . rand(1, 10), CategorieProduit::class);
             $produit->setCategorieProduit($cat);
-        
 
             $manager->persist($produit);
             $this->addReference('produit' . $i, $produit);
