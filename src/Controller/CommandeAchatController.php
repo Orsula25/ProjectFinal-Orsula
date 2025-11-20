@@ -12,6 +12,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+use Dompdf\Dompdf;
+use Dompdf\Options;
+
 
 #[Route('/commande')]
 class CommandeAchatController extends AbstractController
@@ -40,6 +45,8 @@ class CommandeAchatController extends AbstractController
             'pages'     => (int) ceil($total / $limit),
         ]);
     }
+
+  
 
     // NOUVELLE COMMANDE
     #[Route('/nouvelle', name: 'app_commande_achat_new', methods: ['GET','POST'])]
@@ -72,45 +79,7 @@ class CommandeAchatController extends AbstractController
         ]);
     }
 
-    // ENVOYER LA COMMANDE
-    #[Route('/{id}/envoyer', name: 'app_commande_achat_envoyer', methods: ['POST'])]
-    public function envoyer(CommandeAchat $commande, Request $request, EntityManagerInterface $em): Response
-    {
-        if (!$this->isCsrfTokenValid('envoyer'.$commande->getId(), $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException('Token CSRF invalide');
-        }
-
-        if ($commande->isReceptionnee() || $commande->isAnnulee()) {
-            $this->addFlash('warning', 'Cette commande ne peut plus être envoyée.');
-            return $this->redirectToRoute('app_commande_achat_index');
-        }
-
-        if ($commande->isEnvoyee()) {
-            $this->addFlash('info', 'Commande déjà envoyée.');
-            return $this->redirectToRoute('app_commande_achat_index');
-        }
-
-      foreach ($commande->getLignesCommande() as $ligne) {
-    $produit = $ligne->getProduit();
-    $qte     = $ligne->getQuantite();
-
-    if ($produit && $qte > 0) {
-        
-       
-        $produit->incEnCommande($qte);
-
-        $em->persist($produit);
-    }
-}
-
-        $commande->setStatut(CommandeAchat::STATUT_ENVOYEE);
-        $em->flush();
-
-        $this->addFlash('success', 'Commande envoyée ✅');
-        return $this->redirectToRoute('app_commande_achat_index');
-    }
-
-    // VOIR LA COMMANDE
+      // VOIR LA COMMANDE
     #[Route('/{id}', name: 'app_commande_achat_show', methods: ['GET'])]
     public function show(CommandeAchat $commande): Response
     {
@@ -118,6 +87,71 @@ class CommandeAchatController extends AbstractController
             'commande' => $commande,
         ]);
     }
+
+    // ENVOYER LA COMMANDE
+#[Route('/{id}/envoyer', name: 'app_commande_achat_envoyer', methods: ['POST'])]
+public function envoyer(
+    CommandeAchat $commande,
+    Request $request,
+    EntityManagerInterface $em,
+    MailerInterface $mailer
+): Response {
+    if (!$this->isCsrfTokenValid('envoyer'.$commande->getId(), $request->request->get('_token'))) {
+        throw $this->createAccessDeniedException('Token CSRF invalide');
+    }
+
+    if ($commande->isReceptionnee() || $commande->isAnnulee()) {
+        $this->addFlash('warning', 'Cette commande ne peut plus être envoyée.');
+        return $this->redirectToRoute('app_commande_achat_index');
+    }
+
+    if ($commande->isEnvoyee()) {
+        $this->addFlash('info', 'Commande déjà envoyée.');
+        return $this->redirectToRoute('app_commande_achat_index');
+    }
+
+    foreach ($commande->getLignesCommande() as $ligne) {
+        $produit = $ligne->getProduit();
+        $qte     = $ligne->getQuantite();
+
+        if ($produit && $qte > 0) {
+            $produit->incEnCommande($qte);
+            $em->persist($produit);
+        }
+    }
+
+    $commande->setStatut(CommandeAchat::STATUT_ENVOYEE);
+    $em->flush();
+
+    // ENVOI DU MAIL 
+
+    // récupère le fournisseur (en sécurité)
+    $fournisseur = $commande->getFournisseur();
+    $toEmail     = $fournisseur?->getEmail() ?? 'test@example.com';
+
+    // construit le sujet proprement
+    $sujet = sprintf(
+        'Nouvelle commande %s',
+        $commande->getReference() ?? ('#'.$commande->getId())
+    );
+
+    $email = (new Email())
+        ->from('no-reply@logix-gstock.test')
+        ->to($toEmail)
+        ->subject($sujet)   // subject prend UN seul argument
+        ->html(
+            $this->renderView('emails/commande_achat.html.twig', [
+                'commande'    => $commande,
+                'fournisseur' => $fournisseur,
+            ])
+        );
+
+    $mailer->send($email);
+
+    $this->addFlash('success', 'Commande envoyée ✅ (email transmis au fournisseur)');
+    return $this->redirectToRoute('app_commande_achat_index');
+}
+
 
     // RÉCEPTIONNER LA COMMANDE + CRÉER L'ACHAT
 #[Route('/{id}/recevoir', name: 'app_commande_achat_reception', methods: ['POST'])]
@@ -178,10 +212,7 @@ public function recevoir(CommandeAchat $commande, Request $request, EntityManage
         $detail->setProduit($produit);
         $detail->setQuantite($ligneCmd->getQuantite());
 
-        // ⚠️ ADAPTE CE GETTER AU TIEN SUR Produit :
-        //   - getPrixAchat()
-        //   - ou getPrix()
-        //   - ou getPrixHt()
+    
         $detail->setPrixUnitaire($produit->getPrixAchat());
 
         // calcule le sous-total (quantité × prix unitaire)
@@ -238,4 +269,39 @@ public function recevoir(CommandeAchat $commande, Request $request, EntityManage
         $this->addFlash('success', 'Commande annulée ❌');
         return $this->redirectToRoute('app_commande_achat_index');
     }
+
+    // pdf commande 
+    #[Route('/{id}/pdf', name: 'app_commande_achat_pdf', methods: ['GET'])]
+    public function pdf(CommandeAchat $commande): Response
+    {
+          // Options Dompdf
+        $options = new Options();
+        $options->set('isRemoteEnabled', true); // des images / fonts externes
+
+        $dompdf = new Dompdf($options);
+
+        // HTML à partir du Twig
+        $html = $this->renderView('commande_achat/pdf.html.twig', [
+            'commande' => $commande,
+        ]);
+
+        // Générer le PDF
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        $output = $dompdf->output();
+
+        // Réponse HTTP avec headers PDF
+        return new Response(
+            $output,
+            200,
+            [
+                'Content-Type'        => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="commande-'.$commande->getId().'.pdf"',
+            ]
+        );
+    }
 }
+
+

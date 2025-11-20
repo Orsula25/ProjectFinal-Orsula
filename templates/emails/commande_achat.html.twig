@@ -1,0 +1,51 @@
+{# mails commande #}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Nouvelle commande</title>
+</head>
+<body>
+ <p>Bonjour {{fournisseur.nom}} </p>
+
+ <p>
+ Vous avez reçu une nouvelle commande de la part de <strong>{{app.user.entreprise.nom??'Logix G-Stock'}}</strong>
+
+ </p>
+<p>
+ <strong>Référence :</strong>{{commande.reference}}<br>
+ {% if commande.date is defined %}
+ <strong>Date :</strong>{{commande.date|date('d/m/Y')}}<br>
+ {% endif %}
+
+ <strong>Statut :</strong>{{commande.statut}}<br>
+</p>
+
+<h3>Détail de la commande</h3>
+  <table cellspacing="0" cellpadding="4" border="1">
+    <thead>
+      <tr>
+        <th>Produit</th>
+        <th>Quantité</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for ligne in commande.lignesCommande %}
+        <tr>
+          <td>{{ ligne.produit.nom }}</td>
+          <td>{{ ligne.quantite }}</td>
+        </tr>
+      {% else %}
+        <tr>
+          <td colspan="2">Aucune ligne dans cette commande.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <p style="margin-top: 15px;">
+    Cordialement,<br>
+    <strong>{{ app.user.entreprise.nom ?? 'Logix G-Stock' }}</strong>
+  </p>
+</body>
+</html>

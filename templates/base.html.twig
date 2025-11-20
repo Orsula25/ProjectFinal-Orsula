@@ -29,7 +29,12 @@
 
 {% set current = app.request.attributes.get('_route')|default('') %}
 
-{% set hideMenu = current in ['app_login','app_register','app_forgot_password_request','app_reset_password'] %}
+{% set hideMenu = current in ['app_login',
+                              'app_register',
+                              'app_forgot_password_request',
+                              'app_reset_password',
+                              'app_check_email',
+                              ] %}
 
 {% if not hideMenu %}
   {# --- NAVBAR PRINCIPALE (sombre, avec menu burger) --- #}

@@ -1,0 +1,4 @@
+<form method="post" action="{{ path('app_commande_achat_envoyer', {id: commande.id}) }}">
+    <input type="hidden" name="_token" value="{{ csrf_token('envoyer' ~ commande.id) }}">
+    <button class="btn btn-sm btn-primary">Envoyer</button>
+</form>
