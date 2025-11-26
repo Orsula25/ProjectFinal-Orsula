@@ -3,6 +3,7 @@
 {% block titre %}Accueil — Logix G-Stock{% endblock %}
 
 {% block contenu %}
+
 {% if is_granted('ROLE_ADMIN') %}
   <h1 class="page-title">📊 Tableau de bord</h1>
 
@@ -11,7 +12,9 @@
       <div class="card shadow-sm border-0 h-100">
         <div class="card-body">
           <h5 class="card-title text-primary">Chiffre d'affaires</h5>
-          <p class="display-6 fw-bold">{{ chiffreAffaire|number_format(2, ',', ' ') }} €</p>
+          <p class="display-6 fw-bold">
+            {{ chiffreAffaire|number_format(2, ',', ' ') }} €
+          </p>
         </div>
       </div>
     </div>
@@ -20,7 +23,9 @@
       <div class="card shadow-sm border-0 h-100">
         <div class="card-body">
           <h5 class="card-title text-warning">Total Achats</h5>
-          <p class="display-6 fw-bold">{{ totalAchats|number_format(2, ',', ' ') }} €</p>
+          <p class="display-6 fw-bold">
+            {{ totalAchats|number_format(2, ',', ' ') }} €
+          </p>
         </div>
       </div>
     </div>
@@ -29,39 +34,54 @@
       <div class="card shadow-sm border-0 h-100">
         <div class="card-body">
           <h5 class="card-title text-success">Valeur du stock</h5>
-          <p class="display-6 fw-bold">{{ valeurStock|number_format(2, ',', ' ') }} €</p>
+          <p class="display-6 fw-bold">
+            {{ valeurStock|number_format(2, ',', ' ') }} €
+          </p>
         </div>
       </div>
     </div>
   </div>
 
-      <div class="row g-4 mt-2">
-        <div class="col-md-6">
-          <div class="card shadow-sm border-0 h-100">
-          <a href="{{ path('app_produit_index', { q: 'sous-seuil' }) }}"
-            class="text-decoration-none text-reset">
-            <div class="card-dashboard card-sous-seuil">
-              <h5 class="card-title text-danger">Produits sous seuil</h5>
-              <p class="display-5 fw-bold">{{ nbSousSeuil }}</p>
-            </div>
-          </a>
+  <div class="row g-4 mt-2">
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0 h-100">
+        <a href="{{ path('app_produit_index', { q: 'sous-seuil' }) }}"
+           class="text-decoration-none text-reset">
+          <div class="card-dashboard card-sous-seuil">
+            <h5 class="card-title text-danger">Produits sous seuil</h5>
+            <p class="display-5 fw-bold">{{ nbSousSeuil }}</p>
+          </div>
+        </a>
       </div>
     </div>
 
-      <div class="col-md-6">
-        <div class="card shadow-sm border-0 h-100">
-            <div class="card-body">
-                <a href="{{ path('app_produit_index', { q: 'rupture' }) }}"
-                class="text-decoration-none text-reset">
-              <div class="card-dashboard card-rupture">
-                <h5 class="card-title text-danger">Produits en rupture</h5>
-                <p class="display-5 fw-bold">{{ nbRuptures }}</p>
-              </div>
-            </a>
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0 h-100">
+        <a href="{{ path('app_produit_index', { q: 'rupture' }) }}"
+           class="text-decoration-none text-reset">
+          <div class="card-dashboard card-rupture">
+            <h5 class="card-title text-danger">Produits en rupture</h5>
+            <p class="display-5 fw-bold">{{ nbRupture }}</p>
           </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  {# Graphique #}
+  <div class="mt-4">
+    <div class="card shadow-sm border-0 ">
+      <div class="card-body">
+        <h2 class="h4 mb-3">État du stock</h2>
+
+        <div class="mx-auto" style="max-width: 380px;">
+          <canvas id="stockChart"></canvas>
         </div>
       </div>
     </div>
+  </div>
+
+
 
 {% else %}
   <section class="text-center">
@@ -69,4 +89,31 @@
     <p>Utilisez le menu ci-dessus pour gérer vos ventes, achats et stocks.</p>
   </section>
 {% endif %}
+
+{% endblock %}
+
+{# block script doit être en DEHORS de block contenu #}
+{% block script %}
+  {{ parent() }}
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const ctx = document.getElementById('stockChart');
+      if (!ctx) return;
+
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Produits OK', 'Sous seuil', 'En rupture'],
+          datasets: [{
+            data: [{{ nbOk }}, {{ nbSousSeuil }}, {{ nbRupture }}],
+          }]
+        },
+        options: {
+          plugins: {
+            legend: { position: 'bottom' }
+          }
+        }
+      });
+    });
+  </script>
 {% endblock %}

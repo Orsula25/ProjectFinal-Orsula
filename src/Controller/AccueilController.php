@@ -19,47 +19,43 @@ final class AccueilController extends AbstractController
         VenteRepository $venteRepo,
         AchatRepository $achatRepo,
         ProduitRepository $produitRepo
-
     ): Response
     {
-        $chiffreAffaire= $venteRepo->getChiffreAffaire();
-        $valeurStock = $produitRepo->getValeurStock();
-        $totalAchats = $achatRepo->getTotalAchats();
+        // Chiffres globaux
+        $chiffreAffaire = $venteRepo->getChiffreAffaire();
+        $valeurStock    = $produitRepo->getValeurStock();
+        $totalAchats    = $achatRepo->getTotalAchats();
+
+        // Produits sous seuil / rupture
         $nbSousSeuil = $produitRepo->getProduitSousSeuil();
-        $nbRuptures = $produitRepo->countProduitsEnRupture();
-       
-     
-        
-        
+        $nbRupture   = $produitRepo->countProduitsEnRupture();
+
+        // Total produits
+        $totalProduits = $produitRepo->count([]);
+
+        // Produits OK
+        $nbOk = $totalProduits - $nbSousSeuil - $nbRupture;
+
         return $this->render('accueil/index.html.twig', [
             'chiffreAffaire' => $chiffreAffaire,
-            'totalAchats' => $totalAchats,
-            'valeurStock' => $valeurStock,
-            'nbSousSeuil' => $nbSousSeuil,
-            'nbRuptures' => $nbRuptures,
+            'totalAchats'    => $totalAchats,
+            'valeurStock'    => $valeurStock,
+            'nbSousSeuil'    => $nbSousSeuil,
+            'nbRupture'      => $nbRupture,
+            'nbOk'           => $nbOk,
         ]);
     }
 
+
     #[Route('/accueil/index.html.twig')]
-    public function testModele(EntityManagerInterface $en){
-        // on  va obtenir des entité de la bd
-        //1. obtenir le repo de lentité 
+    public function testModele(EntityManagerInterface $en)
+    {
         $rep = $en->getRepository(Produit::class);
-       $arrayProduits = $rep->findAll();
-       
+        $arrayProduits = $rep->findAll();
 
-       $vars = [
-        'produits' => $arrayProduits
-       ];
-
-       return $this->render('accueil/test_Modele.html.twig', $vars);
+        return $this->render('accueil/test_Modele.html.twig', [
+            'produits' => $arrayProduits
+        ]);
     }
-
-
-  
-
-
-
-    
 
 }
