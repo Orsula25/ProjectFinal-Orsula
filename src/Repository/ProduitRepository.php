@@ -57,6 +57,7 @@ class ProduitRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('p')
         ->select('COUNT(p.id)')
         ->where('p.stockMin is not NULL')
+        ->andWhere('p.quantiteStock > 0')
         ->andWhere('p.quantiteStock < p.stockMin')
         ->getQuery()
         ->getSingleScalarResult();

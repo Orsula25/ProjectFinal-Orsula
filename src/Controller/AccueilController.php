@@ -36,6 +36,9 @@ final class AccueilController extends AbstractController
         // Produits OK
         $nbOk = $totalProduits - $nbSousSeuil - $nbRupture;
 
+        $nbOk = $totalProduits - $nbSousSeuil - $nbRupture;
+        
+
         return $this->render('accueil/index.html.twig', [
             'chiffreAffaire' => $chiffreAffaire,
             'totalAchats'    => $totalAchats,
