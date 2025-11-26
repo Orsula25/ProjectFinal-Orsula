@@ -35,25 +35,33 @@
     </div>
   </div>
 
-  <div class="row g-4 mt-2">
-    <div class="col-md-6">
-      <div class="card shadow-sm border-0 h-100">
-        <div class="card-body">
-          <h5 class="card-title text-danger">Produits sous seuil</h5>
-          <p class="display-5 fw-bold">{{ nbSousSeuil }}</p>
-        </div>
+      <div class="row g-4 mt-2">
+        <div class="col-md-6">
+          <div class="card shadow-sm border-0 h-100">
+          <a href="{{ path('app_produit_index', { q: 'sous-seuil' }) }}"
+            class="text-decoration-none text-reset">
+            <div class="card-dashboard card-sous-seuil">
+              <h5 class="card-title text-danger">Produits sous seuil</h5>
+              <p class="display-5 fw-bold">{{ nbSousSeuil }}</p>
+            </div>
+          </a>
       </div>
     </div>
 
-    <div class="col-md-6">
-      <div class="card shadow-sm border-0 h-100">
-        <div class="card-body">
-          <h5 class="card-title text-danger">Produits en rupture</h5>
-          <p class="display-5 fw-bold">{{ nbRuptures }}</p>
+      <div class="col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <a href="{{ path('app_produit_index', { q: 'rupture' }) }}"
+                class="text-decoration-none text-reset">
+              <div class="card-dashboard card-rupture">
+                <h5 class="card-title text-danger">Produits en rupture</h5>
+                <p class="display-5 fw-bold">{{ nbRuptures }}</p>
+              </div>
+            </a>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
 {% else %}
   <section class="text-center">

@@ -28,7 +28,6 @@
     {% endif %}
   </a>
 </th>
-      <th>Description</th>
       <th>Prix</th>
       <th>Référence</th>
       <th>Créé le</th>
@@ -46,7 +45,6 @@
       <tr class="row-click" data-href="{{ path('app_produit_show', {id: produit.id}) }}">
         <td>{{ produit.id }}</td>
         <td>{{ produit.nom }}</td>
-        <td>{{ produit.description }}</td>
         <td class="col-price text-end text-nowrap">{{ produit.prixUnitaire|number_format(2, ',', ' ') }} €</td>        
         <td class="col-price text-end text-nowrap">{{ produit.reference }}</td>
         <td>{{ produit.dateCreation ? produit.dateCreation|date('d/m/Y H:i') : '' }}</td>

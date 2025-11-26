@@ -3,90 +3,94 @@
 {% block titre %}Produits — Logix G-Stock{% endblock %}
 
 {% block contenu %}
-<h1 class="mb-4">📦 Liste des produits</h1>
 
-{# barre de recherche #}
-<form id="produit-search-form"
-      method="get"
-      action="{{ path('app_produit_index') }}"
-      class="search-pill mb-3">
+  <h1 class="mb-4">📦 Liste des produits</h1>
 
-  <input
-    type="text"
-    name="q"
-    value="{{ q ?? '' }}"
-    class="search-pill-input"
-    placeholder="Rechercher par nom ou référence..."
-  >
+  {# Barre de recherche simple + autocomplétion #}
+  <form id="produit-search-form"
+        method="get"
+        action="{{ path('app_produit_index') }}"
+        class="search-pill mb-3">
 
-  <button class="search-pill-btn" type="submit" aria-label="Rechercher">
-    <i class="fa-solid fa-magnifying-glass"></i>
-  </button>
-</form>
+    <input
+      type="text"
+      name="q"
+      value="{{ q ?? '' }}"
+      class="search-pill-input"
+      placeholder="Rechercher par nom, référence, rupture ou sous-seuil..."
+      list="produit-terms"
+    >
 
- <a class="btn btn-success btn-sm produit-add-btn"
+    <button class="search-pill-btn" type="submit" aria-label="Rechercher">
+      <i class="fa-solid fa-magnifying-glass"></i>
+    </button>
+
+  </form>
+
+  {# Autocomplétion (noms + références) #}
+  <datalist id="produit-terms">
+    {% for t in termes %}
+      {% if t.nom is defined and t.nom %}
+        <option value="{{ t.nom }}"></option>
+      {% endif %}
+      {% if t.reference is defined and t.reference %}
+        <option value="{{ t.reference }}"></option>
+      {% endif %}
+    {% endfor %}
+  </datalist>
+
+  <a class="btn btn-success btn-sm produit-add-btn"
      href="{{ path('app_produit_new') }}">
     ➕ Ajouter un produit
   </a>
 
+  {% if q is defined and q %}
+    <p class="text-muted mb-2">
+      Résultats pour : <strong>{{ q }}</strong>
+    </p>
+  {% endif %}
 
-{% if q is defined and q %}
-  <p class="text-muted mb-2">Résultats pour : <strong>{{ q }}</strong></p>
-{% endif %}
+  {# Zone remplacée en AJAX #}
+  <div id="produit-table-wrapper">
+    {% include 'produit/_liste.html.twig' %}
+  </div>
 
-{# liste des produits #}
-<div id="produit-table-wrapper">
-  {% include 'produit/_liste.html.twig' %}
-</div>
-
-
-<a class="btn btn-outiline-secondary ms-2" href="{{path('app_accueil')}}">🏠Retour à l'accueil</a>
-
-
+  <a class="btn btn-outline-secondary ms-2" href="{{ path('app_accueil') }}">
+    🏠 Retour à l'accueil
+  </a>
 
 {% endblock %}
-{# Ajax #}
+
 {% block javascripts %}
   {{ parent() }}
-  <script>
 
-  document.getElementById('produit-search-form').addEventListener('submit', function (e) {
-  e.preventDefault();
-})
-     // empêcher le submit classique (rechargement)
-    const searchForm = document.getElementById('produit-search-form');
+  <script>
+    const baseUrl     = '{{ path('app_produit_index') }}';
+    const searchForm  = document.getElementById('produit-search-form');
+    const searchInput = document.querySelector('#produit-search-form input[name="q"]');
+    const wrapper     = document.getElementById('produit-table-wrapper');
+
+    {# Empêcher rechargement de la page lors d’un submit #}
     if (searchForm) {
       searchForm.addEventListener('submit', function (e) {
         e.preventDefault();
       });
     }
 
-    const searchInput = document.querySelector('#produit-search-form input[name="q"]');
-    const wrapper = document.getElementById('produit-table-wrapper');
+    {# Fabrique la query string ?q=...&page=... #}
+    function buildQuery(page = 1) {
+      const params = new URLSearchParams();
+      if (searchInput && searchInput.value.trim() !== '') {
+        params.set('q', searchInput.value.trim());
+      }
+      params.set('page', page);
+      return '?' + params.toString();
+    }
 
-    if (searchInput) {
-  searchInput.addEventListener('input', function () {
-    const q = this.value;
-    const sort = sortSelect ? sortSelect.value : 'recent';
-    loadProduits('?q=' + encodeURIComponent(q) + '&sort=' + encodeURIComponent(sort) + '&page=1');
-  });
-}
-
-if (sortSelect) {
-  sortSelect.addEventListener('change', function () {
-    const q = searchInput ? searchInput.value : '';
-    const sort = this.value;
-    loadProduits('?q=' + encodeURIComponent(q) + '&sort=' + encodeURIComponent(sort) + '&page=1');
-  });
-}
-
-    
-    // charge la liste en AJAX
+    {# Charge la liste en AJAX #}
     function loadProduits(queryString) {
-      fetch('{{ path('app_produit_index') }}' + queryString, {
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest'
-        }
+      fetch(baseUrl + queryString, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
       })
       .then(r => r.text())
       .then(html => {
@@ -96,15 +100,14 @@ if (sortSelect) {
       });
     }
 
-    // recherche en direct
+    {# Recherche en direct #}
     if (searchInput) {
       searchInput.addEventListener('input', function () {
-        const q = this.value;
-        loadProduits('?q=' + encodeURIComponent(q) + '&page=1');
+        loadProduits(buildQuery(1));
       });
     }
 
-    // pagination AJAX
+    {# Pagination en AJAX #}
     function bindPagination() {
       wrapper.querySelectorAll('.js-page').forEach(link => {
         link.addEventListener('click', function (e) {
@@ -115,7 +118,7 @@ if (sortSelect) {
       });
     }
 
-    // clic sur la ligne
+    {# Clic sur une ligne de tableau #}
     function bindRowClick() {
       wrapper.querySelectorAll('.row-click').forEach(row => {
         row.addEventListener('click', function () {
@@ -125,9 +128,9 @@ if (sortSelect) {
       });
     }
 
-    // premier branchement au chargement initial
+    {# Initialisation #}
     bindPagination();
     bindRowClick();
   </script>
 
-  {% endblock %}
+{% endblock %}

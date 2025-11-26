@@ -41,7 +41,7 @@ class ProduitRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    // la valer total du stock 
+    // la valeur total du stock 
 
     public function getValeurStock():float{
         return (float) $this ->createQueryBuilder('p')
@@ -95,44 +95,104 @@ class ProduitRepository extends ServiceEntityRepository
 
     // mm  rechherche que ci-dessus mais on compte juste le nbr de résultats. (combien par page ) 
 
-    public function countSearch(string $term): int {
-        return (int) $this->createQueryBuilder('p')
-       ->select('COUNT(p.id)')
-       ->andWhere('p.reference LIKE :term OR p.nom LIKE :term')
-       ->setParameter('term', '%'.$term.'%')
-       ->getQuery()
-       ->getSingleScalarResult();
-    }
-
-
-    public function findBySearch(?string $q, string $sort, int $limit, int $offset): array
+  public function countSearch(?string $q): int
 {
-    $qb = $this->createQueryBuilder('p');
+    $qb = $this->createQueryBuilder('p')
+        ->select('COUNT(p.id)');
 
     if ($q) {
-        $qb->andWhere('p.nom LIKE :q OR p.description LIKE :q')
-           ->setParameter('q', '%'.$q.'%');
+        $t = mb_strtolower(trim($q));
+
+        if (in_array($t, ['rupture', 'rupture de stock'])) {
+            $qb->andWhere('p.quantiteStock <= 0');
+        } elseif (in_array($t, ['sous-seuil', 'sous seuil', 'sousseuil'])) {
+            $qb->andWhere('p.quantiteStock > 0')
+               ->andWhere('p.stockMin IS NOT NULL')
+               ->andWhere('p.quantiteStock < p.stockMin');
+        } else {
+            $qb->andWhere(
+                'p.nom LIKE :q 
+                 OR p.reference LIKE :q
+                 OR p.description LIKE :q'
+            )
+            ->setParameter('q', '%'.$q.'%');
+        }
     }
 
-    // tri
+    return (int) $qb
+        ->getQuery()
+        ->getSingleScalarResult();
+}
+
+
+public function findBySearch(?string $q, string $sort, int $limit, int $offset): array
+{
+    $priorityExpr = '(CASE 
+        WHEN p.quantiteStock <= 0
+            THEN 0                             
+        WHEN p.stockMin IS NOT NULL 
+             AND p.quantiteStock > 0 
+             AND p.quantiteStock < p.stockMin
+            THEN 1                             
+        ELSE 2                                 
+    END)';
+
+    $qb = $this->createQueryBuilder('p')
+        ->addSelect($priorityExpr . ' AS HIDDEN priority')
+        ->orderBy('priority', 'ASC'); // 0 (rupture) -> 1 (sous-seuil) -> 2 (OK)
+
+    // Filtre recherche 
+    if ($q) {
+        $t = mb_strtolower(trim($q));
+
+        if (in_array($t, ['rupture', 'rupture de stock'])) {
+            $qb->andWhere('p.quantiteStock <= 0');
+
+        } elseif (in_array($t, ['sous-seuil', 'sous seuil', 'sousseuil'])) {
+            $qb->andWhere('p.quantiteStock > 0')
+               ->andWhere('p.stockMin IS NOT NULL')
+               ->andWhere('p.quantiteStock < p.stockMin');
+
+        } else {
+            $qb->andWhere(
+                'p.nom LIKE :q 
+                 OR p.reference LIKE :q
+                 OR p.description LIKE :q'
+            )
+            ->setParameter('q', '%'.$q.'%');
+        }
+    }
+
+    // Tri secondaire (dans chaque groupe de priorité) 
     switch ($sort) {
-        case 'nom_asc':
+        case 'name_asc':
             $qb->addOrderBy('p.nom', 'ASC');
             break;
-        case 'nom_desc':
+        case 'name_desc':
             $qb->addOrderBy('p.nom', 'DESC');
             break;
-        default:
-            $qb->addOrderBy('p.id', 'DESC'); // ou dateCreation
+        default: // 'recent'
+            $qb->addOrderBy('p.id', 'DESC');
+            break;
     }
 
     return $qb
         ->setFirstResult($offset)
         ->setMaxResults($limit)
         ->getQuery()
-        ->getResult()
-    ;
+        ->getResult();
 }
+
+public function findAllSearchTerms(): array
+{
+    return $this->createQueryBuilder('p')
+        ->select('DISTINCT p.nom AS nom, p.reference AS reference')
+        ->orderBy('p.nom', 'ASC')
+        ->getQuery()
+        ->getResult();
+}
+
+
 
 
 
