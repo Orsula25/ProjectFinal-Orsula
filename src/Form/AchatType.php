@@ -39,12 +39,16 @@ class AchatType extends AbstractType
                 'label' => 'Fournisseur',
             ])
             ->add('detailAchats', CollectionType::class, [
-                'entry_type' => DetailAchatType::class,
-                'allow_add' => true,
-                'allow_delete' => true,
-                'by_reference' => false,
-                'label' => false,
-            ]);
+            'entry_type'    => DetailAchatType::class,
+            'entry_options' => [
+                'label' => false,      // ← enlève le "0", "1", "2", ...
+            ],
+            'allow_add'     => true,
+            'allow_delete'  => true,
+            'by_reference'  => false,
+            'label'         => false,  // pas de label pour la collection elle-même
+        ]);
+
     }
 
     public function configureOptions(OptionsResolver $resolver): void
