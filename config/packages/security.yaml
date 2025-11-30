@@ -21,6 +21,7 @@ security:
                 check_path: app_login
                 default_target_path: app_accueil
                 enable_csrf: true
+               
             logout:
                 path: app_logout
                 # where to redirect after logout
