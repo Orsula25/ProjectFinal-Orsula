@@ -1,8 +1,124 @@
-/* =========================================================
+/* 
    LOGIX G-STOCK - THEME GLOBAL
-   ========================================================= */
+*/
 
-/* -------- PALETTE -------- */
+/* Styles pour le menu fixe, la mise en page et le fond global */
+body {
+  padding-top: 56px; /* Hauteur de la navbar */
+  overflow-x: auto;  /* autorise le scroll si contenu trop large */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--lgx-text);
+
+  background:
+    linear-gradient(rgba(148, 189, 239, 0.751), rgba(148, 189, 239, 0.9)),
+    url("../Images/background.png") center top / cover no-repeat fixed;
+}
+
+/* Navbar fixe */
+.navbar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1030;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Conteneur principal */
+.main-container {
+  flex: 1;
+  margin-top: 1rem;
+  padding: 0 15px;
+  width: 100%;
+}
+
+/* Tableau avec défilement horizontal */
+.table-responsive-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 1rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Style amélioré pour les tableaux */
+.table {
+  min-width: 800px; /* Largeur minimale pour forcer le défilement */
+  margin-bottom: 0;
+  width: 100%;
+}
+
+/* En-têtes de tableau fixes lors du défilement */
+.table thead th {
+  position: sticky;
+  top: 56px; /* Hauteur de la navbar */
+  background: #f8f9fa;
+  z-index: 10;
+  border-bottom: 2px solid #dee2e6;
+  vertical-align: middle;
+}
+
+/* Ajustements pour mobile (structure) */
+@media (max-width: 768px) {
+  .main-container {
+    padding: 0 10px;
+  }
+  
+  .table thead th {
+    top: 50px; /* Ajustement pour la hauteur de la navbar sur mobile */
+  }
+  
+  .sidebar {
+    position: fixed;
+    top: 56px;
+    bottom: 0;
+    left: -250px;
+    width: 250px;
+    z-index: 1000;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #f8f9fa;
+    transition: all 0.3s;
+  }
+  
+  .sidebar.show {
+    left: 0;
+  }
+  
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+/* Styles pour les écrans larges */
+@media (min-width: 769px) {
+  .sidebar {
+    position: fixed;
+    top: 56px;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    padding: 20px;
+    overflow-y: auto;
+    width: 250px;
+    background-color: #f8f9fa;
+    border-right: 1px solid #dee2e6;
+  }
+  
+  .main-content {
+    margin-left: 250px;
+    width: calc(100% - 250px);
+  }
+}
+
+/* Palette */
 :root {
   --lgx-body: #e9edf2;        /* fond général */
   --lgx-surface: #ffffff;     /* cartes */
@@ -16,16 +132,7 @@
   --lgx-shadow: 0 16px 35px rgba(15, 23, 42, .04);
 }
 
-/* -------- GLOBAL -------- */
-body {
-  background:
-    linear-gradient(rgba(148, 189, 239, 0.751), rgba(148, 189, 239, 0.9)),
-    url("/Images/background.png") center/cover no-repeat fixed;
-  min-height: 100vh;
-  color: var(--lgx-text);
-}
-
-/* -------- PAGE CONNEXION -------- */
+/* Page connexion */
 .app-brand {
   text-align: center;
   margin-bottom: 1.5rem;
@@ -63,7 +170,7 @@ main.container {
   max-width: 1150px;
 }
 
-/* -------- NAVBAR -------- */
+/* Navbar */
 .navbar.bg-black,
 .navbar.bg-dark,
 .navbar.navbar-dark {
@@ -75,7 +182,7 @@ main.container {
   letter-spacing: .01em;
 }
 
-/* -------- MENU -------- */
+/* Menu */
 .bg-light.border-bottom.shadow-sm {
   background: #fff !important;
   border-bottom: 1px solid rgba(15,23,42,.035) !important;
@@ -93,7 +200,7 @@ main.container {
   box-shadow: inset 0 0 0 1px rgba(13,110,253,.25);
 }
 
-/* -------- TITRES -------- */
+/* Titres */
 .page-title,
 h1, h2 {
   display: flex;
@@ -103,7 +210,7 @@ h1, h2 {
   margin-bottom: 1.25rem;
 }
 
-/* -------- CARDS -------- */
+/* Cards */
 .card,
 .app-card {
   background: var(--lgx-surface) ;
@@ -112,7 +219,7 @@ h1, h2 {
   box-shadow: var(--lgx-shadow);
 }
 
-/* -------- TABLES -------- */
+/* Tables */
 .table {
   background: #fff;
   border-radius: .8rem;
@@ -139,7 +246,7 @@ h1, h2 {
   background: rgba(13,110,253,.03);
 }
 
-/* -------- FORMULAIRES -------- */
+/* Formulaires */
 form .form-control,
 form select,
 form textarea {
@@ -161,7 +268,7 @@ form label {
   color: #0f172a;
 }
 
-/* -------- BOUTONS (GLOBAL) -------- */
+/* BOUTONS (GLOBAL) */
 .btn {
   border-radius: .65rem;
   font-weight: 500;
@@ -187,7 +294,7 @@ form label {
   box-shadow: 0 14px 30px rgba(37, 99, 235, 0.45);
 }
 
-/* État disabled (mais sans effet "grisé fantôme") */
+/* État disabled */
 .btn-primary:disabled,
 .btn-primary.disabled {
   opacity: 1 ;
@@ -205,14 +312,14 @@ form[action*="_delete"] .btn {
   color: #fff ;
 }
 
-/* -------- ALERTES -------- */
+/* Alertes */
 .alert {
   border-radius: .6rem;
   border: 0;
   box-shadow: 0 8px 22px rgba(15,23,42,.08);
 }
 
-/* -------- RESPONSIVE -------- */
+/* Responsive général */
 @media (max-width: 992px) {
   main.container {
     max-width: 100%;
@@ -222,12 +329,12 @@ form[action*="_delete"] .btn {
   }
 }
 
-/* écran moyen (≥ 992px) : fond adapté */
+/* écran moyen (≥ 992px) : fond adapté (zoom différent mais même image) */
 @media (min-width: 992px) {
   body {
     background:
       linear-gradient(rgba(148, 189, 239, 0.751), rgba(148, 189, 239, 0.9)),
-      url("/Images/background.png") center top / 115% no-repeat fixed;
+      url("../Images/background.png") center top / 115% no-repeat fixed;
   }
 }
 
@@ -236,39 +343,18 @@ form[action*="_delete"] .btn {
   body {
     background:
       linear-gradient(rgba(148, 189, 239, 0.751), rgba(148, 189, 239, 0.9)),
-      url("/Images/background.png") center top / 105% no-repeat fixed;
+      url("../Images/background.png") center top / 105% no-repeat fixed;
   }
 }
 
-
-
-/* =========================================================
-   FORMULAIRES — Logix G-Stock
-   ========================================================= */
+/* -------- FORMULAIRES — Logix G-Stock -------- */
 
 :root {
-  --lgx-primary: #2563eb;        /* bleu principal */
   --lgx-primary-hover: #1d4ed8;
   --lgx-bg: #f0f4fa;
-  --lgx-surface: #ffffff;
-  --lgx-border: rgba(15, 23, 42, 0.1);
-  --lgx-text: #0f172a;
-  --lgx-muted: #6b7280;
-  --lgx-radius: 0.8rem;
-  --lgx-shadow: 0 8px 25px rgba(15, 23, 42, 0.08);
 }
 
-/* -------- Page -------- */
-body {
-   background:
-      linear-gradient(rgba(148, 189, 239, 0.751), rgba(148, 189, 239, 0.9)),
-      url("/Images/background.png") center top / 105% no-repeat fixed;
-  
-  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  color: var(--lgx-text);
-}
-
-/* -------- Titre -------- */
+/* Titre */
 h1 {
   text-align: center;
   margin-bottom: 1.5rem;
@@ -276,7 +362,7 @@ h1 {
   font-weight: 700;
 }
 
-/* -------- Bloc principal -------- */
+/* Bloc principal formulaire */
 form {
   background: var(--lgx-surface);
   border: 1px solid var(--lgx-border);
@@ -287,7 +373,7 @@ form {
   padding: 2rem;
 }
 
-/* -------- Champs -------- */
+/* Champs */
 form label {
   display: block;
   font-weight: 600;
@@ -317,7 +403,7 @@ form textarea:focus {
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
 }
 
-/* -------- Bouton principal -------- */
+/* Bouton principal formulaire */
 form button {
   width: 100%;
   background-color: var(--lgx-primary);
@@ -334,7 +420,7 @@ form button:hover {
   background-color: var(--lgx-primary-hover);
 }
 
-/* -------- Lien retour -------- */
+/* Lien retour */
 a {
   display: block;
   text-align: center;
@@ -348,7 +434,7 @@ a:hover {
   text-decoration: underline;
 }
 
-/* -------- Responsive -------- */
+/* Responsive formulaires */
 @media (max-width: 600px) {
   form {
     padding: 1.5rem;
@@ -385,9 +471,9 @@ a:hover {
 
 /* Dropdown utilisateur plus compact */
 .user-dropdown {
-  font-size: 0.85rem;      /* texte plus petit */
-  padding: 0.25rem 0;      /* moins de marge interne */
-  min-width: 180px;        /* un peu plus étroit si tu veux */
+  font-size: 0.85rem;
+  padding: 0.25rem 0;
+  min-width: 180px;
 }
 
 .user-dropdown .dropdown-header {
@@ -408,17 +494,16 @@ a:hover {
   padding: 0;
 }
 
-/* Et on simplifie le bouton du logout dans ce menu */
+/* Bouton logout dans le menu user */
 .user-dropdown form .dropdown-item {
   width: 100%;
   border-radius: 0;
   background: transparent;
   box-shadow: none;
-  padding: 0.35rem 0.75rem;   /* tu peux réduire encore si tu veux */
+  padding: 0.35rem 0.75rem;
 }
 
-
-/* 1) Ne pas transformer les petits formulaires d'actions en grosses cartes */
+/* Pas de "grosse carte" pour les petits forms dans les tableaux */
 .table td form {
   background: transparent;
   border: none;
@@ -428,27 +513,25 @@ a:hover {
   padding: 0;
 }
 
-/* 2) Boutons d'actions vraiment petits */
+/* Boutons d'actions petits */
 .table td .btn-sm {
   padding: 0.15rem 0.55rem;
   font-size: 0.75rem;
   box-shadow: none;
 }
 
-/* Optionnel : retirer le width:100% si ça venait à s'appliquer */
 .table td form button {
   width: auto;
 }
-/* ===== Actions dans le tableau des commandes ===== */
 
+/* Actions dans le tableau des commandes */
 .commande-actions {
   display: flex;
   align-items: center;
-  justify-content: center;   /* ou flex-start si tu préfères à gauche */
+  justify-content: center;
   gap: 0.35rem;
 }
 
-/* On neutralise le style "form carte" pour ces formulaires */
 .commande-actions .action-form {
   display: inline-block;
   margin: 0;
@@ -463,7 +546,7 @@ a:hover {
 .action-btn {
   width: 26px;
   height: 26px;
-  margin: 0;                 /* 🔴 IMPORTANT : enlève le margin-top du <a> global */
+  margin: 0;                 
   border-radius: 50%;
   display: inline-flex;
   align-items: center;
@@ -472,7 +555,7 @@ a:hover {
   border: 2px solid #111827;
   background: #ffffff;
   font-size: 0.8rem;
-  line-height: 1;            /* pour bien centrer l’icône */
+  line-height: 1;
   cursor: pointer;
   box-shadow: none;
   transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease, color .12s ease;
@@ -482,31 +565,29 @@ a:hover {
   pointer-events: none;
 }
 
-/* Styles par type d’action */
 .action-view {
-  border-color: #6b7280;   /* gris */
+  border-color: #6b7280;
   color: #6b7280;
 }
 
 .action-ok {
-  background-color: #22c55e;   /* vert */
+  background-color: #22c55e;
   border-color: #15803d;
   color: #ffffff;
 }
 
 .action-cancel {
-  background-color: #f97316;   /* orange */
+  background-color: #f97316;
   border-color: #ea580c;
   color: #ffffff;
 }
 
-/* Hover */
 .action-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 2px 6px rgba(15,23,42,.25);
 }
-/* ===== Barre de recherche type "pill" ===== */
 
+/* Barre de recherche type "pill" */
 .search-pill {
   display: flex;
   align-items: center;
@@ -520,9 +601,8 @@ a:hover {
   box-shadow: 0 6px 16px rgba(15, 23, 42, 0.18);
 }
 
-/* On efface tous les styles globaux hérités sur cet input */
 .search-pill-input {
-  all: unset;                 /* 🔥 remet à zéro width, margin, border, etc. */
+  all: unset;
   flex: 1;
   font-size: 0.95rem;
   color: #111827;
@@ -533,9 +613,8 @@ a:hover {
   color: #9ca3af;
 }
 
-/* On efface aussi les styles globaux du bouton et on repart propre */
 .search-pill-btn {
-  all: unset;                 
+  all: unset;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -548,62 +627,22 @@ a:hover {
   pointer-events: none;
 }
 
-/* Focus sympa quand on clique dans la zone */
 .search-pill:focus-within {
   border-color: #2563eb;
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25);
 }
 
-/* Enlever le carré bleu sur la loupe */
 .search-pill-btn:focus {
   outline: none;
 }
 
-.produit-add-btn {
-  margin-bottom: 1rem;  /* espace de 16px sous le bouton */
-}
-
-.client-add-btn {
-  margin-bottom: 1rem;  /* espace de 16px sous le bouton */
-}
-
+.produit-add-btn,
+.client-add-btn,
 .fournisseur-add-btn {
-  margin-bottom: 1rem;  /* espace de 16px sous le bouton */
+  margin-bottom: 1rem;
 }
 
-/* ===== Boutons page détail produit ===== */
-
-.detail-actions {
-  margin-top: 1.5rem;
-  display: flex;
-  justify-content: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-/* On annule ton style global sur <a> dans cette zone */
-.detail-actions a {
-  display: inline-flex;
-  align-items: center;
-  margin-top: 0;
-}
-
-/* On neutralise le style "form carte" et width:100% pour ce petit form */
-.detail-actions form {
-  margin: 0;
-  padding: 0;
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  max-width: none;
-}
-
-.detail-actions form button {
-  width: auto;
-}
-
-/* ===== Boutons page détail produit ===== */
-
+/* Boutons page détail produit */
 .detail-actions {
   margin-top: 1.5rem;
   display: flex;
@@ -612,14 +651,12 @@ a:hover {
   flex-wrap: wrap;
 }
 
-/* On annule le a { display:block; margin-top:1rem; } pour ces liens */
 .detail-actions a {
   display: inline-flex;
   align-items: center;
   margin-top: 0;
 }
 
-/* On neutralise le style "form carte" pour le delete */
 .detail-actions form {
   background: transparent !important;
   border: none !important;
@@ -629,12 +666,10 @@ a:hover {
   padding: 0 !important;
 }
 
-/* Le bouton à l'intérieur ne doit pas être full-width */
 .detail-actions form button {
   width: auto !important;
 }
 
-/* Style commun : petits boutons arrondis */
 .btn-detail {
   padding: 0.25rem 0.8rem;
   border-radius: 999px;
@@ -648,39 +683,112 @@ a:hover {
               box-shadow .12s ease, border-color .12s ease;
 }
 
-/* Afficher la liste */
 .btn-detail-secondary {
   border-color: #cbd5e1;
   color: #334155;
 }
+
 .btn-detail-secondary:hover {
   background-color: #e5e7eb;
 }
 
-/* Modifier */
 .btn-detail-primary {
   background-color: #2563eb;
   border-color: #2563eb;
   color: #ffffff;
 }
+
 .btn-detail-primary:hover {
   background-color: #1d4ed8;
 }
 
-/* Supprimer : juste contour rouge, fond transparent */
 .btn-detail-danger {
   background-color: transparent;
   border-color: #ef4444;
   color: #ef4444;
 }
+
 .btn-detail-danger:hover {
   background-color: #ef4444;
   color: #ffffff;
 }
 
+/* MOBILE / TABLET - ÉCRAN < 768px */
+@media (max-width: 768px) {
 
+  /* on garde le background global, on ajuste juste la mise en page */
+  body {
+    padding-top: 56px;
+  }
 
+  main.container {
+    max-width: 100%;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
 
+  .navbar .navbar-brand {
+    font-size: 1rem;
+  }
 
+  .navbar .btn.btn-outiline-secondary {
+    padding: 0.15rem 0.4rem;
+    font-size: 0.85rem;
+  }
 
+  /* Barre de menu sous la navbar : full width + scroll horizontal */
+  .bg-light.border-bottom.shadow-sm {
+    overflow-x: auto;
+  }
 
+  .bg-light.border-bottom.shadow-sm .container {
+    max-width: 100%;
+    width: 100%;
+    margin: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .bg-light.border-bottom.shadow-sm .nav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .bg-light.border-bottom.shadow-sm .nav-pills .nav-link {
+    white-space: nowrap;
+    padding-inline: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .search-pill {
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0.25rem 0.75rem;
+  }
+
+  .table {
+    font-size: 0.8rem;
+  }
+
+  .produit-add-btn,
+  .client-add-btn,
+  .fournisseur-add-btn {
+    width: 100%;
+    display: inline-flex;
+    justify-content: center;
+  }
+}
+
+/* Cacher la barre de scroll du menu horizontal,
+   mais garder le scroll au doigt */
+.bg-light.border-bottom.shadow-sm .nav {
+  scrollbar-width: none;               /* Firefox */
+}
+
+.bg-light.border-bottom.shadow-sm .nav::-webkit-scrollbar {
+  display: none;                       /* Chrome, Edge, Safari */
+}
